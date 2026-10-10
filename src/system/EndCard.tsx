@@ -1,7 +1,7 @@
 import React from 'react';
 import {AbsoluteFill, interpolate, useCurrentFrame} from 'remotion';
 import {Behavior, Particles, Spawner} from 'remotion-bits';
-import {C, CtaPill, F, Sfx, Stage, Wordmark, brand, clamp, ease, ramp} from '../kit';
+import {C, CtaPill, F, Sfx, Stage, Wordmark, brand, clamp, ease, ramp} from './kit';
 
 // 240f. Lime flash -> wordmark slam -> tagline -> CTA + URL, then a calm hold (>= 4s fully readable).
 export const END_CARD = 240;

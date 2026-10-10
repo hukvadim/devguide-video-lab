@@ -44,3 +44,5 @@ npm run preview:alts       # A/B/C 540x960
 npm run render:skia        # окремий entry + config
 node scripts/qa-sheet.mjs out/final/devguide-final-preview-540x960.mp4 out/final/qa/sheet.png 20,84,300,560,700,860,1000,1130
 ```
+
+> 2026-10-10: лабораторні композиції (Lab/Pro/Posts/Scenes, Day5, Skia, snap-cn) видалено з коду; спільне перенесено в `src/system/`. Відновити: `git checkout 852b0d0 -- src/dg src/skia src/components src/lib`.

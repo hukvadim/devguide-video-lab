@@ -14,6 +14,6 @@ for(const name of Object.keys(pkg.dependencies).filter(x=>x==='remotion'||x.star
  const installed=JSON.parse(readFileSync(`node_modules/${name}/package.json`,'utf8')).version;
  if(installed!==pkg.dependencies.remotion){console.error('VERSION MISMATCH',name,installed);failures++;}
 }
-for(const path of ['src/index.ts','src/Root.tsx','public/assets/lab-bed.wav','data/brand.json'])if(!existsSync(path)){console.error('MISSING FILE',path);failures++;}
+for(const path of ['src/index.ts','src/Root.tsx','data/brand.json'])if(!existsSync(path)){console.error('MISSING FILE',path);failures++;}
 console.log(failures?'Fix the issues above.':'READY. Run npm start. Skills are installed separately: npm run setup:skills');
 process.exitCode=failures?1:0;

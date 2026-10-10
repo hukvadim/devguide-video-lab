@@ -1,8 +1,8 @@
 import React from 'react';
 import {AbsoluteFill, Audio, OffthreadVideo, Sequence, interpolate, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
-import {C, F, Sfx, Stage, Wordmark, brand, clamp, ramp} from '../dg/kit';
-import {Caret} from '../dg/Code';
-import {chunkEnd, chunkWords, Word} from './captions';
+import {C, F, Sfx, Stage, Wordmark, brand, clamp, ramp} from '../system/kit';
+import {Caret} from '../system/Code';
+import {chunkEnd, chunkWords, Word} from '../system/captions';
 import WORDS from '../../public/ideas/idea-001/words.json';
 
 // ID-001 «Покажи AI свою ціль»: YouTube 1920×1080 + 3 вертикальні шорти з того самого голосу.

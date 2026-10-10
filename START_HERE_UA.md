@@ -77,27 +77,16 @@ npm run setup:skills
 Не хочеш проходити всі етапи? Після встановлення дай `prompts/MASTER_PROMPT.md`.
 Він доручає агенту пройти установку, створити три альтернативи, перевірити їх і зібрати фінальний ролик.
 
-## 4. Збережи стартові ролики
+## 4. Рендер відео
 
 ```bash
-npm run render:preview
-npm run render:gsap
-npm run render:3d
-npm run render:svg
-npm run render:captions
-npm run render:hybrid
+node scripts/render-timed.mjs draft Idea-001-Short1
 ```
 
-`render:preview` робить 540×960 для швидкого перегляду. Інші команди — 1080×1920 H.264, CRF 18.
-Для 3D на системі без GPU спробуй `npm run render:3d -- --software`.
-Кожне відео отримує свою папку `out/<назва>/` (наприклад `out/hybrid/`), галерея всіх рендерів: `out/index.html` (`npm run out:index`). Для всіх п'яти початкових композицій: `npm run render:all`.
-
-```bash
-npm run qa:frames -- Hybrid
-```
-
-Це експортує шість контрольних кадрів у `out/<назва>/qa/`. Після AI-змін можуть з'явитися нові ID композицій:
-агент повинен додати відповідні npm-команди або дати точну команду `npx remotion render`.
+`draft` робить прев'ю в половинному розмірі, `final` — повний розмір, CRF 18 (для 16:9 додай `--wh=1920x1080`).
+Кожне відео отримує свою папку `out/<id>/`, галерея всіх рендерів: `out/index.html`.
+`npm run qa:frames -- Idea-001-Short1` експортує шість контрольних кадрів у `out/<id>/qa/`.
+Після фіналу `npm run clean` (запускається сам) прибирає `qa/` і прев'ю. Структура проєкту — в `AGENTS.md`.
 
 ## 5. Додаткові бібліотеки
 

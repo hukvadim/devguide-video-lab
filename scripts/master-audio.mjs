@@ -11,3 +11,4 @@ const out = input.replace(/\.mp4$/, '-14lufs.mp4');
 const r = spawnSync('ffmpeg', ['-v', 'error', '-y', '-i', input, '-c:v', 'copy', '-af', `loudnorm=${target}:${m}`, '-ar', '48000', '-c:a', 'aac', '-b:a', '256k', '-movflags', '+faststart', out], {stdio: 'inherit'});
 if (r.status !== 0) process.exit(r.status ?? 1);
 console.log(`input ${json.input_i} LUFS / ${json.input_tp} dBTP -> ${out}`);
+if (input.startsWith('out')) await import('./clean.mjs'); // не мастерований дубль більше не потрібен

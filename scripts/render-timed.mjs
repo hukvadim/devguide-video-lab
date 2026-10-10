@@ -21,4 +21,5 @@ for (const id of ids) {
 	appendFileSync('out/render-times.log', `${new Date().toISOString()}\t${id}\t${size} crf${draft ? 23 : 18}\t${sec}s\tstatus=${r.status}\t${file}\n`);
 	if (r.status !== 0) process.exit(r.status ?? 1);
 }
-await import('./out-index.mjs'); // галерея out/index.html після рендеру
+// після фіналу прибрати qa/ і прев'ю (clean.mjs сам оновлює галерею out/index.html)
+await import(draft ? './out-index.mjs' : './clean.mjs');
