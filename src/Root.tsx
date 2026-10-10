@@ -2,7 +2,7 @@ import React from 'react';
 import {Composition, Folder} from 'remotion';
 import {EndCard, END_CARD} from './system/EndCard';
 import {Idea001, Idea001Short, Idea001Thumb, IDEA_001, shortFrames} from './ideas/Idea001';
-import {Idea002, Idea002Thumb, IDEA_002} from './ideas/Idea002';
+import {Idea002, Idea002Short, Idea002Thumb, IDEA_002, SHORT_FRAMES} from './ideas/Idea002';
 import './style.css';
 const V = {width: 1080, height: 1920, fps: 30} as const;
 // одне відео = папка ID-xxx: головне (16:9), мініатюра й похідні шорти в Shorts/. Спільне — System/.
@@ -17,6 +17,9 @@ export const Root: React.FC = () => <>
  <Folder name="ID-002">
  <Composition id="Idea-002" component={Idea002} width={1920} height={1080} fps={30} durationInFrames={IDEA_002}/>
  <Composition id="Idea-002-Thumb" component={Idea002Thumb} width={1920} height={1080} fps={30} durationInFrames={1}/>
+ <Folder name="Shorts">
+  <Composition id="Idea-002-Short1" component={Idea002Short} {...V} durationInFrames={SHORT_FRAMES}/>
+ </Folder>
 </Folder>
 <Folder name="System">
  <Composition id="System-EndCard" component={EndCard} {...V} durationInFrames={END_CARD}/>
