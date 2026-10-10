@@ -3,6 +3,7 @@ import {AbsoluteFill, Audio, OffthreadVideo, Sequence, interpolate, staticFile, 
 import {C, F, Sfx, Stage, Wordmark, brand, clamp, ramp} from '../system/kit';
 import {Caret} from '../system/Code';
 import {chunkEnd, chunkWords, Word} from '../system/captions';
+import {Big, L, S, Show, Strike, io, pop, typed} from '../system/step';
 import WORDS from '../../public/ideas/idea-002/words.json';
 
 // ID-002 «Не бійся першого запитання до AI»: YouTube 1920×1080 з голосу (58 с) + end card.
@@ -20,28 +21,10 @@ const useV = () => {
 };
 // секунда голосу → секунда ролика (стокові вставки в шорті); у повному відео — тотожність
 const ToOut = React.createContext((src: number) => src);
-const S = (s: number) => Math.round(s * 30);
-const io = (t: number, a: number, b: number, f = 0.35) => Math.min(ramp(t, a, a + f), 1 - ramp(t, b - f, b));
-const pop = (t: number, at: number, len = 0.35) => ramp(t, at, at + len);
-const typed = (s: string, t: number, a: number, b: number) => s.slice(0, Math.round(interpolate(t, [a, b], [0, s.length], clamp)));
-
-const Show: React.FC<{t: number; a: number; b: number; children: React.ReactNode; rise?: number}> = ({t, a, b, children, rise = 24}) => {
-	if (t < a || t > b) return null;
-	return <AbsoluteFill style={{opacity: io(t, a, b), transform: `translateY(${(1 - ramp(t, a, a + 0.5)) * rise}px)`}}>{children}</AbsoluteFill>;
-};
 const Pad: React.FC<{top: number; vTop?: number; children: React.ReactNode; style?: React.CSSProperties}> = ({top, vTop, children, style}) => {
 	const v = useV();
 	return <div style={{position: 'absolute', left: v ? 84 : X, right: v ? 140 : X, top: v ? vTop ?? top : top, textAlign: 'center', ...style}}>{children}</div>;
 };
-const Big: React.FC<{children: React.ReactNode; size?: number; style?: React.CSSProperties}> = ({children, size = 96, style}) => (
-	<div style={{fontFamily: F.display, fontWeight: 900, fontSize: size, lineHeight: 1.1, letterSpacing: -1.5, ...style}}>{children}</div>
-);
-const L: React.FC<{c?: string; children: React.ReactNode}> = ({c = C.lime, children}) => <span style={{color: c}}>{children}</span>;
-// закреслення лаймовою/червоною рискою, p: 0..1
-const Strike: React.FC<{p: number; children: React.ReactNode; color?: string}> = ({p, children, color = C.red}) => (
-	<span style={{backgroundImage: `linear-gradient(${color}, ${color})`, backgroundRepeat: 'no-repeat', backgroundPosition: '0 55%', backgroundSize: `${p * 100}% 8px`, color: p > 0.5 ? C.dim : undefined}}>{children}</span>
-);
-
 const Stock: React.FC<{t: number; a: number; b: number; src: string; rate?: number; dim?: number; pos?: string; children?: React.ReactNode}> = ({t, a, b, src, rate = 1, dim = 0.5, pos = '50% 50%', children}) => {
 	const toOut = React.useContext(ToOut);
 	if (t < a - 0.1 || t > b + 0.1) return null;

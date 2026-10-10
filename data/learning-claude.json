@@ -1,0 +1,452 @@
+{
+  "title": "Claude / AI",
+  "subtitle": "перше питання, перший сайт, робоче місце",
+  "description": "Створи акаунт, постав питання і запусти свій перший сайт.",
+  "icon": "logo-claude",
+  "order": 1,
+  "relatedSlugs": [
+    "websites",
+    "business",
+    "ads"
+  ],
+  "heroVideo": null,
+  "isPublished": true,
+  "steps": [
+    {
+      "key": "account",
+      "section": "Старт за вечір",
+      "title": "Створи акаунт",
+      "description": "Реєстрація на офіційному сайті: Google-акаунт або пошта.",
+      "outcome": "Акаунт, з яким працюємо на всіх наступних кроках.",
+      "check": "Ти бачиш поле для повідомлення на claude.ai.",
+      "optional": false,
+      "minutes": 5,
+      "icon": "user",
+      "url": "https://claude.ai",
+      "linkLabel": "Відкрити claude.ai",
+      "action": "auto",
+      "prompts": [],
+      "slides": [],
+      "materialSlugs": [],
+      "needsVideo": false,
+      "videoNote": null
+    },
+    {
+      "key": "plan",
+      "section": "Старт за вечір",
+      "title": "Обери підписку",
+      "description": "Для навчання і перших сайтів вистачає Pro. Max — коли працюєш щодня по кілька годин і впираєшся в ліміти.",
+      "outcome": "Розумієш, за що платиш, і не переплачуєш.",
+      "check": "Знаєш, чим твій тариф відрізняється від сусіднього і коли варто перейти.",
+      "optional": false,
+      "minutes": 5,
+      "icon": "credit-card",
+      "url": "https://claude.com/pricing",
+      "linkLabel": "Тарифи Claude",
+      "action": "auto",
+      "prompts": [],
+      "slides": [
+        {
+          "media": "https://devguide.com.ua/uploads/materials/mv2kke3s-pb6hnm-plan-1.webp",
+          "ctaUrl": "https://claude.com/pricing",
+          "caption": "Free — спробувати, Pro — навчання і перші сайти, Max — коли AI працює з тобою весь день.",
+          "ctaLabel": "Порівняти тарифи"
+        },
+        {
+          "media": "https://youtube.com/shorts/dMeGWKHpUN8",
+          "caption": "Що реально змінюється, коли переходиш з Free на Pro (англ., 40 с)."
+        }
+      ],
+      "materialSlugs": [],
+      "needsVideo": false,
+      "videoNote": null
+    },
+    {
+      "key": "first-question",
+      "section": "Старт за вечір",
+      "title": "Перше питання до AI",
+      "description": "Пишемо так, як я пишу щодня: коротко і по суті. Потім те саме питання ще раз і в іншому чаті — відповіді будуть різні, і це нормально.",
+      "outcome": "Перша корисна відповідь за 30 секунд і розуміння, чому «правильної» відповіді немає.",
+      "check": "У тебе дві різні відповіді на одне питання, і ти можеш сказати, яка переконливіша і чому.",
+      "optional": false,
+      "minutes": 10,
+      "icon": "sparkles",
+      "url": null,
+      "linkLabel": null,
+      "action": "prompt",
+      "prompts": [
+        {
+          "key": "first-question",
+          "body": "Який стек для сайту інтернет-магазину буде краще вибрати в 2026 році, коротко",
+          "label": "Питання про стек",
+          "openIn": "claude"
+        },
+        {
+          "key": "why",
+          "body": "Чому саме так? Дай 2 альтернативи і коли кожна з них краща. Коротко, таблицею: варіант, коли брати, мінуси.",
+          "label": "Чому саме так",
+          "openIn": "claude"
+        },
+        {
+          "key": "compare",
+          "body": "Який стек для сайту інтернет-магазину буде краще вибрати в 2026 році, коротко",
+          "label": "Те саме в ChatGPT",
+          "openIn": "chatgpt"
+        }
+      ],
+      "slides": [
+        {
+          "media": "https://devguide.com.ua/uploads/materials/mv2kke67-00fyxd-first-question-1.webp",
+          "caption": "Відповідь Claude: коротко, з аргументами."
+        },
+        {
+          "media": "https://devguide.com.ua/uploads/materials/mv2kke7q-aoo4p8-first-question-2.webp",
+          "caption": "Те саме питання в ChatGPT — інший акцент. Порівнюй, а не вір першій відповіді."
+        }
+      ],
+      "materialSlugs": [],
+      "needsVideo": false,
+      "videoNote": null
+    },
+    {
+      "key": "desktop",
+      "section": "Робоче місце",
+      "title": "Встанови Claude Desktop",
+      "description": null,
+      "outcome": "Claude поруч із будь-яким вікном, без пошуку вкладки.",
+      "check": null,
+      "optional": false,
+      "minutes": 5,
+      "icon": "pc",
+      "url": "https://claude.ai/download",
+      "linkLabel": "Завантажити",
+      "action": "auto",
+      "prompts": [],
+      "slides": [],
+      "materialSlugs": [],
+      "needsVideo": false,
+      "videoNote": null
+    },
+    {
+      "key": "vscode",
+      "section": "Робоче місце",
+      "title": "Встанови VS Code",
+      "description": null,
+      "outcome": "Редактор, у якому Claude Code працюватиме з твоїм проєктом.",
+      "check": "VS Code відкриває порожню папку «my-first-site».",
+      "optional": false,
+      "minutes": 15,
+      "icon": "code",
+      "url": "https://code.visualstudio.com",
+      "linkLabel": "Завантажити VS Code",
+      "action": "auto",
+      "prompts": [],
+      "slides": [],
+      "materialSlugs": [
+        "vstanovlennya-ta-nalashtuvannya-vs-code-dlya-pochatkivtsiv"
+      ],
+      "needsVideo": false,
+      "videoNote": null
+    },
+    {
+      "key": "claude-code-install",
+      "section": "Робоче місце",
+      "title": "Встанови Claude Code",
+      "description": "Найчастіше люди застрягають саме тут. Не шукай інструкції: нехай Claude у чаті веде тебе по кроках, а ти скидаєш йому скріни.",
+      "outcome": "Claude Code запускається в терміналі VS Code.",
+      "check": "Команда claude у терміналі відкриває Claude Code і він відповідає на «привіт».",
+      "optional": false,
+      "minutes": 20,
+      "icon": "terminal",
+      "url": "https://docs.claude.com/en/docs/claude-code/overview",
+      "linkLabel": "Документація Claude Code",
+      "action": "prompt",
+      "prompts": [
+        {
+          "key": "install",
+          "body": "Я новачок, у мене [Windows 11]. Допоможи встановити Claude Code і запустити його в терміналі VS Code.\nВеди по одному кроку. Після кожного питай, що в мене на екрані. Якщо бачу помилку — я скину скрін.",
+          "label": "Встановити з помічником",
+          "openIn": "claude"
+        }
+      ],
+      "slides": [
+        {
+          "media": "https://youtube.com/shorts/PFbKHobS548",
+          "caption": "Встановлення за 25 секунд: команда, вхід в акаунт, перший запуск (англ.)."
+        }
+      ],
+      "materialSlugs": [],
+      "needsVideo": false,
+      "videoNote": null
+    },
+    {
+      "key": "claude-code",
+      "section": "Робоче місце",
+      "title": "Claude Code: перший проєкт",
+      "description": "Головне правило: спершу план, потім код.",
+      "outcome": "Сайт у твоїй папці, який запускається на твоєму комп'ютері.",
+      "check": "Сайт відкривається за адресою localhost у браузері.",
+      "optional": false,
+      "minutes": 30,
+      "icon": "terminal",
+      "url": null,
+      "linkLabel": null,
+      "action": "prompt",
+      "prompts": [
+        {
+          "key": "first-project",
+          "body": "Створи в цій папці сайт для [кав'ярні «Зерно»]: Vite + React + Tailwind.\nСпершу коротко покажи план (структура папок і блоки сторінки) і дочекайся мого «ок».\nПісля цього згенеруй, запусти dev-сервер і скажи, яку адресу відкрити.",
+          "label": "Створити проєкт",
+          "openIn": "claude"
+        }
+      ],
+      "slides": [],
+      "materialSlugs": [
+        "stvoriuiemo-realnyi-sait-z-ai-react-tailwind-gpt-claude-code",
+        "stvoriuiemo-proekt-i-zapuskaiemo-v-brauzeri"
+      ],
+      "needsVideo": false,
+      "videoNote": null
+    },
+    {
+      "key": "claude-md",
+      "section": "Робоче місце",
+      "title": "Правила проєкту в CLAUDE.md",
+      "description": "Команда /init створює CLAUDE.md. Далі доповнюємо його своїми правилами.",
+      "outcome": "Claude пам'ятає правила проєкту між сесіями і не чіпає те, що не можна.",
+      "check": "У новій сесії Claude називає стек і правила проєкту, не питаючи тебе.",
+      "optional": false,
+      "minutes": 10,
+      "icon": "document",
+      "url": null,
+      "linkLabel": null,
+      "action": "auto",
+      "prompts": [
+        {
+          "key": "rules",
+          "body": "Подивись на цей проєкт і доповни CLAUDE.md: стек, як запускати, правила стилю,\nщо НЕ можна змінювати без мого дозволу (оплата, .env, міграції бази). Коротко, списками.",
+          "label": "Доповнити правила",
+          "openIn": "claude"
+        }
+      ],
+      "slides": [
+        {
+          "media": "https://youtube.com/shorts/adsrbuYB-WM",
+          "caption": "Що таке CLAUDE.md, як його створює /init і що туди писати (англ., 1 хв)."
+        }
+      ],
+      "materialSlugs": [],
+      "needsVideo": false,
+      "videoNote": null
+    },
+    {
+      "key": "git",
+      "section": "Робоче місце",
+      "title": "Git як страховка",
+      "description": null,
+      "outcome": "Будь-яку невдалу зміну AI можна відкотити за секунду.",
+      "check": "У проєкті є перший коміт, і ти знаєш команду, щоб повернутися до нього.",
+      "optional": false,
+      "minutes": 20,
+      "icon": "check-circle",
+      "url": null,
+      "linkLabel": null,
+      "action": "auto",
+      "prompts": [
+        {
+          "key": "git-init",
+          "body": "Ініціалізуй git у цьому проєкті, додай нормальний .gitignore (node_modules, .env) і зроби перший коміт із короткою зрозумілою назвою.\nДалі після кожної вдалої зміни пропонуй мені коміт.",
+          "label": "Увімкнути git",
+          "openIn": "claude"
+        }
+      ],
+      "slides": [
+        {
+          "media": "https://youtube.com/shorts/wTes2Qp_dHc",
+          "caption": "Що таке git і чому це «збереження в грі» для коду (англ., 1 хв)."
+        }
+      ],
+      "materialSlugs": [
+        "git-i-github-vid-osnov-do-publikatsii-saitu",
+        "git-github-mini-proekt-success-page"
+      ],
+      "needsVideo": false,
+      "videoNote": null
+    },
+    {
+      "key": "plan-mode",
+      "section": "Коли щось пішло не так",
+      "title": "Спершу план, потім код",
+      "description": "У Claude Code є режим плану (Shift+Tab): AI досліджує проєкт і пропонує план, нічого не змінюючи.",
+      "outcome": "AI не переписує пів проєкту, поки ти не погодив, що саме він змінюватиме.",
+      "check": "Перед великою зміною ти бачиш план і погоджуєш або правиш його.",
+      "optional": false,
+      "minutes": 10,
+      "icon": "route",
+      "url": null,
+      "linkLabel": null,
+      "action": "prompt",
+      "prompts": [
+        {
+          "key": "plan",
+          "body": "Мені треба [додати форму бронювання з відправкою в Telegram]. Нічого поки не змінюй.\nСпершу досліди проєкт і дай план: які файли зміниш, що додаси, які є ризики. Дочекайся мого «ок».",
+          "label": "Попросити план",
+          "openIn": "claude"
+        }
+      ],
+      "slides": [
+        {
+          "media": "https://youtube.com/shorts/SdKCQlWoy_A",
+          "caption": "Shift+Tab — режим плану: Claude читає проєкт і пише план, нічого не змінюючи (англ., 43 с)."
+        }
+      ],
+      "materialSlugs": [],
+      "needsVideo": false,
+      "videoNote": null
+    },
+    {
+      "key": "ai-broke",
+      "section": "Коли щось пішло не так",
+      "title": "AI зламав — що робити",
+      "description": "Порядок: 1) зупини AI; 2) відкоти зміни через git; 3) опиши баг за шаблоном; 4) якщо AI ходить по колу третій раз — /clear або новий чат з підсумком.",
+      "outcome": "Ти не панікуєш і не кидаєш, коли AI ходить по колу чи ламає те, що працювало.",
+      "check": "Ти відкотив невдалу зміну через git і вирішив задачу в новому чаті з коротким описом.",
+      "optional": false,
+      "minutes": 15,
+      "icon": "alert",
+      "url": null,
+      "linkLabel": null,
+      "action": "prompt",
+      "prompts": [
+        {
+          "key": "bug",
+          "body": "Що роблю: [кроки, щоб відтворити].\nЩо очікую: [як має бути].\nЩо бачу: [що відбувається] + скрін.\nПомилка з консолі / терміналу: [вставити текст].\nЩо вже пробували: [список].\nЗнайди причину, а не лише симптом. Спершу поясни причину, потім виправляй.",
+          "label": "Опис бага",
+          "openIn": "claude"
+        },
+        {
+          "key": "handoff",
+          "body": "Підсумуй цю розмову для нового чату: мета, що вже зроблено, що не спрацювало і чому, на чому зупинилися. До 10 рядків.",
+          "label": "Підсумок для нового чату",
+          "openIn": "claude"
+        }
+      ],
+      "slides": [
+        {
+          "media": "https://youtube.com/shorts/ql56K3sveqo",
+          "caption": "Так виглядає вайб-кодинг без git і плану. Посміхнись — і відкоти зміни (англ.)."
+        }
+      ],
+      "materialSlugs": [],
+      "needsVideo": true,
+      "videoNote": "Живий приклад: AI зламав сторінку → git restore → новий чат з описом → виправлено за 5 хв."
+    },
+    {
+      "key": "ai-safety",
+      "section": "Коли щось пішло не так",
+      "title": "Безпечно з AI",
+      "description": "Правила: паролі, токени і .env — ніколи в чат. Дані клієнтів — лише знеособлені. Агенту в браузері — тільки потрібні сайти й акаунти. Текст на чужій сторінці може містити приховані інструкції для агента (prompt injection) — не давай йому діяти без нагляду там, де є гроші.",
+      "outcome": "Ти не зливаєш у чат паролі й дані клієнтів і знаєш межі агента.",
+      "check": "Перед відправкою файлу чи тексту в AI ти перевірив, що там немає секретів і персональних даних.",
+      "optional": false,
+      "minutes": 10,
+      "icon": "shield-key",
+      "url": null,
+      "linkLabel": null,
+      "action": "prompt",
+      "prompts": [
+        {
+          "key": "scrub",
+          "body": "Перевір цей текст перед тим, як я відправлю його в AI: чи є тут паролі, токени, ключі API, телефони, адреси чи інші персональні дані? Заміни їх на [ПРИХОВАНО] і поверни чисту версію.\nТекст: [вставити]",
+          "label": "Перевірити перед відправкою",
+          "openIn": "claude"
+        }
+      ],
+      "slides": [],
+      "materialSlugs": [],
+      "needsVideo": false,
+      "videoNote": null
+    },
+    {
+      "key": "skills-mcp",
+      "section": "Рівень вище",
+      "title": "Skills і MCP",
+      "description": null,
+      "outcome": "Claude отримує нові вміння: Figma, документацію бібліотек, твою адмінку.",
+      "check": "Ти підключив хоча б один MCP або skill і виконав з ним задачу.",
+      "optional": false,
+      "minutes": 20,
+      "icon": "layers",
+      "url": "https://docs.claude.com/en/docs/claude-code/mcp",
+      "linkLabel": "Що таке MCP",
+      "action": "auto",
+      "prompts": [
+        {
+          "key": "audit",
+          "body": "Покажи, які skills і MCP-сервери в мене зараз підключені, і простими словами поясни, що дає кожен.\nЗапропонуй 3, які варто підключити для розробки сайтів, і навіщо.",
+          "label": "Що в мене підключено",
+          "openIn": "claude"
+        }
+      ],
+      "slides": [
+        {
+          "media": "https://youtube.com/shorts/X5GAAu_j4Z8",
+          "caption": "Skill — це інструкція, яку Claude вивчає один раз і виконує щоразу однаково (англ., 40 с)."
+        }
+      ],
+      "materialSlugs": [],
+      "needsVideo": true,
+      "videoNote": "Як я підключив MCP DevGuide: нейромережа сама редагує шлях навчання в адмінці."
+    },
+    {
+      "key": "own-skill",
+      "section": "Рівень вище",
+      "title": "Свій skill: процес в одну команду",
+      "description": "Те, що робиш утретє, — пакуй у skill. Так я роблю зі своїми процесами в DevGuide.",
+      "outcome": "Твій повторюваний процес (інтерв'ю → ТЗ) стає однією командою, яку виконує AI.",
+      "check": "Команда /tz-interview у новій сесії проводить інтерв'ю і зберігає tz.md.",
+      "optional": false,
+      "minutes": 30,
+      "icon": "workflow",
+      "url": null,
+      "linkLabel": null,
+      "action": "prompt",
+      "prompts": [
+        {
+          "key": "skill",
+          "body": "Створи мені skill «tz-interview»: проводить зі мною інтерв'ю про сайт клієнта по одному питанню (бізнес, аудиторія, сторінки, функції, дизайн, бюджет, терміни), а наприкінці зберігає tz.md у корінь проєкту за шаблоном з 9 розділів. Поясни, як його викликати.",
+          "label": "Створити skill",
+          "openIn": "claude"
+        }
+      ],
+      "slides": [
+        {
+          "media": "https://youtube.com/shorts/YpJN5rnm6Rk",
+          "caption": "Перший skill прямо в чаті: створити, зберегти, запустити (англ., 1 хв)."
+        }
+      ],
+      "materialSlugs": [],
+      "needsVideo": false,
+      "videoNote": null
+    },
+    {
+      "key": "next-websites",
+      "section": "Далі",
+      "title": "Йдемо до клієнта",
+      "description": "Ти вмієш питати, вчитися, генерувати, публікувати й рятувати проєкт, коли щось зламалось. Тепер робимо сайт так, як для справжнього замовника.",
+      "outcome": "Наступне — найважливіше: зрозуміти, що насправді треба клієнту.",
+      "check": null,
+      "optional": false,
+      "minutes": 1,
+      "icon": "sparkles",
+      "url": "https://devguide.com.ua/learning/websites",
+      "linkLabel": "Шлях «Сайти»",
+      "action": "auto",
+      "prompts": [],
+      "slides": [],
+      "materialSlugs": [],
+      "needsVideo": false,
+      "videoNote": null
+    }
+  ]
+}
