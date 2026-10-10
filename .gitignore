@@ -12,4 +12,4 @@ out/
 # сторонні скіли ставить npm run setup:skills (skills-lock.json); у git лише наш devguide-reel
 .agents/
 .claude/skills/*
-!.claude/skills/devguide-reel/
+!.claude/skills/devguide-*/
