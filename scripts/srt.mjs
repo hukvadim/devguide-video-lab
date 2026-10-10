@@ -1,9 +1,9 @@
-// words.json → .srt для YouTube (та сама розбивка рядків, що й вшиті субтитри: src/ideas/captions.ts).
+// words.json → .srt для YouTube (та сама розбивка рядків, що й вшиті субтитри: src/system/captions.ts).
 //   node scripts/srt.mjs public/ideas/idea-001/words.json out/idea-001/idea-001.srt
 //   node scripts/srt.mjs selftest
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {chunkEnd, chunkWords} from '../src/ideas/captions.ts';
+import {chunkEnd, chunkWords} from '../src/system/captions.ts';
 
 const ts = (s) => {
 	const ms = Math.round(s * 1000);

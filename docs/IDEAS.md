@@ -7,6 +7,7 @@
 ## Вхідні
 <!-- сирі ідеї, дослівно, з датою. Агент не редагує, лише позначає «→ ID-xxx», коли розклав -->
 - 2026-10-10: «ElevenLabs_…Anton….mp3 зроби відео на пк 1920x1080 кінцевий варіант… Зроби гарне відео для youtube.» → ID-001
+- 2026-10-10: «ElevenLabs_…Bogdan_Melodic_and_Calm….mp3 (Сирий матеріал) треба відео.» → ID-002
 
 ## Картки
 
@@ -19,6 +20,14 @@
 - **Рендер:** `node scripts/render-timed.mjs final Idea-001 --wh=1920x1080` → `node scripts/master-audio.mjs out/idea-001/idea-001-1920x1080.mp4`
 - **Шорти:** `out/idea-001-short1..3/` (1080×1920, ≈ 32 / 41 / 36 с), склад — у кінці `scenario.md`; рендер `node scripts/render-timed.mjs final Idea-001-Short1 Idea-001-Short2 Idea-001-Short3`
 - **Перевірити:** шаблон запиту для «ЦІЛЬ» існує, перш ніж публікувати
+
+### ID-002 · Не бійся першого запитання до AI
+- **Статус:** готово (`out/idea-002/idea-002-1920x1080-14lufs.mp4`, `.srt`, обкладинка `stills/thumb-1920x1080.png`; рендер: `node scripts/render-timed.mjs final Idea-002 --wh=1920x1080` → `node scripts/master-audio.mjs out/idea-002/idea-002-1920x1080.mp4`) · **Акаунт:** YouTube (DevGuide) · **Формат:** F1-подібний explainer 1920×1080, ≈ 58 с, без шортів · **Зйомка:** не потрібна (голос ElevenLabs, `public/ideas/idea-002/voice.mp3`)
+- **Рубрика:** Claude/AI
+- **Хук (0–4 с):** «Яка найбільша помилка, коли вперше відкриваєш AI?»
+- **Сценарій:** `public/ideas/idea-002/scenario.md`
+- **CTA:** без слова; end card `devguide.com.ua/learning` (шлях «Claude / AI»)
+- **Перевірити:** на екрані лише сказане в голосі; ChatGPT називаємо як у голосі, без цін і статистики
 
 <!-- шаблон, копіювати під кожну ідею
 ### ID-001 · Назва
