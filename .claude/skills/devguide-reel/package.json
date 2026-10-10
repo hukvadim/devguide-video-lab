@@ -1,0 +1,19 @@
+{
+  "name": "devguide-reel",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@remotion/cli": "4.0.534",
+    "onnxruntime-node": "1.30.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "remotion": "4.0.534",
+    "@remotion/layout-utils": "4.0.534"
+  },
+  "version": "1.0.0",
+  "description": "Claude Code skill: raw talking-head video -> epic DevGuide vertical reel (Remotion text layer, intro/outro)",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  }
+}

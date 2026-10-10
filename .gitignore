@@ -1,0 +1,15 @@
+node_modules/
+out/
+.env*
+!.env.example
+# сирі записи й робочі файли монтажу: великі, переносимо окремо (диск/хмара)
+5/
+**/work/
+*.part
+*.log
+.claude/settings.local.json
+.claude/skills/devguide-reel/tools
+# сторонні скіли ставить npm run setup:skills (skills-lock.json); у git лише наш devguide-reel
+.agents/
+.claude/skills/*
+!.claude/skills/devguide-reel/
