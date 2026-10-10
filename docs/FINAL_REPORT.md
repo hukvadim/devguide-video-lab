@@ -4,13 +4,13 @@
 
 | Файл | Що це |
 |---|---|
-| `out/devguide-final-1080x1920-14lufs.mp4` | **Основний файл для публікації**: 1080×1920, 30 fps, H.264 CRF 18, AAC 256k, −14.2 LUFS, 38.1 с, 9.5 МБ |
-| `out/devguide-final-1080x1920.mp4` | Той самий рендер з оригінальним міксом (−18.5 LUFS), без мастерингу |
-| `out/devguide-final-preview-540x960.mp4` | Прев'ю 540×960, CRF 23 |
-| `out/stills/cover.png` | Обкладинка (кадр 1060, end card) |
-| `out/stills/final-*.png` | 8 контрольних кадрів 1080×1920: 40, 100, 230, 330, 560, 700, 870, 1060 |
-| `out/devguide-{a-kinetic,b-depth,c-explainer}-preview-540x960.mp4` | Три альтернативи по 30 с |
-| `out/devguide-skia-lab-1080x1920.mp4` | Skia-експеримент, 10 с |
+| `out/final/devguide-final-1080x1920-14lufs.mp4` | **Основний файл для публікації**: 1080×1920, 30 fps, H.264 CRF 18, AAC 256k, −14.2 LUFS, 38.1 с, 9.5 МБ |
+| `out/final/devguide-final-1080x1920.mp4` | Той самий рендер з оригінальним міксом (−18.5 LUFS), без мастерингу |
+| `out/final/devguide-final-preview-540x960.mp4` | Прев'ю 540×960, CRF 23 |
+| `out/final/stills/cover.png` | Обкладинка (кадр 1060, end card) |
+| `out/final/stills/final-*.png` | 8 контрольних кадрів 1080×1920: 40, 100, 230, 330, 560, 700, 870, 1060 |
+| `out/{a-kinetic,b-depth,c-explainer}/devguide-*-preview-540x960.mp4` | Три альтернативи по 30 с |
+| `out/skia-lab/devguide-skia-lab-1080x1920.mp4` | Skia-експеримент, 10 с |
 
 Розкадрування — `docs/STORYBOARD.md`; порівняння технологій і часи — `docs/EXPERIMENT_RESULTS.md`.
 
@@ -52,17 +52,17 @@
 ```bash
 npm install
 npm run check
-npm run preview:final                      # out/devguide-final-preview-540x960.mp4
-npm run render:final                       # out/devguide-final-1080x1920.mp4 + -14lufs.mp4
+npm run preview:final                      # out/final/devguide-final-preview-540x960.mp4
+npm run render:final                       # out/final/devguide-final-1080x1920.mp4 + -14lufs.mp4
 npm run preview:alts                       # A/B/C прев'ю
 npm run render:skia                        # окремий Skia entry
-npm run qa:final                           # 10 кадрів у out/qa/
+npm run qa:final                           # 10 кадрів у out/final/qa/
 node scripts/qa-sheet.mjs <video> <out.png> 20,84,300,560,700,860,1000,1130
 ```
 
 Еквівалент без npm-скриптів:
-`npx remotion render src/index.ts DevGuide-Final out/devguide-final-1080x1920.mp4 --codec=h264 --crf=18 --concurrency=4`
-і `node scripts/master-audio.mjs out/devguide-final-1080x1920.mp4`.
+`npx remotion render src/index.ts DevGuide-Final out/final/devguide-final-1080x1920.mp4 --codec=h264 --crf=18 --concurrency=4`
+і `node scripts/master-audio.mjs out/final/devguide-final-1080x1920.mp4`.
 
 ## Час
 
@@ -72,7 +72,7 @@ node scripts/qa-sheet.mjs <video> <out.png> 20,84,300,560,700,860,1000,1130
 
 ## Візуальна та звукова QA (що реально перевірено)
 
-- Кадри: контактні аркуші 21 кадру з прев'ю Final (`out/qa/draft1/sheet.png`, `final-sheet-2.png`), перехід match cut по кадрах 82/84/86 (`final-sheet-3.png`), 3D-план по 10 кадрах (`qa/dev/final-phone-test2.png`), повнорозмірні кадри 330/700/1060 (`out/qa/final-fullres-check.png`).
+- Кадри: контактні аркуші 21 кадру з прев'ю Final (`out/final/qa/draft1/sheet.png`, `final-sheet-2.png`), перехід match cut по кадрах 82/84/86 (`final-sheet-3.png`), 3D-план по 10 кадрах (`qa/dev/final-phone-test2.png`), повнорозмірні кадри 330/700/1060 (`out/qa/final-fullres-check.png`).
 - Власна перевірка (не remotion-qa — його не підключали): safe area 84 px по боках і y 180–1650 для читабельного тексту; розміри: заголовки 76–104 px, основний текст 36–52 px, код 36 px, URL 56 px; час читання — сценові заголовки («Пиши справжній код», «Шлях навчання», «8 напрямів», «Пиши код разом із ментором») у кадрі 3–5 с, end card повністю зібраний ~5.3 с; слова хука («У тебе є», «Що далі?») навмисно короткі — ~1–2 с.
 - Звук: ebur128 повного міксу −18.5 LUFS / −0.96 dBTP → мастеринг −14.2 LUFS, LRA 5.1, пік −0.7 dBFS; BGM fade-in 40 кадрів і fade-out 90 кадрів у кінці; SFX довгих семплів обрізано `durationInFrames`.
 - **Не зроблено**: перегляд MP4 у реальному часі людиною — я перевіряв кадри та вимірювання звуку, а не слухав мікс. Перед публікацією подивись і послухай ролик повністю.

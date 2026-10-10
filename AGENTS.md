@@ -14,6 +14,7 @@ The task is to create polished Ukrainian DevGuide videos, with distinct experime
 - Use local assets when possible. No unexplained remote dependencies during rendering.
 - No paid service calls without an existing authorized account/budget. If absent, render with procedural assets and clearly describe the fallback.
 - Run npm run check; validate compositions; render 540x960 preview, inspect representative frames, then final MP4.
+- Outputs: one folder per video, `out/<composition id without devguide->/` (qa frames in `qa/`, stills in `stills/`). Use scripts/render-timed.mjs; never write to the out/ root. Gallery: `out/index.html`, favourites: `out/_обране/`.
 - A text/code audit is not visual QA. Report separately which renders and frames were checked.
 - Include sound design, edit rhythm and a clear end card. Do not add an effect merely to increase dependency usage.
 - Track technology usage and timings in docs/EXPERIMENT_RESULTS.md. Distinguish coding time from rendering time.
