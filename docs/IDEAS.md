@@ -17,6 +17,7 @@
 - **Сценарій:** `public/ideas/idea-001/scenario.md` · матеріал і ліцензії: `sources.md`, `contact.png`
 - **CTA:** «Напиши «ЦІЛЬ»» → шаблон запиту; на картці `t.me/hukvadim` + `devguide.com.ua/learning`
 - **Рендер:** `node scripts/render-timed.mjs final Idea-001 --wh=1920x1080` → `node scripts/master-audio.mjs out/idea-001/idea-001-1920x1080.mp4`
+- **Шорти:** `out/idea-001-short1..3/` (1080×1920, ≈ 32 / 41 / 36 с), склад — у кінці `scenario.md`; рендер `node scripts/render-timed.mjs final Idea-001-Short1 Idea-001-Short2 Idea-001-Short3`
 - **Перевірити:** шаблон запиту для «ЦІЛЬ» існує, перш ніж публікувати
 
 <!-- шаблон, копіювати під кожну ідею
