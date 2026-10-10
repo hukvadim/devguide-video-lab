@@ -75,7 +75,7 @@ const Cycle: React.FC<{dur: number}> = ({dur}) => {
 				</div>
 			</AbsoluteFill>
 			{starts.map((s, i) => (
-				<Sfx key={i} at={s} src={i % 2 ? 'switch-tap.mp3' : 'switch-click-quick.mp3'} vol={0.4 - i * 0.025} dur={12} />
+				<Sfx key={i} at={s} src="switch-tap.mp3" vol={0.4 - i * 0.025} dur={12} />
 			))}
 		</Stage>
 	);

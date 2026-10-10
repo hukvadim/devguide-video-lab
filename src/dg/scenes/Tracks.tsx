@@ -83,7 +83,7 @@ export const Tracks: React.FC<{tilt?: boolean}> = ({tilt = false}) => {
 			</AbsoluteFill>
 			<Sfx at={0} src="transition-snap.mp3" vol={0.4} dur={30} />
 			{GAPS.map((g, i) => (
-				<Sfx key={i} at={LAUNCH + g + FLIGHT - 3} src={i % 2 ? 'switch-tap.mp3' : 'switch-click-quick.mp3'} vol={0.42 - i * 0.025} dur={14} />
+				<Sfx key={i} at={LAUNCH + g + FLIGHT - 3} src="switch-tap.mp3" vol={0.42 - i * 0.025} dur={14} />
 			))}
 			<Sfx at={118} src="sparkle-touch.mp3" vol={0.45} dur={60} />
 			<Sfx at={164} src="whoosh-fast.mp3" vol={0.4} dur={25} />

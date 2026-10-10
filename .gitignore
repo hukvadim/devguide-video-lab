@@ -13,3 +13,4 @@ out/
 .agents/
 .claude/skills/*
 !.claude/skills/devguide-*/
+/ElevenLabs_*.mp3

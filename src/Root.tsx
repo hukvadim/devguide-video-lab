@@ -17,6 +17,7 @@ import {AltDepth, ALT_B} from './dg/AltDepth';
 import {AltExplainer, ALT_C} from './dg/AltExplainer';
 import {Day5Epic, DAY5_DURATION} from './dg/Day5Epic';
 import {ResourcePost, ResourcePostStatic, POST_DURATION} from './dg/ResourcePost';
+import {Idea001, Idea001Thumb, IDEA_001} from './ideas/Idea001';
 import './style.css';
 const V = {width: 1080, height: 1920, fps: 30} as const;
 export const Root:React.FC=()=> <>
@@ -45,5 +46,9 @@ export const Root:React.FC=()=> <>
  <Composition id="Scene-Mentor" component={Mentor} {...V} durationInFrames={MENTOR}/>
  <Composition id="Scene-Journey" component={Journey} {...V} durationInFrames={JOURNEY}/>
  <Composition id="Scene-EndCard" component={EndCard} {...V} durationInFrames={END_CARD}/>
+</Folder>
+<Folder name="Ideas">
+ <Composition id="Idea-001" component={Idea001} width={1920} height={1080} fps={30} durationInFrames={IDEA_001}/>
+ <Composition id="Idea-001-Thumb" component={Idea001Thumb} width={1920} height={1080} fps={30} durationInFrames={1}/>
 </Folder>
 </>;

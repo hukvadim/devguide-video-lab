@@ -103,9 +103,9 @@ export const Mentor: React.FC = () => {
 
 			<Sfx at={0} src="air-woosh-deep.mp3" vol={0.35} dur={50} />
 			<Sfx at={30} src="whoosh-fast.mp3" vol={0.25} dur={25} />
-			<Sfx at={62} src="switch-click-quick.mp3" vol={0.4} dur={12} />
+			<Sfx at={62} src="switch-tap.mp3" vol={0.4} dur={12} />
 			{[74, 78, 82, 86].map((t, i) => (
-				<Sfx key={t} at={t} src={i % 2 ? 'switch-click-quick.mp3' : 'typewriter-hit-soft.mp3'} vol={0.2} dur={6} />
+				<Sfx key={t} at={t} src="typewriter-hit-soft.mp3" vol={0.2} dur={6} />
 			))}
 			<Sfx at={88} src="lock-digital.mp3" vol={0.5} dur={30} />
 			<Sfx at={104} src="shimmer-sparkle-sweep.mp3" vol={0.22} dur={60} />

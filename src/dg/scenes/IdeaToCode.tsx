@@ -200,10 +200,10 @@ export const IdeaToCode: React.FC = () => {
 				i === IDEA_LINE
 					? []
 					: Array.from({length: Math.ceil(LINES[i].length / CPF / 5)}, (_, k) => (
-							<Sfx key={`k${i}-${k}`} at={s + k * 5} src={k % 2 ? 'switch-click-quick.mp3' : 'typewriter-hit-soft.mp3'} vol={0.16 - Math.min(0.06, i * 0.006)} dur={6} />
+							<Sfx key={`k${i}-${k}`} at={s + k * 5} src="typewriter-hit-soft.mp3" vol={0.16 - Math.min(0.06, i * 0.006)} dur={6} />
 						)),
 			)}
-			<Sfx at={226} src="switch-click-quick.mp3" vol={0.5} dur={12} />
+			<Sfx at={226} src="switch-tap.mp3" vol={0.5} dur={12} />
 			<Sfx at={180} src="riser-procedural.wav" vol={0.5} dur={90} />
 			<Sfx at={248} src="air-whoosh-powerful.mp3" vol={0.55} dur={40} />
 		</Stage>

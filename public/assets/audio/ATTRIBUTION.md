@@ -20,7 +20,6 @@
 | sparkle-touch.mp3 | Mixkit SFX Free License | https://assets.mixkit.co/active_storage/sfx/3083/3083-preview.mp3 |
 | typewriter-digital.mp3 | Mixkit SFX Free License | https://assets.mixkit.co/active_storage/sfx/1363/1363-preview.mp3 |
 | typewriter-hit-soft.mp3 | Mixkit SFX Free License | https://assets.mixkit.co/active_storage/sfx/1366/1366-preview.mp3 |
-| switch-click-quick.mp3 | Mixkit SFX Free License | https://assets.mixkit.co/active_storage/sfx/2582/2582-preview.mp3 |
 | switch-tap.mp3 | Mixkit SFX Free License | https://assets.mixkit.co/active_storage/sfx/2585/2585-preview.mp3 |
 | lock-digital.mp3 | Mixkit SFX Free License | https://assets.mixkit.co/active_storage/sfx/2859/2859-preview.mp3 |
 | camera-shutter-hard.mp3 | Mixkit SFX Free License | https://assets.mixkit.co/active_storage/sfx/1430/1430-preview.mp3 |

@@ -1,4 +1,5 @@
-@import 'tailwindcss';
+/* source('.'): Tailwind сканує лише src/, а не корінь (там junction .claude/skills/devguide-reel/tools, що ламає кеш webpack) */
+@import 'tailwindcss' source('.');
 @import '@fontsource/inter/latin-400.css';
 @import '@fontsource/inter/latin-800.css';
 @import '@fontsource/inter/cyrillic-400.css';
