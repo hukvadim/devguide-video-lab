@@ -17,6 +17,7 @@ import {Idea014, IDEA_014} from './ideas/Idea014';
 import {Idea015, IDEA_015} from './ideas/Idea015';
 import {Idea016, IDEA_016} from './ideas/Idea016';
 import {StepPreview} from './system/step';
+import {LAB, LAB_FRAMES} from './lab/Lab';
 import './style.css';
 const V = {width: 1080, height: 1920, fps: 30} as const;
 // шлях «Claude / AI»: один шорт на крок (ID-004…), спільне — src/system/step.tsx
@@ -38,6 +39,9 @@ export const Root: React.FC = () => <>
  </Folder>
 </Folder>
 {STEPS.map(([n, C, d]) => <Folder key={n} name={`ID-${n}`}><Composition id={`Idea-${n}`} component={C} {...V} durationInFrames={d}/></Folder>)}
+<Folder name="Lab">
+ {Object.entries(LAB).map(([n, C]) => <Composition key={n} id={`Lab-${n.padStart(2, "0")}`} component={C} {...V} durationInFrames={LAB_FRAMES[+n]}/>)}
+</Folder>
 <Folder name="System">
  <Composition id="System-Step" component={StepPreview} {...V} durationInFrames={420}/>
  <Composition id="System-EndCard" component={EndCard} {...V} durationInFrames={END_CARD}/>

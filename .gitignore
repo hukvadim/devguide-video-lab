@@ -14,3 +14,7 @@ out/
 .claude/skills/*
 !.claude/skills/devguide-*/
 /ElevenLabs_*.mp3
+
+# кандидати музики й звуків (переслуховування; вибрані переносимо поруч і комітимо)
+public/assets/music/_кандидати/
+public/assets/audio/_кандидати/

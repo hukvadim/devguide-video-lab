@@ -7,9 +7,9 @@ import { fitSize } from './layout';
 // Епічна обгортка DevGuide: хук перед роликом і end card після нього (непрозорі кліпи; звуки кладе ffmpeg).
 // SLAM — кадр удару в інтро, на нього vid.mjs ставить impact і дроп музики.
 export const SLAM = 30;
-export type IntroProps = { w: number; h: number; dur: number; kicker?: string; big: string; sub?: string; accent?: string };
+export type IntroProps = { w: number; h: number; dur: number; kicker?: string; big: string; sub?: string; accent?: string; bg?: string };
 // keyword — Instagram-CTA «напиши СЛОВО в коментарях»: велике слово замість tagline, cta тоді пояснює, що прийде в Direct
-export type OutroProps = { w: number; h: number; dur: number; tagline?: string; cta?: string; url?: string; offer?: string; keyword?: string; accent?: string };
+export type OutroProps = { w: number; h: number; dur: number; tagline?: string; cta?: string; url?: string; offer?: string; keyword?: string; accent?: string; bg?: string };
 
 const useReady = () => {
   const [st] = useState(() => ({ h: delayRender('wrap fonts') }));
@@ -19,12 +19,12 @@ const useReady = () => {
   return ready;
 };
 
-const Stage: React.FC<{ children: React.ReactNode; w: number }> = ({ children, w }) => {
+const Stage: React.FC<{ children: React.ReactNode; w: number; bg?: string; accent?: string }> = ({ children, w, bg = C.bg, accent = C.lime }) => {
   const f = useCurrentFrame();
   const gx = 540 + Math.sin(f / 50) * 60, gy = 860 + Math.cos(f / 60) * 60;
-  return <AbsoluteFill style={{ background: C.bg, overflow: 'hidden' }}>
+  return <AbsoluteFill style={{ background: bg, overflow: 'hidden' }}>
     <div style={{ position: 'absolute', width: 1080, height: 1920, transform: `scale(${w / 1080})`, transformOrigin: '0 0', overflow: 'hidden' }}>
-      <AbsoluteFill style={{ background: `radial-gradient(900px 900px at ${gx}px ${gy}px, #C3FF5526, transparent 70%)` }} />
+      <AbsoluteFill style={{ background: `radial-gradient(900px 900px at ${gx}px ${gy}px, ${accent}26, transparent 70%)` }} />
       <AbsoluteFill style={{ backgroundImage: 'linear-gradient(#ffffff08 1px, transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px)',
         backgroundSize: '90px 90px', maskImage: 'radial-gradient(circle at 50% 45%, black 20%, transparent 75%)' }} />
       {children}
@@ -38,7 +38,7 @@ const Accented: React.FC<{ text: string; accent: string }> = ({ text, accent }) 
   {text.split(/(\*[^*]+\*)/).map((p, i) => p.startsWith('*') ? <span key={i} style={{ color: accent }}>{p.slice(1, -1)}</span> : <span key={i}>{p}</span>)}
 </>;
 
-export const Intro: React.FC<IntroProps> = ({ w, kicker = 'DevGuide · практика', big, sub, accent = C.lime }) => {
+export const Intro: React.FC<IntroProps> = ({ w, kicker = 'DevGuide · практика', big, sub, accent = C.lime, bg }) => {
   const ready = useReady();
   const f = useCurrentFrame();
   const { fps, durationInFrames: N } = useVideoConfig();
@@ -51,7 +51,7 @@ export const Intro: React.FC<IntroProps> = ({ w, kicker = 'DevGuide · прак�
   const subIn = spring({ frame: f - SLAM - 10, fps, config: { damping: 16, stiffness: 140 } });
   const flash = interpolate(f, [SLAM - 3, SLAM, SLAM + 14], [0, 0.7, 0], clamp);
   const push = ramp(f, N - 18, N);
-  return <Stage w={w}>
+  return <Stage w={w} bg={bg} accent={accent}>
     <AbsoluteFill style={{ justifyContent: 'center', alignItems: 'center', transform: `scale(${1 + push * 0.3})`, filter: `blur(${push * 12}px)`, opacity: 1 - push * 0.7 }}>
       <div style={{ fontFamily: F.mono, fontSize: 34, letterSpacing: 6, color: accent, textTransform: 'uppercase', opacity: kick, transform: `translateY(${(1 - kick) * 30}px)` }}>{kicker}</div>
       <div style={{ marginTop: 26, display: 'flex', flexDirection: 'column', alignItems: 'center', textShadow: `0 0 90px ${accent}60` }}>
@@ -82,13 +82,13 @@ const Dust: React.FC<{ accent: string }> = ({ accent }) => {
   })}</>;
 };
 
-export const Outro: React.FC<OutroProps> = ({ w, tagline = 'Від ідеї —\n*до власного проєкту.*', cta = 'Почни свій шлях із DevGuide', url = 'devguide.com.ua', offer, keyword, accent = C.lime }) => {
+export const Outro: React.FC<OutroProps> = ({ w, tagline = 'Від ідеї —\n*до власного проєкту.*', cta = 'Почни свій шлях із DevGuide', url = 'devguide.com.ua', offer, keyword, accent = C.lime, bg }) => {
   const ready = useReady();
   const f = useCurrentFrame();
   if (!ready) return null;
   const slam = ramp(f, 0, 14);
   const tag = ramp(f, 22, 40), ctaIn = ramp(f, 40, 58), urlIn = ramp(f, 52, 70), offIn = ramp(f, 64, 82);
-  return <Stage w={w}>
+  return <Stage w={w} bg={bg} accent={accent}>
     <AbsoluteFill style={{ opacity: interpolate(f, [10, 50], [0, 0.7], clamp) }}><Dust accent={accent} /></AbsoluteFill>
     <div style={{ position: 'absolute', left: 84, right: 84, top: 520, textAlign: 'center' }}>
       <div style={{ transform: `scale(${interpolate(slam, [0, 1], [1.9, 1])})`, opacity: slam, filter: `blur(${(1 - slam) * 16}px)`,
@@ -108,7 +108,7 @@ export const Outro: React.FC<OutroProps> = ({ w, tagline = 'Від ідеї —\
     </div>
     <div style={{ position: 'absolute', left: 0, right: 0, top: 1060, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 34 }}>
       <div style={{ opacity: ctaIn, transform: `translateY(${(1 - ctaIn) * 40}px) scale(${0.9 + ctaIn * 0.1})`, display: 'inline-flex', alignItems: 'center', gap: 18,
-        padding: '28px 42px', borderRadius: 999, background: accent, color: C.bg, fontFamily: F.body, fontWeight: 800, fontSize: 42, boxShadow: `0 30px 80px ${accent}40` }}>
+        padding: '28px 42px', borderRadius: 999, background: accent, color: bg ?? C.bg, fontFamily: F.body, fontWeight: 800, fontSize: 42, boxShadow: `0 30px 80px ${accent}40` }}>
         {cta} <span style={{ fontSize: 44 }}>→</span>
       </div>
       <div style={{ fontFamily: F.mono, fontSize: 56, color: C.text, opacity: urlIn }}><span style={{ color: accent }}>↗ </span>{url}</div>

@@ -2,6 +2,7 @@ import React from 'react';
 import {AbsoluteFill, Audio, continueRender, delayRender, Easing, interpolate, Sequence, staticFile, useCurrentFrame} from 'remotion';
 import {noise2D} from '@remotion/noise';
 import brand from '../../data/brand.json';
+import {useTheme} from './theme';
 
 // DevGuide production kit: tokens, background, SFX helpers. Shared by A/B/C/Final.
 // @fontsource faces are plain CSS; block the first frame until the faces we use are decoded.
@@ -46,23 +47,25 @@ export const BEAT = 30 * (60 / 129);
 /** Graphite stage: soft lime key light, film grain via seeded noise, vignette. */
 export const Stage: React.FC<{children?: React.ReactNode; glow?: [number, number]; grid?: boolean}> = ({children, glow = [300, 520], grid = false}) => {
 	const f = useCurrentFrame();
+	const T = useTheme();
 	const gx = glow[0] + noise2D('gx', f / 140, 0) * 60;
 	const gy = glow[1] + noise2D('gy', 0, f / 140) * 60;
 	return (
-		<AbsoluteFill style={{background: C.bg, color: C.text, fontFamily: F.body, overflow: 'hidden'}}>
-			<AbsoluteFill style={{background: `radial-gradient(900px 900px at ${gx}px ${gy}px, #C3FF5524, transparent 70%)`}} />
-			<AbsoluteFill style={{background: 'radial-gradient(1200px 900px at 900px 1700px, #8EDFFF12, transparent 70%)'}} />
+		<AbsoluteFill style={{background: T.bg, color: T.text, fontFamily: F.body, overflow: 'hidden'}}>
+			{T.bgImage ? <AbsoluteFill style={{background: T.bgImage}} /> : null}
+			<AbsoluteFill style={{background: `radial-gradient(900px 900px at ${gx}px ${gy}px, ${T.glow}24, transparent 70%)`}} />
+			<AbsoluteFill style={{background: `radial-gradient(1200px 900px at 900px 1700px, ${T.glow2}12, transparent 70%)`}} />
 			{grid ? (
 				<AbsoluteFill
 					style={{
-						backgroundImage: 'linear-gradient(#ffffff07 1px, transparent 1px),linear-gradient(90deg,#ffffff07 1px,transparent 1px)',
+						backgroundImage: `linear-gradient(${T.grid} 1px, transparent 1px),linear-gradient(90deg,${T.grid} 1px,transparent 1px)`,
 						backgroundSize: '90px 90px',
 						maskImage: 'radial-gradient(circle at 50% 45%, black 20%, transparent 75%)',
 					}}
 				/>
 			) : null}
 			{children}
-			<AbsoluteFill style={{background: 'radial-gradient(ellipse at center, transparent 55%, #000000AA 100%)', pointerEvents: 'none'}} />
+			<AbsoluteFill style={{background: `radial-gradient(ellipse at center, transparent 55%, ${T.vignette ?? '#000000AA'} 100%)`, pointerEvents: 'none'}} />
 		</AbsoluteFill>
 	);
 };
@@ -89,12 +92,15 @@ export const Kicker: React.FC<{children: React.ReactNode; style?: React.CSSPrope
 );
 
 /** DevGuide wordmark (typographic, matches the site's DEV / GUIDE stacked header). */
-export const Wordmark: React.FC<{size?: number; style?: React.CSSProperties}> = ({size = 120, style}) => (
-	<div style={{fontFamily: F.display, fontWeight: 900, fontSize: size, lineHeight: 0.92, letterSpacing: -size * 0.03, ...style}}>
-		<span style={{color: C.text}}>DEV</span>
-		<span style={{color: C.lime}}>GUIDE</span>
-	</div>
-);
+export const Wordmark: React.FC<{size?: number; style?: React.CSSProperties}> = ({size = 120, style}) => {
+	const T = useTheme();
+	return (
+		<div style={{fontFamily: F.display, fontWeight: 900, fontSize: size, lineHeight: 0.92, letterSpacing: -size * 0.03, ...style}}>
+			<span style={{color: T.text}}>DEV</span>
+			<span style={{color: T.accent}}>GUIDE</span>
+		</div>
+	);
+};
 
 export const CtaPill: React.FC<{scale?: number}> = ({scale = 1}) => (
 	<div

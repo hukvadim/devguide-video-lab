@@ -1,14 +1,15 @@
 import React from 'react';
 import {AbsoluteFill} from 'remotion';
-import {C, F, ramp} from '../system/kit';
-import {Big, Box, Check, Cue, L, Reply, Show, Steps, StepVideo, Strike, Term, Title, UserMsg, Win, at, pop, prompt, PromptCard, stepFrames, Mono} from '../system/step';
+import {F, ramp} from '../system/kit';
+import {Big, Box, Check, Cue, L, Reply, Show, Steps, StepVideo, Strike, Term, Title, UserMsg, Win, at, pop, prompt, PromptCard, stepFrames, Mono, useTheme} from '../system/step';
 import WORDS from '../../public/ideas/idea-008/words.json';
 
 // ID-008 «Встанови Claude Code» (крок claude-code-install), шорт 1080×1920. Сценарій: public/ideas/idea-008/scenario.md.
 const a = (w: string, after = 0) => at(WORDS, w, after);
 export const IDEA_008 = stepFrames(WORDS);
 
-const Scenes = (t: number) => {
+export const Scenes = (t: number) => {
+	const T = useTheme();
 	const stuck = a('Саме'), noSearch = a('Тому'), lead = a('Нехай'), paste = a('Відкрий', 11), simple = a('Далі', 22), err = a('Бачиш'), shot = a('Зроби'), run = a('Коли'), check = a('Відповів');
 	return (
 		<>
@@ -19,7 +20,7 @@ const Scenes = (t: number) => {
 				<Box y={420}><Big size={92}>Тут застрягають <L>найчастіше</L></Big></Box>
 				{['Інструкція №1', 'Відео на 40 хв', 'Форум, 2019 рік'].map((s, i) => (
 					<Box key={s} y={840 + i * 150} o={pop(t, noSearch + i * 0.25)}>
-						<div style={{display: 'inline-block', padding: '22px 40px', borderRadius: 22, background: '#10161C', border: `2px solid ${C.line}`, fontSize: 46, fontWeight: 700}}>
+						<div style={{display: 'inline-block', padding: '22px 40px', borderRadius: 22, background: T.card, border: `2px solid ${T.line}`, fontSize: 46, fontWeight: 700}}>
 							<Strike p={ramp(t, noSearch + 1 + i * 0.2, noSearch + 1.4 + i * 0.2)}>{s}</Strike>
 						</div>
 					</Box>
@@ -64,7 +65,7 @@ const Scenes = (t: number) => {
 	);
 };
 
-const SFX: Cue[] = [
+export const SFX: Cue[] = [
 	[0, 'whoosh-swirl.mp3', 0.35],
 	[a('Саме'), 'bass-hit-futuristic.mp3', 0.2],
 	[a('встав'), 'typewriter-hit-soft.mp3', 0.22],

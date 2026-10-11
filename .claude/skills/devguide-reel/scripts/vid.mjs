@@ -533,7 +533,8 @@ async function render(editPath, preview) {
   // текст: один прозорий шар Remotion на весь ролик (motion/Text.tsx) — субтитри, титул, плашки, удари
   const split = !!scr;
   const st = { ...(split ? SPLIT_STYLE : HEAD_STYLE), ...edit.style };
-  const accent = edit.captions?.accent ?? '#C3FF55';
+  const accent = edit.theme?.accent ?? edit.captions?.accent ?? '#C3FF55'; // theme: палітра з src/system/theme.tsx проєкту
+  const bg = edit.theme?.bg;
   const emph = (edit.captions?.emphasis ?? []).map((x) => x.toLowerCase());
   const at = (x, what) => { const t = mapTime(segs, x); if (t == null) console.warn(`${what} у вирізаному шматку, пропускаю:`, x); return t; };
   const callouts = (edit.callouts ?? []).map((c) => ({ c, t: at(c.at, 'плашка') })).filter((x) => x.t != null)
@@ -565,12 +566,12 @@ async function render(editPath, preview) {
   if (introDur || outroDur) {
     wrap = { total: introDur + total + outroDur, sfx: [] };
     if (introDur) {
-      inputs.push('-i', renderMotion(dir, project, 'Intro', { w: W, h: H, dur: introDur, accent, kicker: edit.intro.kicker, big: edit.intro.big, sub: edit.intro.sub }, true));
+      inputs.push('-i', renderMotion(dir, project, 'Intro', { w: W, h: H, dur: introDur, accent, bg, kicker: edit.intro.kicker, big: edit.intro.big, sub: edit.intro.sub }, true));
       wrap.intro = { idx: idx++, dur: introDur };
     }
     if (outroDur) {
       const o = edit.outro ?? {};
-      inputs.push('-i', renderMotion(dir, project, 'Outro', { w: W, h: H, dur: outroDur, accent, tagline: o.tagline, cta: o.cta, url: o.url ?? edit.site ?? 'devguide.com.ua', offer: o.offer, keyword: o.keyword }, true));
+      inputs.push('-i', renderMotion(dir, project, 'Outro', { w: W, h: H, dur: outroDur, accent, bg, tagline: o.tagline, cta: o.cta, url: o.url ?? edit.site ?? 'devguide.com.ua', offer: o.offer, keyword: o.keyword }, true));
       wrap.outro = { idx: idx++, dur: outroDur };
     }
     if (hasMusic) {
