@@ -18,6 +18,7 @@ import {Idea015, IDEA_015} from './ideas/Idea015';
 import {Idea016, IDEA_016} from './ideas/Idea016';
 import {StepPreview} from './system/step';
 import {LAB, LAB_FRAMES} from './lab/Lab';
+import {TIPS_LIST} from './tips/Tips';
 import './style.css';
 const V = {width: 1080, height: 1920, fps: 30} as const;
 // шлях «Claude / AI»: один шорт на крок (ID-004…), спільне — src/system/step.tsx
@@ -41,6 +42,10 @@ export const Root: React.FC = () => <>
 {STEPS.map(([n, C, d]) => <Folder key={n} name={`ID-${n}`}><Composition id={`Idea-${n}`} component={C} {...V} durationInFrames={d}/></Folder>)}
 <Folder name="Lab">
  {Object.entries(LAB).map(([n, C]) => <Composition key={n} id={`Lab-${n.padStart(2, "0")}`} component={C} {...V} durationInFrames={LAB_FRAMES[+n]}/>)}
+</Folder>
+{/* «Секретні коди»: корисності без голосу для Instagram, src/tips/Tips.tsx + data/tips.json */}
+<Folder name="Tips">
+ {TIPS_LIST.map(({id, C, frames}) => <Composition key={id} id={`Tips-${id}`} component={C} {...V} durationInFrames={frames}/>)}
 </Folder>
 <Folder name="System">
  <Composition id="System-Step" component={StepPreview} {...V} durationInFrames={420}/>
