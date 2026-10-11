@@ -16,7 +16,6 @@ import {Idea013, IDEA_013} from './ideas/Idea013';
 import {Idea014, IDEA_014} from './ideas/Idea014';
 import {Idea015, IDEA_015} from './ideas/Idea015';
 import {Idea016, IDEA_016} from './ideas/Idea016';
-import {Idea018, IDEA_018} from './ideas/Idea018';
 import {StepPreview} from './system/step';
 import {LAB, LAB_FRAMES} from './lab/Lab';
 import './style.css';
@@ -40,9 +39,6 @@ export const Root: React.FC = () => <>
  </Folder>
 </Folder>
 {STEPS.map(([n, C, d]) => <Folder key={n} name={`ID-${n}`}><Composition id={`Idea-${n}`} component={C} {...V} durationInFrames={d}/></Folder>)}
-<Folder name="ID-018">
- <Composition id="Idea-018" component={Idea018} {...V} durationInFrames={IDEA_018}/>
-</Folder>
 <Folder name="Lab">
  {Object.entries(LAB).map(([n, C]) => <Composition key={n} id={`Lab-${n.padStart(2, "0")}`} component={C} {...V} durationInFrames={LAB_FRAMES[+n]}/>)}
 </Folder>

@@ -10,7 +10,6 @@
 - 2026-10-10: «ElevenLabs_…Bogdan_Melodic_and_Calm….mp3 (Сирий матеріал) треба відео.» → ID-002
 - 2026-10-10: «Finish.mp4 … треба гарно зробити відео. Це говоряща голова» (сайт, блок flow video; монтаж не змінювати) → ID-003
 - 2026-10-10: «Треба подивитися на мою програму і я хочу, щоб ти згенерив під кожен крок відео… Сценарій і можливо окремий текст для elevenlabs… Якщо щось можна генерити без elevenlabs давай спробуємо.» (claude.json → `data/learning-claude.json`) → ID-004…ID-017
-- 2026-10-11: «https://lovim.devguide.com.ua/ тепер давай зробимо відео про сайт Альони. Дай сценарій також для elevenlabs.» (уточнення: промо для Альони, Reels 30–40 с, жіночий голос) → ID-018
 
 ## Картки
 
@@ -64,14 +63,6 @@
 
 **Збірка:** `node scripts/words.mjs public/ideas/idea-0xx` (таймінги: whisper + voice.txt + словник показу) → `src/ideas/Idea0xx.tsx` на блоках `src/system/step.tsx` (сцени прив'язані до слів через `at()`) → `node scripts/render-timed.mjs final Idea-0xx` → `node scripts/master-audio.mjs out/idea-0xx/idea-0xx-1080x1920.mp4` → `node scripts/collect-path.mjs` (усі кроки по порядку в `out/_шлях-claude-ai/NN Назва.mp4`).
 **Перевірити:** команду відкату `git restore .` (ID-011/013); порт `localhost:5173` підписано «може відрізнятися» (ID-009); ElevenLabs вимова «Клод», «Ві-Ес Код», «Ем-Сі-Пі», «точка енв».
-
-### ID-018 · Lovim: прикраси Альони (промо сайту)
-- **Статус:** готово (`out/idea-018/idea-018-1080x1920-14lufs.mp4`, обкладинка `stills/cover.jpg`; рендер: `node scripts/render-timed.mjs final Idea-018` → `node scripts/master-audio.mjs out/idea-018/idea-018-1080x1920.mp4`) · **Акаунт:** Instagram Альони (Reels), не DevGuide · **Формат:** промо 9:16, 1080×1920, ≈ 38 с · **Зйомка:** не потрібна (фото й скріни з сайту + голос ElevenLabs, жіночий, від імені Альони)
-- **Хук (0–3 с):** «Прикраса, яка щось означає» на фото аквамаринового браслета; кадр 0 = обкладинка
-- **Сценарій:** `public/ideas/idea-018/scenario.md` · голос: `voice.txt` · матеріал і ліцензії: `sources.md`, `contact.png`
-- **Стиль:** палітра й шрифти сайту Lovim (крем, троянда `#B56364`, Cormorant Garamond), не DevGuide
-- **CTA:** end card `Lovim` + `lovim.devguide.com.ua` + «Посилання в профілі» (без слова-тригера: бота в Альони немає)
-- **Перевірити:** вимова «Ловім»; whisper почув «Я **плиту** браслети» (5 с) — переслухати, чи ElevenLabs не сказав «плиту»; «в профілі» vs «в описі» залежно від платформи; дозвіл Альони на фото в рекламі
 
 <!-- шаблон, копіювати під кожну ідею
 ### ID-001 · Назва

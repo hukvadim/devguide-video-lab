@@ -22,7 +22,7 @@ const DISPLAY = [
 	['вайт', 'Vite'], ['реакт', 'React'], ['тейлвінд', 'Tailwind'], ['локалхост', 'localhost'], ['дев-сервер', 'dev-сервер'],
 	['телеграм', 'Telegram'], ['фігма', 'Figma'], ['дев-гайд', 'DevGuide'], ['дев-гайді', 'DevGuide'], ['ем-сі-пі', 'MCP'],
 	['май-ферст-сайт', 'my-first-site'], ['опен фолдер', 'Open Folder'], ['меню файл', 'меню File'], ['гугл-акаунт', 'Google-акаунт'],
-	["промпт-ін'єкція", 'prompt injection'], ['ловім', 'Lovim'], ['Фрі', 'Free'], ['Про', 'Pro'], ['Макс', 'Max'],
+	["промпт-ін'єкція", 'prompt injection'], ['Фрі', 'Free'], ['Про', 'Pro'], ['Макс', 'Max'],
 ].map(([k, v]) => [k.split(' '), v, /\p{Lu}/u.test(k)]).sort((a, b) => b[0].length - a[0].length);
 
 const norm = (s) => s.replace(/[’ʼ`]/g, "'").replace(/[^\p{L}\p{N}'-]/gu, '').replace(/^[-']+|[-']+$/g, '');
