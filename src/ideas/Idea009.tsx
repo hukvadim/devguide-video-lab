@@ -8,7 +8,7 @@ import WORDS from '../../public/ideas/idea-009/words.json';
 const a = (w: string, after = 0) => at(WORDS, w, after);
 export const IDEA_009 = stepFrames(WORDS);
 
-const Scenes = (t: number) => {
+export const Scenes = (t: number) => {
 	const rule = a('Головне'), open = a('Відкрий'), paste = a('Встав'), plan = a('покаже'), build = a('Тепер'), browser = a('Відкрий', 41), idea = a("Кав'ярню"), next = a('Далі', 49);
 	return (
 		<>
@@ -69,7 +69,7 @@ const Scenes = (t: number) => {
 	);
 };
 
-const SFX: Cue[] = [
+export const SFX: Cue[] = [
 	[0, 'whoosh-swirl.mp3', 0.35],
 	[a('запусти'), 'typewriter-hit-soft.mp3', 0.22], [a('Встав'), 'typewriter-hit-soft.mp3', 0.22],
 	[a('Що'), 'soft-pop.wav', 0.4], [a('Як'), 'soft-pop.wav', 0.4], [a('кінці'), 'soft-pop.wav', 0.4],

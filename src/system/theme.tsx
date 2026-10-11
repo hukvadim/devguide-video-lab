@@ -42,9 +42,7 @@ export const PALETTES: Record<string, Theme> = {
 	// #01: бірюза на електрик-фіолетовому
 	drop01: dark({bg: '#6E10F7', dim: '#D2C2FF', line: '#FFFFFF2E', accent: '#39D6CE', accentDeep: '#1E9A93', onAccent: '#2A0566', red: '#FF6B8A',
 		panel: '#4E0AB8F2', panel2: '#5A0CD6', card: '#600DE0', glow: '#39D6CE', glow2: '#FFFFFF', grid: '#FFFFFF0D'}),
-	// #14: кораловий на синьому
-	drop14: dark({bg: '#0166BD', dim: '#BFD9F0', line: '#FFFFFF2E', accent: '#F45267', accentDeep: '#C23A4D', onAccent: '#FFFFFF', red: '#FFD27A',
-		panel: '#01529AF2', panel2: '#1A78CA', card: '#015BAA', glow: '#F45267', glow2: '#FFFFFF', grid: '#FFFFFF0D'}),
+	// #14 (кораловий на синьому) прибрано назавжди: контраст ≈1.7:1, текст не читається (Вадим, 2026-10-11). Акцентний текст — від 3:1 до фону.
 	// #02: кислотний лайм на майже чорному
 	drop02: dark({bg: '#11121C', dim: '#9A9CB0', accent: '#D9FF3A', accentDeep: '#A3C21F', onAccent: '#11121C', panel: '#171826F2', panel2: '#23253A', card: '#1A1B28', glow: '#D9FF3A', glow2: '#9A6BFF'}),
 	// Neon Pulse: рожево-блакитний градієнт

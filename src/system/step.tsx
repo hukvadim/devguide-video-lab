@@ -4,6 +4,7 @@ import {F, Sfx, Stage, Wordmark, brand, clamp, ramp} from './kit';
 import {Caret} from './Code';
 import {chunkEnd, chunkWords, Word} from './captions';
 import {Theme, ThemeProvider, useTheme} from './theme';
+import {Insert, UgcInsert} from './ugc';
 import PATH from '../../data/learning-claude.json';
 
 /** Промпт кроку дослівно з програми (data/learning-claude.json). */
@@ -120,7 +121,7 @@ export const Reply: React.FC<{o: number; children?: React.ReactNode; size?: numb
 };
 
 /** Текст з `[підстановками]`, підсвіченими акцентом; показує перші n символів. */
-const Marked: React.FC<{text: string; n?: number}> = ({text, n = Infinity}) => {
+export const Marked: React.FC<{text: string; n?: number}> = ({text, n = Infinity}) => {
 	const T = useTheme();
 	let left = n;
 	return <>{text.split(/(\[[^\]]*\])/).map((seg, i) => {
@@ -291,7 +292,8 @@ export const PatternBg: React.FC<{t: number}> = ({t}) => {
 	);
 };
 
-/** Кінетична типографіка під голос: «word» — одне слово на весь екран з інверсією фону між фразами; «karaoke» — фраза по центру. */
+/** Кінетична типографіка під голос: «karaoke» — фраза по центру з підсвіченим словом (для пояснень).
+ * «word» — одне слово на весь екран з інверсією фону: для пояснень НЕ годиться (скаче, нема контексту — Вадим, 2026-10-11, варіант 10); лише короткі гасла. */
 export const Kinetic: React.FC<{t: number; words: Word[]; mode: 'word' | 'karaoke'}> = ({t, words, mode}) => {
 	const T = useTheme();
 	const chunks = React.useMemo(() => chunkWords(words, mode === 'word' ? 16 : 26), [words, mode]);
@@ -332,12 +334,14 @@ const MUSIC = 'ideas/idea-001/music/hazy-after-hours.mp3';
 
 type StepProps = {
 	dir: string; words: Word[]; next: string; nextLabel?: string; nextUrl?: string; sfx: Cue[]; scenes?: (t: number) => React.ReactNode;
-	theme?: string | Theme; music?: string; musicVol?: number; look?: 'scenes' | 'word' | 'karaoke'; captions?: 'bottom' | 'center' | false;
+	theme?: string | Theme; music?: string; musicVol?: number; look?: 'scenes' | 'word' | 'karaoke'; captions?: 'bottom' | 'center' | false; inserts?: Insert[];
 };
 /** Шорт кроку: голос, музика, SFX, субтитри, сцени (render-функція від t) і фінальна картка «Наступний крок». */
 export const StepVideo: React.FC<StepProps> = ({theme, ...p}) => <ThemeProvider theme={theme}><StepInner {...p} /></ThemeProvider>;
-const StepInner: React.FC<Omit<StepProps, 'theme'>> = ({dir, words, next, nextLabel, nextUrl, sfx, scenes, music = MUSIC, musicVol = 0.085, look = 'scenes', captions = 'bottom'}) => {
-	const t = useCurrentFrame() / 30;
+const StepInner: React.FC<Omit<StepProps, 'theme'>> = ({dir, words, next, nextLabel, nextUrl, sfx, scenes, music = MUSIC, musicVol = 0.085, look = 'scenes', captions = 'bottom', inserts = []}) => {
+	const frame = useCurrentFrame();
+	// кадр 0 = обкладинка: Instagram бере його за cover, тож показуємо вже проявлену заставку (t = 1.2 с), а не порожній фон
+	const t = frame === 0 ? 1.2 : frame / 30;
 	const end = words[words.length - 1].e;
 	const total = end + TAIL;
 	const card = end + 0.3;
@@ -352,8 +356,10 @@ const StepInner: React.FC<Omit<StepProps, 'theme'>> = ({dir, words, next, nextLa
 			{sfx.map(([a, src, vol], i) => <Sfx key={i} at={S(a)} src={src} vol={vol} />)}
 			<Sfx at={S(card)} src="impact-movie-epic.mp3" vol={0.4} dur={150} />
 			{t < card + 0.4 ? <AbsoluteFill style={{opacity: 1 - ramp(t, card, card + 0.4)}}>{body}</AbsoluteFill> : null}
+			{inserts.map((ins, i) => <UgcInsert key={i} t={t} ins={ins} />)}
+			{inserts.map((ins, i) => <Sfx key={`u${i}`} at={S(ins.at)} src="whoosh-fast.mp3" vol={0.3} dur={30} />)}
 			<NextCard t={t} a={card} next={next} label={nextLabel} url={nextUrl} />
-			{captions && look === 'scenes' && t < end + 0.5 ? <Captions t={t} chunks={chunks} place={captions} /> : null}
+			{frame > 0 && captions && look === 'scenes' && t < end + 0.5 ? <Captions t={t} chunks={chunks} place={captions} /> : null}
 		</Stage>
 	);
 };

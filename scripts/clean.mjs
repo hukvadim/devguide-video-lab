@@ -11,7 +11,11 @@ for (const e of fs.readdirSync(OUT, {withFileTypes: true})) {
 	const dir = path.join(OUT, e.name);
 	const mp4 = fs.readdirSync(dir).filter((f) => f.endsWith('.mp4'));
 	if (!mp4.some((f) => !f.includes('-preview-'))) continue; // фіналу ще немає — qa і прев'ю потрібні
-	const junk = mp4.filter((f) => f.includes('-preview-') || mp4.includes(f.replace(/\.mp4$/, '-14lufs.mp4')));
+	// не мастерований X.mp4 — сміття лише якщо X-14lufs.mp4 НОВІШИЙ за нього; інакше це свіжий перерендер,
+	// який ще чекає на master-audio (раніше clean його видаляв, і перерендер поверх старого фіналу тихо губився)
+	const mtime = (f) => fs.statSync(path.join(dir, f)).mtimeMs;
+	const mastered = (f) => { const m = f.replace(/\.mp4$/, '-14lufs.mp4'); return m !== f && mp4.includes(m) && mtime(m) >= mtime(f); };
+	const junk = mp4.filter((f) => f.includes('-preview-') || mastered(f));
 	if (fs.existsSync(path.join(dir, 'qa'))) junk.push('qa');
 	for (const f of junk) fs.rmSync(path.join(dir, f), {recursive: true, force: true});
 	if (junk.length) console.log(`${dir}: видалено ${junk.join(', ')}`);

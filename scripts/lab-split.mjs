@@ -15,6 +15,10 @@ const day5 = base(`${DAY5}/work/day5-epic`), fin = base(`${FIN}/work/Finish`);
 // трек з кандидатів; drop — секунда треку на удар інтро (або старт без інтро): перший біт + 8 тактів
 const music = (project, file, volume, bars = 8) => ({file: path.relative(project, `public/assets/music/_кандидати/${file}`).replaceAll('\\', '/'),
 	drop: +(BEATS[file].offset + (bars * 4 * 60) / BEATS[file].bpm).toFixed(3), volume});
+// UGC з Flow: найкращий шматок кліпу (як UGC у src/system/ugc.tsx); шляхи відносно проєкту «Сирий матеріал»
+const UGC_FROM = {Stop: 1.8, facepalm: 1.4, 'point-up': 2.6, smile: 5.0, typing: 0.3, wow: 1.8};
+const ugc = (file, at, dur) => ({at, dur, file: `../public/assets/ugc/flow/${file}.mp4`, from: UGC_FROM[file], cropX: 0.5});
+const sfx = (file) => `../public/assets/audio/_кандидати/${file}`;
 const pick = (segs, ranges) => ranges.flatMap(([a, b]) => segs.filter((s) => s.start >= a - 0.05 && s.end <= b + 0.05));
 
 const V = {
@@ -24,21 +28,25 @@ const V = {
 	'lab-02': [DAY5, {...day5, theme: {accent: '#39D6CE', bg: '#6E10F7'}, captions: {...day5.captions, accent: '#39D6CE'},
 		intro: {kicker: 'DevGuide · практика', big: 'ГОДИНА', sub: 'відео, сайт і гра —\n*з нейромережею*', dur: 4},
 		music: music(DAY5, '04-trap-need-for-speed.mp3', 0.32), hits: [{at: 13.5}, {at: 32.0}, {at: 52.95}]}],
-	'lab-03': [DAY5, {...day5, theme: {accent: '#F45267', bg: '#0166BD'}, captions: {...day5.captions, accent: '#F45267'},
+	'lab-03': [DAY5, {...day5, theme: {accent: '#00D4FF', bg: '#150722'}, captions: {...day5.captions, accent: '#00D4FF'},
 		segments: pick(day5.segments, [[52.95, 62.12], [2.52, 9.3], [12.1, 20.7], [31.68, 41.62]]), // результат першим
 		title: {text: 'Це щось *неймовірне*', dur: 2.4}, callouts: day5.callouts.filter((c) => c.at !== 55.0),
 		music: music(DAY5, '11-house-deep-urban.mp3', 0.28, 4)}],
 	'lab-04': [DAY5, {...day5, theme: {accent: '#D9FF3A', bg: '#11121C'}, captions: {...day5.captions, accent: '#D9FF3A'},
 		callouts: [], music: music(DAY5, '27-lofi-night-sky-hip-hop.mp3', 0.18, 0)}],
-	'lab-05': [FIN, {...fin, theme: {accent: '#E7F9A9', bg: '#3D0814'}, captions: {...fin.captions, accent: '#E7F9A9'},
-		music: music(FIN, '33-cinematic-lifes-a-movie.mp3', 0.16, 0),
+	// 05–07: голова + UGC-вставки з Google Flow (public/assets/ugc/flow) — кліп на весь екран 2–3 с, звук кліпу не береться
+	'lab-05': [FIN, {...fin, theme: {accent: '#39D6CE', bg: '#6E10F7'}, captions: {...fin.captions, accent: '#39D6CE'},
+		cutaways: [ugc('typing', 8.0, 2.6), ugc('smile', 17.6, 2.4), ugc('wow', 25.0, 2.4), ugc('point-up', 37.9, 2.8)],
+		whoosh: sfx('02-whoosh-cinematic-whoosh-fast-transition.mp3'), music: music(FIN, '41-synthwave-solitude.mp3', 0.16, 0),
 		outro: {cta: 'Напиши мені в Telegram', url: 't.me/hukvadim', tagline: 'Почнемо зі знайомства —\n*30 хвилин*'}}],
-	'lab-06': [FIN, {...fin, theme: {accent: '#3FBFA2', bg: '#0B2F27'}, captions: {...fin.captions, accent: '#3FBFA2'},
-		broll: [{at: 6.0, dur: 3.2, layout: 'fan', images: ['06.jpg', '07.jpg', '11.jpg']}, {at: 37.9, dur: 3.0, layout: 'fly', images: ['01.jpg', '09.jpg', '13.jpg']}],
-		music: music(FIN, '46-pop-life-is-a-dream.mp3', 0.16, 0), outro: false}],
+	'lab-06': [FIN, {...fin, theme: {accent: '#D9FF3A', bg: '#11121C'}, captions: {...fin.captions, accent: '#D9FF3A'},
+		broll: [{at: 6.0, dur: 3.2, layout: 'fan', images: ['06.jpg', '07.jpg', '11.jpg']}],
+		cutaways: [ugc('wow', 25.0, 2.4), ugc('point-up', 37.9, 2.8)], hits: [{at: 15.0}],
+		whoosh: sfx('12-glitch-small-electric-glitch.mp3'), music: music(FIN, '15-house-house-02.mp3', 0.16, 0), outro: false}],
 	'lab-07': [FIN, {...fin, theme: {accent: '#00D4FF', bg: '#150722'}, captions: {...fin.captions, accent: '#00D4FF'},
 		segments: [{start: 0, end: 3.74, zoom: 1}, {start: 12.78, end: 20.6, zoom: 1.1}, {start: 41.66, end: 44.2, zoom: 1.15}],
 		title: {text: 'Нейромережі — *для твоїх задач*', dur: 2.4}, callouts: fin.callouts.filter((c) => [12.8, 15.6, 41.7].includes(c.at)),
+		cutaways: [ugc('smile', 16.6, 2.2)], whoosh: sfx('07-whoosh-magic-sparkle-whoosh.mp3'),
 		intro: {kicker: 'DevGuide', big: 'ШІ', sub: 'для *твоїх* задач', dur: 3}, music: music(FIN, '09-trap-never-going-broke.mp3', 0.3),
 		outro: {cta: 'Напиши в Telegram', url: 't.me/hukvadim', tagline: 'Знайомство —\n*30 хвилин*'}}],
 };

@@ -13,7 +13,7 @@ const Key: React.FC<{children: React.ReactNode; down: boolean}> = ({children, do
 	<span style={{display: 'inline-block', padding: '30px 46px', borderRadius: 24, background: down ? C.lime : '#1B2530', color: down ? C.bg : C.text, border: `3px solid ${down ? C.lime : C.line}`, boxShadow: down ? `0 4px 0 ${C.limeDeep}` : '0 12px 0 #0A0F14', transform: `translateY(${down ? 8 : 0}px)`, fontFamily: F.mono, fontWeight: 500, fontSize: 64}}>{children}</span>
 );
 
-const Scenes = (t: number) => {
+export const Scenes = (t: number) => {
 	const mode = a('Для'), keys = a('Натисни'), reads = a('режимі'), task = a('Опиши'), plan = a('Прочитай'), code = a('Тільки'), rule = a('Правило');
 	const rewrite = a('переписує'), press = a('Shift');
 	return (
@@ -67,7 +67,7 @@ const Scenes = (t: number) => {
 	);
 };
 
-const SFX: Cue[] = [
+export const SFX: Cue[] = [
 	[0.2, 'warp-slide.mp3', 0.2], [a('переписує'), 'bass-hit-futuristic.mp3', 0.2],
 	[a('Для'), 'whoosh-swirl.mp3', 0.3], [a('Shift'), 'switch-tap.mp3', 0.4], [a('Shift') + 0.25, 'switch-tap.mp3', 0.4],
 	[a('нічого'), 'lock-digital.mp3', 0.3], [a('Наприклад'), 'typewriter-hit-soft.mp3', 0.22],

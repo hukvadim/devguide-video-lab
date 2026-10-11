@@ -312,7 +312,8 @@ const plan = (() => {
 export const SHORT_FRAMES = S(plan.total);
 
 export const Idea002Short: React.FC = () => {
-	const f = useCurrentFrame();
+	const frame = useCurrentFrame();
+	const f = frame === 0 ? 36 : frame; // кадр 0 = обкладинка Instagram: титул хука вже проявлений (1.2 с)
 	const {m, total} = plan;
 	const tOut = f / 30;
 	const last = m[m.length - 1];
