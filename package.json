@@ -16,7 +16,8 @@
     "qa:sheet": "node scripts/qa-sheet.mjs",
     "tts": "node scripts/tts.mjs",
     "out:index": "node scripts/out-index.mjs",
-    "clean": "node scripts/clean.mjs"
+    "clean": "node scripts/clean.mjs",
+    "bootstrap": "npm run setup:skills && node .claude/skills/devguide-reel/scripts/setup.mjs && npm run check"
   },
   "dependencies": {
     "@fontsource/caveat": "5.3.0",
