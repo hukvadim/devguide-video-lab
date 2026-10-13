@@ -17,6 +17,8 @@ import {Idea014, IDEA_014} from './ideas/Idea014';
 import {Idea015, IDEA_015} from './ideas/Idea015';
 import {Idea016, IDEA_016} from './ideas/Idea016';
 import {Sites01, SITES_01} from './ideas/Sites01';
+import {Sites02, SITES_02} from './ideas/Sites02';
+import {Sites03, SITES_03} from './ideas/Sites03';
 import {AdsA, AdsAVoice, AdsAVoice45, AdsB, AdsBVoice, AdsBVoice45, AdsBanner, ADS_A, ADS_A_VOICE, ADS_B, ADS_B_VOICE} from './ideas/Ads';
 import {StepPreview} from './system/step';
 import {LAB, LAB_FRAMES} from './lab/Lab';
@@ -44,6 +46,8 @@ export const Root: React.FC = () => <>
 {/* шлях «Сайти»: Sites-NN = крок NN (C:/DevGuide/helpers/websites-videos), seed — вигляд рендеру (палітра + рух), у Studio міняй seed у props */}
 <Folder name="Sites">
 	<Composition id="Sites-01" component={Sites01} {...V} durationInFrames={SITES_01} defaultProps={{seed: 0}}/>
+	<Composition id="Sites-02" component={Sites02} {...V} durationInFrames={SITES_02} defaultProps={{seed: 0}}/>
+	<Composition id="Sites-03" component={Sites03} {...V} durationInFrames={SITES_03} defaultProps={{seed: 0}}/>
 </Folder>
 {STEPS.map(([n, C, d]) => <Folder key={n} name={`ID-${n}`}><Composition id={`Idea-${n}`} component={C} {...V} durationInFrames={d}/></Folder>)}
 {/* Meta-реклама менторства: ADS/, src/ideas/Ads.tsx */}

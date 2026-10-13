@@ -6,11 +6,12 @@ import {chunkEnd, chunkWords, Word} from './captions';
 import {Theme, ThemeProvider, useTheme} from './theme';
 import {Insert, UgcInsert} from './ugc';
 import PATH from '../../data/learning-claude.json';
+import SITES from '../../data/learning-websites.json';
 
-/** Промпт кроку дослівно з програми (data/learning-claude.json). */
+/** Промпт кроку дослівно з програми (data/learning-claude.json, data/learning-websites.json). */
 export const prompt = (step: string, key: string) => {
-	const p = PATH.steps.find((s) => s.key === step)?.prompts.find((q) => q.key === key);
-	if (!p) throw new Error(`prompt(): ${step}/${key} немає в learning-claude.json`);
+	const p = [...PATH.steps, ...SITES.steps].find((s) => s.key === step)?.prompts.find((q) => q.key === key);
+	if (!p) throw new Error(`prompt(): ${step}/${key} немає в data/learning-*.json`);
 	return p.body;
 };
 
