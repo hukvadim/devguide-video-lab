@@ -2,7 +2,7 @@
 
 Крок шляху `websites` → `setup-tools` (розділ «Організація»). Джерело: `C:/DevGuide/helpers/websites-videos/01-setup-tools/` (scenes.md, voice.txt).
 Стиль як шлях «Claude / AI»: `StepVideo` (`src/system/step.tsx`), графіт + лайм, субтитри знизу, музика Hazy After Hours.
-Голос: тимчасово Bogdan / eleven_v4 (`tts.mjs`), після тренування — клон Vadim Huk (переозвучка, сцени прив'язані до слів через `at()`).
+Голос: клон Vadim Huk, eleven_v4 (`tts.mjs`); сцени прив'язані до слів через `at()`.
 SCREEN зі scenes.md зроблено схемою (вікно браузера/редактора без логотипів), як у ID-007, а не скріном сайту.
 Кінець: «Наступний крок: Claude Code: VS Code, Desktop, Browser», `devguide.com.ua/learning/websites`.
 

@@ -47,14 +47,18 @@ const INFO = {
     console.log(`${v.voice_id}  ${v.category.padEnd(12)} ${v.name}${v.fine_tuning?.state ? '  навчання: ' + JSON.stringify(v.fine_tuning.state) : ''}`)),
   models: async () => (await api('/v1/models')).filter((m) => m.can_do_text_to_speech).forEach((m) =>
     console.log(`${m.model_id.padEnd(28)} uk:${m.languages?.some((l) => l.language_id === 'uk') ? 'так' : 'ні'}  ${m.name}`)),
-  // чи готовий голос з .env (клон тренується годинами): моделі зі станом fine_tuned
+  // чи готовий голос з .env: стан тренування по моделях + справжня озвучка одного слова (~5 кредитів).
+  // eleven_v3/v4 беруть клон без окремого тренування, тому в fine_tuning.state їх немає — вірить лише проба.
   status: async () => {
     const id = process.env.ELEVENLABS_VOICE_ID, model = process.env.ELEVENLABS_MODEL || 'eleven_multilingual_v2';
     if (!id) throw new Error('ELEVENLABS_VOICE_ID у .env порожній');
     const v = await api(`/v1/voices/${id}`);
-    const ready = Object.entries(v.fine_tuning?.state ?? {}).filter(([, s]) => s === 'fine_tuned').map(([m]) => m);
-    console.log(`${v.name} (${v.category}): ${ready.length ? 'готовий для ' + ready.join(', ') : 'ще тренується або не верифікований'}`);
-    if (v.category === 'professional' && !ready.includes(model)) console.log(`ELEVENLABS_MODEL=${model} ще не навчена${ready.length ? `; візьми одну з: ${ready.join(', ')}` : ''}`);
+    const st = v.fine_tuning?.state ?? {}, pr = v.fine_tuning?.progress ?? {};
+    console.log(`${v.name} (${v.category})`);
+    for (const [m, x] of Object.entries(st)) console.log(`  ${m.padEnd(28)} ${x}${x === 'fine_tuning' && pr[m] != null ? ` ${Math.round(pr[m] * 100)}%` : ''}`);
+    const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${id}?output_format=mp3_22050_32`, {method: 'POST', headers: {'xi-api-key': key, 'Content-Type': 'application/json'}, body: JSON.stringify({text: 'Тест.', model_id: model})});
+    await res.arrayBuffer();
+    console.log(res.ok ? `✓ ${model}: голос працює` : `✗ ${model}: HTTP ${res.status} — візьми eleven_v4 або дочекайся тренування`);
   },
   credits: async () => {
     const s = await api('/v1/user/subscription');

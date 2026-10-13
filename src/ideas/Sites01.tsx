@@ -32,7 +32,7 @@ const Tree: React.FC<{t: number}> = ({t}) => {
 };
 
 const Scenes = (t: number) => {
-	const first = a('Перше'), second = a('Друге'), mix = a('ось'), chat = a('Claude', 15), agent = a('А', 20), so = a('Тобто'), fin = a('VS Code', 30);
+	const first = a('Перше'), second = a('Друге'), mix = a('ось'), chat = a('Claude', a('плутати')), agent = a('А', chat), so = a('Тобто'), fin = a('VS Code', a('зробить'));
 	return (
 		<>
 			<Show t={t} a={0} b={first}>
@@ -89,11 +89,11 @@ const SFX: Cue[] = [
 	[a('офіційного'), 'click/mouse-click-352734.mp3', 0.4],
 	[a('Друге'), 'pop/bubble-pop-406640.mp3', 0.35],
 	[a('важливо'), 'impact/bass-hit-futuristic.mp3', 0.2],
-	[a('А', 20), 'click/lock-digital.mp3', 0.3],
-	[a('VS Code', 30), 'sparkle/shimmer-sparkle-sweep.mp3', 0.3],
+	[a('А', a('текстом')), 'click/lock-digital.mp3', 0.3],
+	[a('VS Code', a('зробить')), 'sparkle/shimmer-sparkle-sweep.mp3', 0.3],
 ];
 
 export const Sites01: React.FC<{theme?: string; seed?: number}> = ({theme, seed}) => (
 	<StepVideo theme={theme} seed={seed} dir="ideas/sites-01" words={WORDS} next={'Claude Code: VS Code, Desktop, Browser'} nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={Scenes}
-		inserts={[ugc('Man_typing_at_desk', a('потрібен'), a('Перше') - a('потрібен') - 0.15, {label: <>Дуже простий <L>набір</L></>})]} />
+		inserts={[ugc('Man_typing_at_desk', a('потрібен'), a('Перше') - a('потрібен') - 0.15, {label: <>Дуже простий <L>набір</L></>, labelY: 960})]} />
 );
