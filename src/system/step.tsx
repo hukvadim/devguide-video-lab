@@ -226,6 +226,20 @@ export const Chips: React.FC<{t: number; y: number; items: [string, number][]; s
 	</Box>
 );
 
+/** Рядки «✓ плюс» / «✗ мінус», що з'являються в моменти at. */
+export const Ticks: React.FC<{t: number; y: number; items: [ok: boolean, text: React.ReactNode, at: number][]; size?: number; gap?: number}> = ({t, y, items, size = 50, gap = 118}) => {
+	const T = useTheme();
+	return <>{items.map(([ok, txt, a], i) => {
+		const p = pop(t, a, 0.35);
+		return (
+			<div key={i} style={{position: 'absolute', left: X + 30, width: W - 60, top: y + i * gap, opacity: p, transform: `translateX(${(1 - p) * 50}px)`, display: 'flex', alignItems: 'center', gap: 26, fontFamily: F.body, fontWeight: 800, fontSize: size, lineHeight: 1.2, textAlign: 'left'}}>
+				<span style={{flex: 'none', display: 'inline-flex', width: size * 1.3, height: size * 1.3, borderRadius: size, alignItems: 'center', justifyContent: 'center', background: ok ? T.accent : `${T.red}26`, color: ok ? T.onAccent : T.red, border: ok ? 'none' : `3px solid ${T.red}`, fontSize: size * 0.8, fontWeight: 900}}>{ok ? '✓' : '✗'}</span>
+				<span>{txt}</span>
+			</div>
+		);
+	})}</>;
+};
+
 /** Нумеровані картки кроків згори вниз; активна — та, що з'явилася останньою. */
 export const Steps: React.FC<{t: number; y: number; items: [string, React.ReactNode, number][]; gap?: number; size?: number; nsize?: number}> = ({t, y, items, gap = 170, size = 46, nsize = 84}) => {
 	const T = useTheme();
@@ -364,15 +378,15 @@ export const stepFrames = (words: Word[]) => S(words[words.length - 1].e + TAIL)
 const MUSIC = 'ideas/idea-001/music/hazy-after-hours.mp3';
 
 type StepProps = {
-	dir: string; words: Word[]; next: string; nextLabel?: string; nextUrl?: string; sfx: Cue[]; scenes?: (t: number) => React.ReactNode;
-	theme?: string | Theme; seed?: number; music?: string; musicVol?: number; look?: 'scenes' | 'word' | 'karaoke'; captions?: 'bottom' | 'center' | false; inserts?: Insert[];
+	dir: string; words: Word[]; next?: string; nextLabel?: string; nextUrl?: string; sfx: Cue[]; scenes?: (t: number) => React.ReactNode;
+	theme?: string | Theme; seed?: number; music?: string; musicVol?: number; look?: 'scenes' | 'word' | 'karaoke'; captions?: 'bottom' | 'center' | false; inserts?: Insert[]; endCard?: (t: number, a: number) => React.ReactNode;
 };
 /** Шорт кроку: голос, музика, SFX, субтитри, сцени (render-функція від t) і фінальна картка «Наступний крок». */
 export const StepVideo: React.FC<StepProps> = ({theme, seed, ...p}) => <ThemeProvider theme={theme} seed={seed}><StepInner {...p} /></ThemeProvider>;
-const StepInner: React.FC<Omit<StepProps, 'theme' | 'seed'>> = ({dir, words, next, nextLabel, nextUrl, sfx, scenes, music = MUSIC, musicVol = 0.085, look = 'scenes', captions = 'bottom', inserts = []}) => {
+const StepInner: React.FC<Omit<StepProps, 'theme' | 'seed'>> = ({dir, words, next, nextLabel, nextUrl, sfx, scenes, music = MUSIC, musicVol = 0.085, look = 'scenes', captions = 'bottom', inserts = [], endCard}) => {
 	const frame = useCurrentFrame();
-	// кадр 0 = обкладинка: Instagram бере його за cover, тож показуємо вже проявлену заставку (t = 1.2 с), а не порожній фон
-	const t = frame === 0 ? 1.2 : frame / 30;
+	// кадр 0 = обкладинка: Instagram бере його за cover, тож показуємо вже проявлену заставку (t = 0.9 с, до першої склейки), а не порожній фон
+	const t = frame === 0 ? 0.9 : frame / 30;
 	const end = words[words.length - 1].e;
 	const total = end + TAIL;
 	const card = end + 0.3;
@@ -393,7 +407,7 @@ const StepInner: React.FC<Omit<StepProps, 'theme' | 'seed'>> = ({dir, words, nex
 			{t < card + 0.4 ? <AbsoluteFill style={{opacity: 1 - ramp(t, card, card + 0.4)}}>{body}</AbsoluteFill> : null}
 			{inserts.map((ins, i) => <UgcInsert key={i} t={t} ins={ins} />)}
 			{inserts.map((ins, i) => <Sfx key={`u${i}`} at={S(ins.at)} src="whoosh/whoosh-fast.mp3" vol={0.3} dur={30} />)}
-			<NextCard t={t} a={card} next={next} label={nextLabel} url={nextUrl} />
+			{endCard ? endCard(t, card) : <NextCard t={t} a={card} next={next ?? ""} label={nextLabel} url={nextUrl} />}
 			{frame > 0 && captions && look === 'scenes' && t < end + 0.5 ? <Captions t={t} chunks={chunks} place={captions} /> : null}
 		</Stage>
 	);

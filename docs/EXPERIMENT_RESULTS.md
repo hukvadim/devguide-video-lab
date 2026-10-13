@@ -57,3 +57,11 @@ node scripts/qa-sheet.mjs out/final/devguide-final-preview-540x960.mp4 out/final
 - Обмеження: скриншоти 430 px завширшки (у телефоні масштабуються ~1.2×); музика з кандидатів (не вибрана Вадимом).
 - Лендінг: `ADS/landing` (Next.js 16, Tailwind 4, shadcn/ui, GSAP+ScrollTrigger+SplitText, Lenis, R3F+Drei), окремий package.json.
 - v2 (2026-10-12): А — картка сайту = 3 скриншоти babayaga.lviv.ua (Playwright, DPR 2, кожен через 5 с після прокрутки), + 3D-телефон «Шлях навчання» (`src/system/phone3d.tsx`, відновлено з 852b0d0 PhoneScene, без «острова», що закривав заголовок). Б — переписано: порівняння $1000/$300, 5 карток, 16.4 с. Текст озвучки: `ADS/03-video/voice.md`.
+
+## Шлях «Сайти»: Sites-04…22 голосом Вадима (2026-10-13)
+
+- 15 шортів на всі кроки з відео (04–07, 09–16, 20–22), `src/ideas/SitesNN.tsx` на `StepVideo`. Голос — клон Вадима (ElevenLabs eleven_v4, ~12 тис. символів), тексти з `C:/DevGuide/helpers/websites-videos/NN-*/voice.txt` з фонетикою термінів; словник показу в `scripts/words.mjs` доповнено (VPS, GSAP, Three.js, tz.md, ui-ux-pro-max, Trello, Viber, Playwright, ChatGPT, PageSpeed…).
+- Живі скріни (Playwright, 1280×900): vercel.com, trello.com, playwright.dev, threejs.org, репозиторій ui-ux-pro-max, звіт PageSpeed devguide.com.ua (телефон 69, ПК 97). UGC-вставки Flow — по одній на ролик (крім 21). Нове в `step.tsx`: `Ticks` (✓/✗ рядки); обкладинка кадру 0 тепер t = 0.9 с (заставка ще не почала зникати).
+- Кодинг ~1 год 40 хв (сценарії, скріни, 15 композицій). Рендер: прев'ю 540×960 — усі 15 за ~14 хв; фінал — див. `out/render-times.log`.
+- QA: смуги кадрів кожні 70 кадрів з прев'ю всіх 15, виправлено накладки заголовків на вікна, переноси в ✓-рядках, вицвілу обкладинку (Sites-12); фінальні смуги переглянуто після рендеру.
+- Обмеження: дві сторінки кав'ярні (Sites-06), тестова сторінка варіантів (15), чати, дошка Trello, адмінка — намальовані приклади, не справжні генерації; github.com/signup і vercel.com/login автоматичному браузеру не віддаються — показано головні сторінки.

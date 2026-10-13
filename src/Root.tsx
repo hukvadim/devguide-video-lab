@@ -19,6 +19,21 @@ import {Idea016, IDEA_016} from './ideas/Idea016';
 import {Sites01, SITES_01} from './ideas/Sites01';
 import {Sites02, SITES_02} from './ideas/Sites02';
 import {Sites03, SITES_03} from './ideas/Sites03';
+import {Sites04, SITES_04} from './ideas/Sites04';
+import {Sites05, SITES_05} from './ideas/Sites05';
+import {Sites06, SITES_06} from './ideas/Sites06';
+import {Sites07, SITES_07} from './ideas/Sites07';
+import {Sites09, SITES_09} from './ideas/Sites09';
+import {Sites10, SITES_10} from './ideas/Sites10';
+import {Sites11, SITES_11} from './ideas/Sites11';
+import {Sites12, SITES_12} from './ideas/Sites12';
+import {Sites13, SITES_13} from './ideas/Sites13';
+import {Sites14, SITES_14} from './ideas/Sites14';
+import {Sites15, SITES_15} from './ideas/Sites15';
+import {Sites16, SITES_16} from './ideas/Sites16';
+import {Sites20, SITES_20} from './ideas/Sites20';
+import {Sites21, SITES_21} from './ideas/Sites21';
+import {Sites22, SITES_22} from './ideas/Sites22';
 import {AdsA, AdsAVoice, AdsAVoice45, AdsB, AdsBVoice, AdsBVoice45, AdsBanner, ADS_A, ADS_A_VOICE, ADS_B, ADS_B_VOICE} from './ideas/Ads';
 import {StepPreview} from './system/step';
 import {LAB, LAB_FRAMES} from './lab/Lab';
@@ -48,6 +63,21 @@ export const Root: React.FC = () => <>
 	<Composition id="Sites-01" component={Sites01} {...V} durationInFrames={SITES_01} defaultProps={{seed: 0}}/>
 	<Composition id="Sites-02" component={Sites02} {...V} durationInFrames={SITES_02} defaultProps={{seed: 0}}/>
 	<Composition id="Sites-03" component={Sites03} {...V} durationInFrames={SITES_03} defaultProps={{seed: 0}}/>
+	<Composition id="Sites-04" component={Sites04} {...V} durationInFrames={SITES_04} defaultProps={{seed: 0}}/>
+	<Composition id="Sites-05" component={Sites05} {...V} durationInFrames={SITES_05} defaultProps={{seed: 0}}/>
+	<Composition id="Sites-06" component={Sites06} {...V} durationInFrames={SITES_06} defaultProps={{seed: 0}}/>
+	<Composition id="Sites-07" component={Sites07} {...V} durationInFrames={SITES_07} defaultProps={{seed: 0}}/>
+	<Composition id="Sites-09" component={Sites09} {...V} durationInFrames={SITES_09} defaultProps={{seed: 0}}/>
+	<Composition id="Sites-10" component={Sites10} {...V} durationInFrames={SITES_10} defaultProps={{seed: 0}}/>
+	<Composition id="Sites-11" component={Sites11} {...V} durationInFrames={SITES_11} defaultProps={{seed: 0}}/>
+	<Composition id="Sites-12" component={Sites12} {...V} durationInFrames={SITES_12} defaultProps={{seed: 0}}/>
+	<Composition id="Sites-13" component={Sites13} {...V} durationInFrames={SITES_13} defaultProps={{seed: 0}}/>
+	<Composition id="Sites-14" component={Sites14} {...V} durationInFrames={SITES_14} defaultProps={{seed: 0}}/>
+	<Composition id="Sites-15" component={Sites15} {...V} durationInFrames={SITES_15} defaultProps={{seed: 0}}/>
+	<Composition id="Sites-16" component={Sites16} {...V} durationInFrames={SITES_16} defaultProps={{seed: 0}}/>
+	<Composition id="Sites-20" component={Sites20} {...V} durationInFrames={SITES_20} defaultProps={{seed: 0}}/>
+	<Composition id="Sites-21" component={Sites21} {...V} durationInFrames={SITES_21} defaultProps={{seed: 0}}/>
+	<Composition id="Sites-22" component={Sites22} {...V} durationInFrames={SITES_22} defaultProps={{seed: 0}}/>
 </Folder>
 {STEPS.map(([n, C, d]) => <Folder key={n} name={`ID-${n}`}><Composition id={`Idea-${n}`} component={C} {...V} durationInFrames={d}/></Folder>)}
 {/* Meta-реклама менторства: ADS/, src/ideas/Ads.tsx */}
