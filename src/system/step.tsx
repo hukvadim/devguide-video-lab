@@ -253,7 +253,7 @@ export const NextCard: React.FC<{t: number; a: number; next: string; label?: str
 				<Big size={next.length > 22 ? 64 : 80} style={{color: T.accent}}>{next}</Big>
 			</Box>
 			<Box y={1180} o={pop(t, a + 1.3)}>
-				<span style={{display: 'inline-block', padding: '24px 44px', borderRadius: 999, background: T.accent, color: T.onAccent, fontFamily: F.body, fontWeight: 800, fontSize: 44, boxShadow: `0 30px 80px ${T.accent}40`}}>{url} →</span>
+				<span style={{display: 'inline-block', padding: '24px 44px', borderRadius: 999, background: T.accent, color: T.onAccent, fontFamily: F.body, fontWeight: 800, fontSize: url.length > 26 ? 36 : 44, boxShadow: `0 30px 80px ${T.accent}40`}}>{url} →</span>
 			</Box>
 		</Show>
 	);
@@ -354,10 +354,10 @@ const StepInner: React.FC<Omit<StepProps, 'theme'>> = ({dir, words, next, nextLa
 			<Audio src={staticFile(`${dir}/voice.mp3`)} volume={(f) => (f < S(end) + 6 ? 1 : 0)} />
 			<Audio src={staticFile(music)} volume={vol} />
 			{sfx.map(([a, src, vol], i) => <Sfx key={i} at={S(a)} src={src} vol={vol} />)}
-			<Sfx at={S(card)} src="impact-movie-epic.mp3" vol={0.4} dur={150} />
+			<Sfx at={S(card)} src="impact/impact-movie-epic.mp3" vol={0.4} dur={150} />
 			{t < card + 0.4 ? <AbsoluteFill style={{opacity: 1 - ramp(t, card, card + 0.4)}}>{body}</AbsoluteFill> : null}
 			{inserts.map((ins, i) => <UgcInsert key={i} t={t} ins={ins} />)}
-			{inserts.map((ins, i) => <Sfx key={`u${i}`} at={S(ins.at)} src="whoosh-fast.mp3" vol={0.3} dur={30} />)}
+			{inserts.map((ins, i) => <Sfx key={`u${i}`} at={S(ins.at)} src="whoosh/whoosh-fast.mp3" vol={0.3} dur={30} />)}
 			<NextCard t={t} a={card} next={next} label={nextLabel} url={nextUrl} />
 			{frame > 0 && captions && look === 'scenes' && t < end + 0.5 ? <Captions t={t} chunks={chunks} place={captions} /> : null}
 		</Stage>

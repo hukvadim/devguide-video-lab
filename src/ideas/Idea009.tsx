@@ -70,12 +70,12 @@ export const Scenes = (t: number) => {
 };
 
 export const SFX: Cue[] = [
-	[0, 'whoosh-swirl.mp3', 0.35],
-	[a('запусти'), 'typewriter-hit-soft.mp3', 0.22], [a('Встав'), 'typewriter-hit-soft.mp3', 0.22],
-	[a('Що'), 'soft-pop.wav', 0.4], [a('Як'), 'soft-pop.wav', 0.4], [a('кінці'), 'soft-pop.wav', 0.4],
-	[a('блоки'), 'soft-pop.wav', 0.3], [a('ок', 34), 'switch-tap.mp3', 0.35],
-	[a('dev-сервер'), 'typewriter-digital.mp3', 0.15], [a('localhost'), 'lock-digital.mp3', 0.3],
-	[a('Відкрий', 41), 'shimmer-sparkle-sweep.mp3', 0.3], [a('дужках'), 'switch-tap.mp3', 0.35],
+	[0, 'whoosh/whoosh-cinematic-376875.mp3', 0.35],
+	[a('запусти'), 'typing/typewriter-hit-soft.mp3', 0.22], [a('Встав'), 'typing/typewriter-hit-soft.mp3', 0.22],
+	[a('Що'), 'pop/soft-pop.wav', 0.4], [a('Як'), 'pop/soft-pop.wav', 0.4], [a('кінці'), 'pop/soft-pop.wav', 0.4],
+	[a('блоки'), 'pop/soft-pop.wav', 0.3], [a('ок', 34), 'click/switch-tap.mp3', 0.35],
+	[a('dev-сервер'), 'typing/typewriter-digital.mp3', 0.15], [a('localhost'), 'click/lock-digital.mp3', 0.3],
+	[a('Відкрий', 41), 'sparkle/shimmer-sparkle-sweep.mp3', 0.3], [a('дужках'), 'click/switch-tap.mp3', 0.35],
 ];
 
 export const Idea009: React.FC = () => <StepVideo dir="ideas/idea-009" words={WORDS} next="Правила проєкту в CLAUDE.md" sfx={SFX} scenes={Scenes} />;

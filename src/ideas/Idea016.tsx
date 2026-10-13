@@ -50,10 +50,10 @@ const Scenes = (t: number) => {
 };
 
 const SFX: Cue[] = [
-	[0.2, 'soft-pop.wav', 0.35], [0.7, 'soft-pop.wav', 0.35], [a('утретє'), 'soft-pop.wav', 0.4], [a('пакуй'), 'impact-cine-big.mp3', 0.25],
-	...TOPICS.map((w): Cue => [a(w, a('Приклад')), 'soft-pop.wav', 0.22]),
-	[a('Попроси'), 'typewriter-hit-soft.mp3', 0.22], [a("дев'яти"), 'lock-digital.mp3', 0.25],
-	[a('пишеш'), 'typewriter-hit-soft.mp3', 0.22], [a('зберігає', a('Тепер')), 'shimmer-sparkle-sweep.mp3', 0.3],
+	[0.2, 'pop/soft-pop.wav', 0.35], [0.7, 'pop/soft-pop.wav', 0.35], [a('утретє'), 'pop/soft-pop.wav', 0.4], [a('пакуй'), 'impact/impact-cine-big.mp3', 0.25],
+	...TOPICS.map((w): Cue => [a(w, a('Приклад')), 'pop/soft-pop.wav', 0.22]),
+	[a('Попроси'), 'typing/typewriter-hit-soft.mp3', 0.22], [a("дев'яти"), 'click/lock-digital.mp3', 0.25],
+	[a('пишеш'), 'typing/typewriter-hit-soft.mp3', 0.22], [a('зберігає', a('Тепер')), 'sparkle/shimmer-sparkle-sweep.mp3', 0.3],
 ];
 
 export const Idea016: React.FC = () => <StepVideo dir="ideas/idea-016" words={WORDS} next="Йдемо до клієнта" sfx={SFX} scenes={Scenes} />;

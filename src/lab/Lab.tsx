@@ -45,7 +45,7 @@ const label = (s: string, k: string) => PATH.steps.find((x) => x.key === s)!.pro
 const TR15 = '06-trap-thunder.mp3';
 const C15: Card[] = [
 	{beats: 6, el: (t, a) => <Poster t={t} a={a} kicker="DevGuide · Claude / AI" size={130}>5 промптів<br /><L>для старту</L></Poster>},
-	...P5.map(([s, k], i): Card => ({beats: 10, sfx: '_кандидати/37-typing-single-key-type.mp3', vol: 0.35, el: (t, a, z) => (
+	...P5.map(([s, k], i): Card => ({beats: 10, sfx: 'typing/typewriter-hit-soft.mp3', vol: 0.35, el: (t, a, z) => (
 		<>
 			<Box y={240}><Big size={150}><L>{i + 1}/5</L></Big></Box>
 			<Box y={470} o={pop(t, a, 0.2)}><Big size={76}>{label(s, k)}</Big></Box>
@@ -68,7 +68,7 @@ const C16: Card[] = [
 	{beats: 4, el: (t, a) => <Word1 t={t} a={a} w="Стоп" inv />},
 	{beats: 4, el: (t, a) => <Poster t={t} a={a} size={110}>4 правила<br /><L>безпеки з AI</L></Poster>},
 	...RULES.flatMap(([h, body], i): Card[] => [
-		{beats: 2, sfx: '_кандидати/12-glitch-small-electric-glitch.mp3', vol: 0.3, el: (t, a) => <Word1 t={t} a={a} w={String(i + 1)} inv />},
+		{beats: 2, sfx: 'glitch/small-electric-glitch-2595.wav', vol: 0.3, el: (t, a) => <Word1 t={t} a={a} w={String(i + 1)} inv />},
 		{beats: 6, el: (t, a) => <Poster t={t} a={a} kicker={h} size={92}>{body}</Poster>},
 	]),
 	{beats: 6, el: (t, a) => <Check t={t} a={a} y={640}>Перед відправкою в AI — без секретів і персональних даних</Check>},
@@ -118,7 +118,7 @@ const Drop: React.FC<{t: number; a: number; no: string}> = ({t, a, no}) => {
 };
 const C18: Card[] = [
 	{beats: 4, el: (t, a) => <Word1 t={t} a={a} w="Drop" inv />},
-	...DROPS.map(([th, no]): Card => ({beats: 4, theme: th, sfx: 'air-whoosh-powerful.mp3', vol: 0.2, el: (t, a) => <Drop t={t} a={a} no={no} />})),
+	...DROPS.map(([th, no]): Card => ({beats: 4, theme: th, sfx: 'whoosh/air-whoosh-powerful.mp3', vol: 0.2, el: (t, a) => <Drop t={t} a={a} no={no} />})),
 	{beats: 8, el: (t, a) => <Outro t={t} a={a} next="Який колір твій?" label="Напиши номер у коментарях" url="devguide.com.ua" />},
 ];
 export const Lab18 = () => <BeatVideo theme="brand" track={TR18} cards={C18} />;
@@ -135,7 +135,7 @@ const Keys: React.FC<{t: number; a: number}> = ({t, a}) => {
 };
 const C19: Card[] = [
 	{beats: 6, el: (t, a) => <Poster t={t} a={a} size={96}>AI переписав<br /><L>пів проєкту?</L></Poster>},
-	{beats: 6, sfx: 'switch-tap.mp3', vol: 0.4, el: (t, a) => <Keys t={t} a={a} />},
+	{beats: 6, sfx: 'click/switch-tap.mp3', vol: 0.4, el: (t, a) => <Keys t={t} a={a} />},
 	{beats: 8, el: (t, a) => <Poster t={t} a={a} kicker="Режим плану" size={92} sub="Claude читає проєкт і пише план, нічого не змінюючи">Спершу <L>план</L></Poster>},
 	{beats: 6, el: (t, a) => <Poster t={t} a={a} size={96}>AI переписав<br /><L>пів проєкту?</L></Poster>},
 ];
@@ -147,7 +147,7 @@ const Q = ['Головне', 'правило', 'спершу', 'план'];
 const C20: Card[] = [
 	...Q.map((w, i): Card => ({beats: 2, vol: 0.12, el: (t, a) => <Word1 t={t} a={a} w={w} inv={i % 2 === 1} />})),
 	{beats: 2, vol: 0.12, el: (t, a) => <Word1 t={t} a={a} w="потім" />},
-	{beats: 6, sfx: 'impact-movie-epic.mp3', vol: 0.5, el: (t, a) => <Word1 t={t} a={a} w="код" inv />},
+	{beats: 6, sfx: 'impact/impact-movie-epic.mp3', vol: 0.5, el: (t, a) => <Word1 t={t} a={a} w="код" inv />},
 	{beats: 8, el: (t, a) => <Poster t={t} a={a} kicker="Claude Code" size={88} sub="Попроси план, прочитай, скажи «ок» — і лише тоді код">Спершу <L>план</L>,<br />потім код</Poster>},
 	{beats: 10, el: (t, a) => <Outro t={t} a={a} next="Claude Code: перший проєкт" />},
 ];
@@ -170,11 +170,11 @@ const C24: Card[] = [
 	{beats: 6, el: (t, a, z) => <UgcCard t={t} a={a} z={z} file="Stop" label="СТОП" />},
 	{beats: 4, el: (t, a) => <Poster t={t} a={a} size={110}>4 правила<br /><L>безпеки з AI</L></Poster>},
 	...RULES.slice(0, 3).flatMap(([h, body], i): Card[] => [
-		{beats: 2, sfx: '_кандидати/12-glitch-small-electric-glitch.mp3', vol: 0.3, el: (t, a) => <Word1 t={t} a={a} w={String(i + 1)} inv />},
+		{beats: 2, sfx: 'glitch/small-electric-glitch-2595.wav', vol: 0.3, el: (t, a) => <Word1 t={t} a={a} w={String(i + 1)} inv />},
 		{beats: 6, el: (t, a) => <Poster t={t} a={a} kicker={h} size={92}>{body}</Poster>},
 	]),
 	{beats: 6, el: (t, a, z) => <UgcCard t={t} a={a} z={z} file="facepalm" label="А ще…" />},
-	{beats: 2, sfx: '_кандидати/12-glitch-small-electric-glitch.mp3', vol: 0.3, el: (t, a) => <Word1 t={t} a={a} w="4" inv />},
+	{beats: 2, sfx: 'glitch/small-electric-glitch-2595.wav', vol: 0.3, el: (t, a) => <Word1 t={t} a={a} w="4" inv />},
 	{beats: 6, el: (t, a) => <Poster t={t} a={a} kicker={RULES[3][0]} size={92}>{RULES[3][1]}</Poster>},
 	{beats: 8, el: (t, a) => <Outro t={t} a={a} next="Безпечно з AI" label="Крок шляху Claude / AI" />},
 ];

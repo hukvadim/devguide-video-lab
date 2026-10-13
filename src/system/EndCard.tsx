@@ -52,9 +52,9 @@ export const EndCard: React.FC<{fromLime?: boolean; particles?: boolean; sfx?: b
 			<AbsoluteFill style={{background: C.lime, opacity: limeBg}} />
 			{sfx ? (
 				<>
-					<Sfx at={0} src="impact-movie-epic.mp3" vol={0.75} dur={150} />
-					<Sfx at={0} src="stomp-apocalyptic.mp3" vol={0.35} dur={80} />
-					<Sfx at={40} src="sparkle-touch.mp3" vol={0.3} dur={60} />
+					<Sfx at={0} src="impact/impact-movie-epic.mp3" vol={0.75} dur={150} />
+					<Sfx at={0} src="impact/stomp-apocalyptic.mp3" vol={0.35} dur={80} />
+					<Sfx at={40} src="sparkle/sparkle-touch.mp3" vol={0.3} dur={60} />
 				</>
 			) : null}
 		</Stage>

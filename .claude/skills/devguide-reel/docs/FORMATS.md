@@ -48,7 +48,7 @@
 
 ## F6. Особисте / за кадром (особистий, 15–40 с)
 - Формат 1, мінімум графіки: `title` + 1–2 `callouts`, без `intro`.
-- `outro`: `false` або коротке з Telegram: `{"cta": "Пиши в Telegram", "url": "t.me/hukvadim"}`.
+- `outro`: `false` або коротке з Telegram: `{"cta": "Пиши в Telegram", "url": "t.me/<свій_нік>"}` (свій Telegram, не автора).
 
 ## F7. Карусель (стілли)
 - Не відео: `remotion still` композицій проєкту, 1080×1350. Остання картка: CTA-слово.

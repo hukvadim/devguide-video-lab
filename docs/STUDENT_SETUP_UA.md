@@ -12,7 +12,7 @@ npm install
 npm run bootstrap
 ```
 
-`npm run bootstrap` ставить Remotion-скіли (`setup:skills`), ffmpeg, whisper і моделі для монтажу (`devguide-reel/scripts/setup.mjs`) і запускає `npm run check`. Повторний запуск нічого не перекачує.
+`npm run bootstrap` ставить Remotion-скіли (`setup:skills`), ffmpeg, whisper і моделі для монтажу (`devguide-reel/scripts/setup.mjs`), качає музику Mixkit (`scripts/fetch-music.mjs`, ~190 МБ) і запускає `npm run check`. Повторний запуск нічого не перекачує.
 Потім відкрий папку в Claude Code. `CLAUDE.md` і `AGENTS.md` підхопляться самі, скіли `devguide-ideas`, `devguide-reel` лежать у `.claude/skills/`.
 
 ## 2. Щоденна робота
@@ -30,9 +30,9 @@ Claude напише сценарій, закодить ролик, зробит�
 ## 3. Що їде через git, а що ні
 | Є після `git clone` | Треба зробити вручну |
 |---|---|
-| код `src/`, `data/brand.json`, `docs/`, `prompts/` | ключ ElevenLabs: скопіюй `.env.example` у `.env` і впиши (лише якщо потрібна озвучка) |
-| скіли `devguide-ideas`, `devguide-reel`, правила `AGENTS.md` і `CLAUDE.md` (з уподобаннями автора) | `npm run bootstrap` (сторонні скіли, ffmpeg, whisper, моделі ~600 МБ) |
-| вибрані музика й SFX, UGC-клипи Flow (`public/assets/ugc/flow/`) | сирі записи (`5/` та папки днів), `out/` (готові рендери), кандидати музики/звуків: перенеси диском або перегенеруй |
+| код `src/`, `data/brand.json`, `docs/`, `prompts/` | ключ ElevenLabs: скопіюй `.env.example` у `.env` і впиши свій ключ і свій голос (`ELEVENLABS_VOICE_ID` автора в тебе не працює), `docs/ELEVENLABS.md` |
+| скіли `devguide-ideas`, `devguide-reel`, правила `AGENTS.md` і `CLAUDE.md` (з уподобаннями автора) | `npm run bootstrap` (сторонні скіли, ffmpeg, whisper, моделі ~600 МБ, музика ~190 МБ) |
+| звуки за папками (`public/assets/audio/`, опис у `README.md` там), UGC-клипи Flow (`public/assets/ugc/flow/`) | сирі записи (`5/` та папки днів), `out/` (готові рендери): перенеси диском |
 
 ## 4. Глобальне на ПК автора, чого учневі не треба
 `~/.claude/skills/` містить багато маркетингових скілів (SEO, ads, email) і старий `edit-video`: для відео вони не потрібні, їхню роль виконує `devguide-reel` з репо. Плагіни (ponytail, ui-ux-pro-max, figma тощо) за бажанням. Пам'ять Claude (`~/.claude/projects/.../memory`) у git не їде, тому її суть уже вписано в `CLAUDE.md`.

@@ -70,11 +70,11 @@ export const Scenes = (t: number) => {
 };
 
 export const SFX: Cue[] = [
-	[0, 'whoosh-swirl.mp3', 0.35],
-	[a('один'), 'soft-pop.wav', 0.35], [a('щоразу'), 'soft-pop.wav', 0.35], [a('однаково'), 'soft-pop.wav', 0.35],
-	[a('Figma'), 'sparkle-touch.mp3', 0.3], [a('документація'), 'sparkle-touch.mp3', 0.3], [a('адмінка'), 'sparkle-touch.mp3', 0.3],
-	[a('Пишеш'), 'typewriter-hit-soft.mp3', 0.22], [a('оновлює'), 'lock-digital.mp3', 0.3], [a('оновлює') + 0.4, 'shimmer-sparkle-sweep.mp3', 0.25],
-	[a('Встав'), 'typewriter-hit-soft.mp3', 0.22], [a('Підключи', a('сайтів')), 'shimmer-sparkle-sweep.mp3', 0.3],
+	[0, 'whoosh/whoosh-cinematic-376875.mp3', 0.35],
+	[a('один'), 'pop/soft-pop.wav', 0.35], [a('щоразу'), 'pop/soft-pop.wav', 0.35], [a('однаково'), 'pop/soft-pop.wav', 0.35],
+	[a('Figma'), 'sparkle/sparkle-touch.mp3', 0.3], [a('документація'), 'sparkle/sparkle-touch.mp3', 0.3], [a('адмінка'), 'sparkle/sparkle-touch.mp3', 0.3],
+	[a('Пишеш'), 'typing/typewriter-hit-soft.mp3', 0.22], [a('оновлює'), 'click/lock-digital.mp3', 0.3], [a('оновлює') + 0.4, 'sparkle/shimmer-sparkle-sweep.mp3', 0.25],
+	[a('Встав'), 'typing/typewriter-hit-soft.mp3', 0.22], [a('Підключи', a('сайтів')), 'sparkle/shimmer-sparkle-sweep.mp3', 0.3],
 ];
 
 export const Idea015: React.FC = () => <StepVideo dir="ideas/idea-015" words={WORDS} next="Свій skill: процес в одну команду" sfx={SFX} scenes={Scenes} />;

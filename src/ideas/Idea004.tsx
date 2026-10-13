@@ -48,11 +48,11 @@ const Scenes = (t: number) => {
 };
 
 const SFX: Cue[] = [
-	[0, 'whoosh-swirl.mp3', 0.35],
-	[a('офіційний'), 'typewriter-hit-soft.mp3', 0.22],
-	[a('Google'), 'soft-pop.wav', 0.4], [a('пошту'), 'soft-pop.wav', 0.4],
-	[a('працюватимемо'), 'soft-pop.wav', 0.3], [a('всіх'), 'soft-pop.wav', 0.3], [a('наступних'), 'soft-pop.wav', 0.3],
-	[a('Як'), 'lock-digital.mp3', 0.3], [a('Значить'), 'shimmer-sparkle-sweep.mp3', 0.3],
+	[0, 'whoosh/whoosh-cinematic-376875.mp3', 0.35],
+	[a('офіційний'), 'typing/typewriter-hit-soft.mp3', 0.22],
+	[a('Google'), 'pop/soft-pop.wav', 0.4], [a('пошту'), 'pop/soft-pop.wav', 0.4],
+	[a('працюватимемо'), 'pop/soft-pop.wav', 0.3], [a('всіх'), 'pop/soft-pop.wav', 0.3], [a('наступних'), 'pop/soft-pop.wav', 0.3],
+	[a('Як'), 'click/lock-digital.mp3', 0.3], [a('Значить'), 'sparkle/shimmer-sparkle-sweep.mp3', 0.3],
 ];
 
 export const Idea004: React.FC = () => <StepVideo dir="ideas/idea-004" words={WORDS} next="Обери підписку" sfx={SFX} scenes={Scenes} />;

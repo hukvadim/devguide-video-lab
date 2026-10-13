@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Кандидати музики з Mixkit (Mixkit License, безкоштовно, комерційно) → public/assets/music/_кандидати/NN-жанр-назва.mp3
+// Кандидати музики з Mixkit (Mixkit License, безкоштовно, комерційно) → public/assets/music/NN-жанр-назва.mp3
 // + CATALOG.md (походження) + out/_музика/index.html (переслухати підряд). Уже скачані файли пропускає.
 //   node scripts/fetch-music.mjs
 import fs from 'node:fs';
@@ -34,7 +34,7 @@ const TRACKS = [
 	['1147', 'Midnight Funk', 'Michael Ramir C.', 'funk', 'Funk', '1:47'], ['1167', 'Close Up', 'Michael Ramir C.', 'pop', 'Corporate Music', '1:35'],
 	['729', 'Pop Track 03', 'Lily J', 'pop', 'Electronic', '1:37'],
 ];
-const DIR = 'public/assets/music/_кандидати';
+const DIR = 'public/assets/music';
 const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const file = ([id, t, , g], i) => `${String(i + 1).padStart(2, '0')}-${g}-${slug(t)}.mp3`;
 
@@ -49,13 +49,13 @@ for (const [i, tr] of TRACKS.entries()) {
 	await new Promise((r) => setTimeout(r, 400)); // ponytail: ввічлива пауза між запитами до CDN
 }
 
-const rows = TRACKS.map((tr, i) => `| ${i + 1} | ${tr[1]} | ${tr[2]} | ${tr[3]} | ${tr[4]} | ${tr[5]} | \`_кандидати/${file(tr, i)}\` | https://assets.mixkit.co/music/${tr[0]}/${tr[0]}.mp3 |`);
-fs.writeFileSync('public/assets/music/CATALOG.md', `# Музика: кандидати (Mixkit)
+const rows = TRACKS.map((tr, i) => `| ${i + 1} | ${tr[1]} | ${tr[2]} | ${tr[3]} | ${tr[4]} | ${tr[5]} | \`${file(tr, i)}\` | https://assets.mixkit.co/music/${tr[0]}/${tr[0]}.mp3 |`);
+fs.writeFileSync('public/assets/music/CATALOG.md', `# Музика (Mixkit)
 
 Завантажено 2026-10-11 скриптом \`scripts/fetch-music.mjs\`. Ліцензія: Mixkit License (безкоштовно, комерційне використання,
 без атрибуції; сторінки жанрів mixkit.co: «All audio tracks are completely free … under the Mixkit License»).
-Кандидати лежать у \`_кандидати/\` (не комітяться). Вадим переслухує \`out/_музика/index.html\` і називає номери —
-вибрані переходять у \`public/assets/music/\` (комітяться), рядок тут лишається з позначкою ✓.
+Усі треки прийняті й лежать у \`public/assets/music/\` (mp3 не комітяться: на новому ПК \`node scripts/fetch-music.mjs\`).
+Не сподобався трек після рендеру — видаляй файл і рядок тут.
 
 | № | Трек | Автор | Група | Жанр Mixkit | Тривалість | Файл | Джерело |
 |---|---|---|---|---|---|---|---|
@@ -73,7 +73,7 @@ h1{font-size:28px}.g{color:#C3FF55;font:600 13px monospace;letter-spacing:2px;te
 .t{display:grid;grid-template-columns:44px 1fr 330px;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid #ffffff14}
 .n{font:700 22px monospace;color:#C3FF55}.m{color:#8A97A3;font-size:13px}audio{width:330px}</style>
 <h1>Музика: ${TRACKS.length} кандидатів</h1><p class="m">Відтворення наступного треку починається саме. Напиши в чат номери, які залишити.</p>
-${groups.map((g) => `<div class="g">${g}</div>` + TRACKS.map((tr, i) => tr[3] !== g ? '' : `<div class="t"><span class="n">${i + 1}</span><span>${esc(tr[1])} <span class="m">· ${esc(tr[2])} · ${esc(tr[4])} · ${tr[5]}${bpm(tr, i)}</span></span><audio controls preload="none" src="../../public/assets/music/_кандидати/${file(tr, i)}"></audio></div>`).join('')).join('\n')}
+${groups.map((g) => `<div class="g">${g}</div>` + TRACKS.map((tr, i) => tr[3] !== g ? '' : `<div class="t"><span class="n">${i + 1}</span><span>${esc(tr[1])} <span class="m">· ${esc(tr[2])} · ${esc(tr[4])} · ${tr[5]}${bpm(tr, i)}</span></span><audio controls preload="none" src="../../public/assets/music/${file(tr, i)}"></audio></div>`).join('')).join('\n')}
 <script>const a=[...document.querySelectorAll('audio')];a.forEach((x,i)=>{x.addEventListener('play',()=>a.forEach(y=>y!==x&&y.pause()));x.addEventListener('ended',()=>a[i+1]?.play())})</script>
 `);
 console.log(`каталог: public/assets/music/CATALOG.md, сторінка: out/_музика/index.html`);

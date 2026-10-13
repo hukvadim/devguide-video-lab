@@ -48,10 +48,10 @@ const Scenes = (t: number) => {
 };
 
 const SFX: Cue[] = [
-	[0, 'whoosh-swirl.mp3', 0.35],
-	[a('Перший'), 'soft-pop.wav', 0.4], [a('Другий'), 'soft-pop.wav', 0.4], [a('Третій'), 'soft-pop.wav', 0.4],
-	[a('меню'), 'switch-tap.mp3', 0.35], [a('Open'), 'lock-digital.mp3', 0.3],
-	[a('Перевірка'), 'shimmer-sparkle-sweep.mp3', 0.3],
+	[0, 'whoosh/whoosh-cinematic-376875.mp3', 0.35],
+	[a('Перший'), 'pop/soft-pop.wav', 0.4], [a('Другий'), 'pop/soft-pop.wav', 0.4], [a('Третій'), 'pop/soft-pop.wav', 0.4],
+	[a('меню'), 'click/switch-tap.mp3', 0.35], [a('Open'), 'click/lock-digital.mp3', 0.3],
+	[a('Перевірка'), 'sparkle/shimmer-sparkle-sweep.mp3', 0.3],
 ];
 
 export const Idea007: React.FC = () => <StepVideo dir="ideas/idea-007" words={WORDS} next="Встанови Claude Code" sfx={SFX} scenes={Scenes} />;

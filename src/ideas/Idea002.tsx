@@ -256,14 +256,14 @@ const Scenes: React.FC<{t: number}> = ({t}) => {
 };
 
 const SFX: [number, string, number, number?][] = [
-	[0, 'whoosh-swirl.mp3', 0.35],
-	[7.4, 'typewriter-hit-soft.mp3', 0.25], [10.2, 'soft-pop.wav', 0.4], [11.6, 'soft-pop.wav', 0.4],
-	[14.2, 'switch-tap.mp3', 0.4], [16.9, 'shimmer-sparkle-sweep.mp3', 0.3],
-	[21.6, 'soft-pop.wav', 0.4], [23.0, 'soft-pop.wav', 0.4], [24.6, 'lock-digital.mp3', 0.35],
-	...PROMPTS.map(([, a]): [number, string, number] => [a, 'typewriter-hit-soft.mp3', 0.22]),
-	[42.7, 'switch-tap.mp3', 0.4], [44.8, 'switch-tap.mp3', 0.4],
-	[45.9, 'warp-slide.mp3', 0.2], [55.0, 'typewriter-hit-soft.mp3', 0.25], [57.8, 'soft-pop.wav', 0.5],
-	[58.1, 'impact-movie-epic.mp3', 0.45],
+	[0, 'whoosh/whoosh-cinematic-376875.mp3', 0.35],
+	[7.4, 'typing/typewriter-hit-soft.mp3', 0.25], [10.2, 'pop/soft-pop.wav', 0.4], [11.6, 'pop/soft-pop.wav', 0.4],
+	[14.2, 'click/switch-tap.mp3', 0.4], [16.9, 'sparkle/shimmer-sparkle-sweep.mp3', 0.3],
+	[21.6, 'pop/soft-pop.wav', 0.4], [23.0, 'pop/soft-pop.wav', 0.4], [24.6, 'click/lock-digital.mp3', 0.35],
+	...PROMPTS.map(([, a]): [number, string, number] => [a, 'typing/typewriter-hit-soft.mp3', 0.22]),
+	[42.7, 'click/switch-tap.mp3', 0.4], [44.8, 'click/switch-tap.mp3', 0.4],
+	[45.9, 'whoosh/whoosh-effect-382717.mp3', 0.2], [55.0, 'typing/typewriter-hit-soft.mp3', 0.25], [57.8, 'pop/soft-pop.wav', 0.5],
+	[58.1, 'impact/impact-movie-epic.mp3', 0.45],
 ];
 const MUSIC = `${DIR}/music/hazy-after-hours.mp3`;
 const musicVol = (f: number, end = VOICE_END, total = TOTAL) => interpolate(f, [0, 30, S(end), S(end) + 15, S(total - 1.5), S(total)], [0, 0.085, 0.085, 0.2, 0.2, 0], clamp);
@@ -341,7 +341,7 @@ export const Idea002Short: React.FC = () => {
 				))}
 				<Audio src={staticFile(MUSIC)} volume={(q) => musicVol(q, voiceEnd, total)} />
 				{SFX.filter(([at]) => inSeg(at)).map(([at, src, vol, dur], i) => <Sfx key={i} at={S(toOut(at))} src={src} vol={vol} dur={dur ? S(dur) : 90} />)}
-				<Sfx at={S(m[1].o) - 2} src="transition-snap.mp3" vol={0.25} dur={20} />
+				<Sfx at={S(m[1].o) - 2} src="whoosh/transition-snap.mp3" vol={0.25} dur={20} />
 				<Scenes t={t} />
 				{tOut < voiceEnd + 0.5 ? <Captions t={tOut} chunks={chunks} /> : null}
 			</Stage>

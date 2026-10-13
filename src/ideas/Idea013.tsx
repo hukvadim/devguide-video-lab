@@ -70,11 +70,11 @@ export const Scenes = (t: number) => {
 };
 
 export const SFX: Cue[] = [
-	[0.8, 'stomp-apocalyptic.mp3', 0.2], [a('Чотири'), 'impact-cine-big.mp3', 0.3],
-	[a('Esc'), 'switch-tap.mp3', 0.45], [a('відкоти'), 'typewriter-hit-soft.mp3', 0.22], [a('Сторінка'), 'whoosh-fast.mp3', 0.25],
-	[a('Що', a('Третій')), 'typewriter-hit-soft.mp3', 0.2], [a('колу'), 'warp-slide.mp3', 0.2],
-	[a('Попроси', a('Четвертий')), 'soft-pop.wav', 0.35], [a('команда', a('Четвертий')), 'transition-snap.mp3', 0.3],
-	[a('Поки'), 'shimmer-sparkle-sweep.mp3', 0.3],
+	[0.8, 'impact/stomp-apocalyptic.mp3', 0.2], [a('Чотири'), 'impact/impact-cine-big.mp3', 0.3],
+	[a('Esc'), 'click/switch-tap.mp3', 0.45], [a('відкоти'), 'typing/typewriter-hit-soft.mp3', 0.22], [a('Сторінка'), 'whoosh/whoosh-fast.mp3', 0.25],
+	[a('Що', a('Третій')), 'typing/typewriter-hit-soft.mp3', 0.2], [a('колу'), 'whoosh/whoosh-effect-382717.mp3', 0.2],
+	[a('Попроси', a('Четвертий')), 'pop/soft-pop.wav', 0.35], [a('команда', a('Четвертий')), 'whoosh/transition-snap.mp3', 0.3],
+	[a('Поки'), 'sparkle/shimmer-sparkle-sweep.mp3', 0.3],
 ];
 
 export const Idea013: React.FC = () => <StepVideo dir="ideas/idea-013" words={WORDS} next="Безпечно з AI" sfx={SFX} scenes={Scenes} />;

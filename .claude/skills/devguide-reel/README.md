@@ -1,6 +1,6 @@
-# edit-video — скіл Claude Code для монтажу Reels / TikTok / Shorts
+# devguide-reel — скіл Claude Code для монтажу Reels / TikTok / Shorts у стилі DevGuide
 
-Кладете сире відео «говорю в камеру» в папку, пишете Claude `/edit-video VID.mp4` і отримуєте готовий
+Кладете сире відео «говорю в камеру» в папку, пишете Claude `/devguide-reel VID.mp4` і отримуєте готовий
 вертикальний ролик 1080×1920:
 
 - вирізані паузи, «еее», дублі; наближення на склейках ховає джамп-кати;
@@ -15,28 +15,25 @@
 **Два формати запису:**
 1. **Говорюща голова** — одне відео.
 2. **Екран + голова + окремий мікрофон** (`… Head.mp4`, `… Screen.mp4`, `… Sound.wav` в одній папці) →
-   `/edit-video <папка>`. Скіл сам синхронізує файли за звуком і складає спліт: екран зверху з наближенням на
+   `/devguide-reel <папка>`. Скіл сам синхронізує файли за звуком і складає спліт: екран зверху з наближенням на
    потрібну ділянку, ви знизу, звук із мікрофона.
 
 Як має виглядати ролик (структура, темп, стиль, звук, чекліст), описано в [docs/TZ-video.md](docs/TZ-video.md).
 
 ## Встановлення
 
-Потрібні [Claude Code](https://claude.com/claude-code) і git. Решту скіл поставить сам при першому запуску.
-
-**Windows (PowerShell):**
-```powershell
-git clone https://github.com/hukvadim/edit-video-skill "$env:USERPROFILE\.claude\skills\edit-video"
-```
-
-**macOS:**
+Скіл живе в репо DevGuide Video Lab (`.claude/skills/devguide-reel/`), окремо його ставити не треба.
+Потрібні [Claude Code](https://claude.com/claude-code), git і Node.js 22/24 LTS. Повна інструкція — `docs/STUDENT_SETUP_UA.md` у корені репо:
 ```bash
-git clone https://github.com/hukvadim/edit-video-skill ~/.claude/skills/edit-video
+git clone git@github.com:hukvadim/devguide-video-lab.git
+cd devguide-video-lab
+npm install
+npm run bootstrap
 ```
 
 Відкрийте Claude Code у папці з відео й напишіть:
 ```
-/edit-video VID_20260608_165802.mp4
+/devguide-reel VID_20260608_165802.mp4
 ```
 
 ### Що встановлюється при першому запуску (`scripts/setup.mjs`)
@@ -52,8 +49,8 @@ git clone https://github.com/hukvadim/edit-video-skill ~/.claude/skills/edit-vid
 
 Перевірити або доставити вручну:
 ```
-node ~/.claude/skills/edit-video/scripts/setup.mjs          # перевірити й встановити відсутнє
-node ~/.claude/skills/edit-video/scripts/setup.mjs --check  # лише звіт
+node .claude/skills/devguide-reel/scripts/setup.mjs          # перевірити й встановити відсутнє
+node .claude/skills/devguide-reel/scripts/setup.mjs --check  # лише звіт
 ```
 На Windows зі старим Visual C++ Runtime setup сам підкладе новіші DLL для onnxruntime (система не змінюється),
 а якщо це не допоможе — поставить VC++ Redistributable (з'явиться вікно UAC).

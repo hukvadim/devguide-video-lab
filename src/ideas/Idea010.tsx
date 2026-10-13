@@ -65,12 +65,12 @@ const Scenes = (t: number) => {
 };
 
 const SFX: Cue[] = [
-	[0.5, 'typewriter-hit-soft.mp3', 0.18], [1.8, 'typewriter-hit-soft.mp3', 0.18], [3.1, 'typewriter-hit-soft.mp3', 0.18],
-	[a('Для'), 'whoosh-fast.mp3', 0.25], [a('Це'), 'soft-pop.wav', 0.4],
-	[a('/init') - 0.4, 'typewriter-hit-soft.mp3', 0.22], [a('подивиться'), 'lock-digital.mp3', 0.3],
-	[a('Встав'), 'typewriter-hit-soft.mp3', 0.22],
-	[a('Оплата'), 'lock-digital.mp3', 0.2], [a('.env'), 'lock-digital.mp3', 0.2], [a('міграції'), 'lock-digital.mp3', 0.2],
-	[a('запитай'), 'soft-pop.wav', 0.35], [a('називає'), 'shimmer-sparkle-sweep.mp3', 0.3],
+	[0.5, 'typing/typewriter-hit-soft.mp3', 0.18], [1.8, 'typing/typewriter-hit-soft.mp3', 0.18], [3.1, 'typing/typewriter-hit-soft.mp3', 0.18],
+	[a('Для'), 'whoosh/whoosh-fast.mp3', 0.25], [a('Це'), 'pop/soft-pop.wav', 0.4],
+	[a('/init') - 0.4, 'typing/typewriter-hit-soft.mp3', 0.22], [a('подивиться'), 'click/lock-digital.mp3', 0.3],
+	[a('Встав'), 'typing/typewriter-hit-soft.mp3', 0.22],
+	[a('Оплата'), 'click/lock-digital.mp3', 0.2], [a('.env'), 'click/lock-digital.mp3', 0.2], [a('міграції'), 'click/lock-digital.mp3', 0.2],
+	[a('запитай'), 'pop/soft-pop.wav', 0.35], [a('називає'), 'sparkle/shimmer-sparkle-sweep.mp3', 0.3],
 ];
 
 export const Idea010: React.FC = () => <StepVideo dir="ideas/idea-010" words={WORDS} next="Git як страховка" sfx={SFX} scenes={Scenes} />;

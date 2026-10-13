@@ -1,12 +1,12 @@
 ---
 name: devguide-reel
-description: Монтаж відео DevGuide у бренд-стилі (графіт + лайм, Unbounded/Inter) — talking-head або «екран + камера + мікрофон» (сам синхронізує, складає спліт) → 9:16 для Instagram Reels і відео кроків шляху навчання devguide.com.ua. Вирізає паузи й дублі, звук −14 LUFS, кінетичний текст і субтитри Remotion, епічне інтро з ударом, end card DevGuide або Instagram-CTA «напиши СЛОВО в коментарях», картки-роботи за спиною спікера (маска RVM), стокові вставки, музика з дропом. Формати F1–F7 з контент-стратегії. Використовуй для будь-якого відео DevGuide / рілса для Вадима, або /devguide-reel <файл|папка>. DevGuide-branded vertical video editing pipeline.
+description: Монтаж відео DevGuide у бренд-стилі (графіт + лайм, Unbounded/Inter) — talking-head або «екран + камера + мікрофон» (сам синхронізує, складає спліт) → 9:16 для Instagram Reels і відео кроків шляху навчання devguide.com.ua. Вирізає паузи й дублі, звук −14 LUFS, кінетичний текст і субтитри Remotion, епічне інтро з ударом, end card DevGuide або Instagram-CTA «напиши СЛОВО в коментарях», картки-роботи за спиною спікера (маска RVM), стокові вставки, музика з дропом. Формати F1–F7 з контент-стратегії. Використовуй для будь-якого відео DevGuide / рілса автора, або /devguide-reel <файл|папка>. DevGuide-branded vertical video editing pipeline.
 ---
 
 # devguide-reel — конвеєр монтажу відео DevGuide
 
 Форк `edit-video` під бренд DevGuide. Джерело правди: `.claude/skills/devguide-reel/` у репо DevGuide_Video_Lab
-(приватний GitHub `hukvadim/devguide-video-lab`). Змінюєш скіл — коміть туди.
+(приватний GitHub `hukvadim/devguide-video-lab`). Змінюєш скіл — коміть туди, якщо це репо автора; учень правки лишає в себе.
 **Перед кроком 2 спитай формат (F1–F7) і, для Instagram, слово-CTA.** Пресети: `SKILL_DIR/docs/FORMATS.md`,
 стратегія: `docs/CONTENT_STRATEGY.md`, теми: `docs/CONTENT_BACKLOG.md` у корені проєкту.
 
@@ -86,7 +86,7 @@ node "SKILL_DIR/scripts/vid.mjs" preview <проєкт>/work/<назва>/edit.j
 ```
 node "SKILL_DIR/scripts/vid.mjs" render <проєкт>/work/<назва>/edit.json
 ```
-Вийде `<проєкт>/out/<назва>_final.mp4` (1080×1920, H.264 + AAC). Скрипт друкує LUFS і true peak (ціль ≈ −14, пік ≤ −1).
+Вийде `<проєкт>/out/<назва>_reel.mp4` (1080×1920, H.264 + AAC). Скрипт друкує LUFS і true peak (ціль ≈ −14, пік ≤ −1).
 Перевір ffprobe-ом формат і тривалість, витягни 3–4 кадри. Нагадай користувачу послухати ролик:
 звук перевірено лише вимірами.
 

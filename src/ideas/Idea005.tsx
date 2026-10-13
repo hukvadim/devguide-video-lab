@@ -42,10 +42,10 @@ const Scenes = (t: number) => {
 };
 
 const SFX: Cue[] = [
-	[0, 'whoosh-swirl.mp3', 0.35],
-	[a('Free'), 'switch-tap.mp3', 0.35], [a('Pro'), 'sparkle-touch.mp3', 0.35], [a('Max'), 'switch-tap.mp3', 0.35],
-	[a('Тож'), 'soft-pop.wav', 0.4], [a('Актуальні'), 'typewriter-hit-soft.mp3', 0.22],
-	[a('Перевір'), 'lock-digital.mp3', 0.3],
+	[0, 'whoosh/whoosh-cinematic-376875.mp3', 0.35],
+	[a('Free'), 'click/switch-tap.mp3', 0.35], [a('Pro'), 'sparkle/sparkle-touch.mp3', 0.35], [a('Max'), 'click/switch-tap.mp3', 0.35],
+	[a('Тож'), 'pop/soft-pop.wav', 0.4], [a('Актуальні'), 'typing/typewriter-hit-soft.mp3', 0.22],
+	[a('Перевір'), 'click/lock-digital.mp3', 0.3],
 ];
 
 export const Idea005: React.FC = () => <StepVideo dir="ideas/idea-005" words={WORDS} next="Перше питання до AI" sfx={SFX} scenes={Scenes} />;

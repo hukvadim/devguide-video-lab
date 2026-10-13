@@ -17,7 +17,7 @@
     "tts": "node scripts/tts.mjs",
     "out:index": "node scripts/out-index.mjs",
     "clean": "node scripts/clean.mjs",
-    "bootstrap": "npm run setup:skills && node .claude/skills/devguide-reel/scripts/setup.mjs && npm run check"
+    "bootstrap": "npm run setup:skills && node .claude/skills/devguide-reel/scripts/setup.mjs && node scripts/fetch-music.mjs && npm run check"
   },
   "dependencies": {
     "@fontsource/caveat": "5.3.0",

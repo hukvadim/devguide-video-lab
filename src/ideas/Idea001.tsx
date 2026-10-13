@@ -390,18 +390,18 @@ const Scenes: React.FC<{t: number}> = ({t}) => {
 
 // ---------- звук (секунди голосу) ----------
 const SFX: [number, string, number, number?][] = [
-	[0, 'whoosh-swirl.mp3', 0.35], [9.4, 'soft-pop.wav', 0.5],
-	[12.1, 'typewriter-digital.mp3', 0.18, 2.8],
-	[19.58, 'switch-tap.mp3', 0.45], [20.64, 'switch-tap.mp3', 0.45], [21.76, 'switch-tap.mp3', 0.45],
-	...LIST.map(([, at]): [number, string, number] => [at, 'soft-pop.wav', 0.25]),
-	[32.71, 'bass-hit-futuristic.mp3', 0.4], [37.8, 'transition-snap.mp3', 0.35],
-	[40.3, 'typewriter-digital.mp3', 0.15, 10.2],
-	[50.75, 'shimmer-sparkle-sweep.mp3', 0.35], [53.4, 'whoosh-fast.mp3', 0.3],
-	...ROUTE.map(([, at]): [number, string, number] => [at, 'soft-pop.wav', 0.35]),
-	[66.3, 'transition-snap.mp3', 0.35], [70.45, 'impact-cine-big.mp3', 0.45], [71.7, 'soft-pop.wav', 0.5], [72.95, 'soft-pop.wav', 0.5],
-	[80.5, 'whoosh-fast.mp3', 0.3], [83.5, 'whoosh-fast.mp3', 0.35],
-	[91.3, 'warp-slide.mp3', 0.35], [95.9, 'whoosh-swirl.mp3', 0.3], [98.6, 'lock-digital.mp3', 0.45],
-	[103.4, 'impact-movie-epic.mp3', 0.45],
+	[0, 'whoosh/whoosh-cinematic-376875.mp3', 0.35], [9.4, 'pop/soft-pop.wav', 0.5],
+	[12.1, 'typing/typewriter-digital.mp3', 0.18, 2.8],
+	[19.58, 'click/switch-tap.mp3', 0.45], [20.64, 'click/switch-tap.mp3', 0.45], [21.76, 'click/switch-tap.mp3', 0.45],
+	...LIST.map(([, at]): [number, string, number] => [at, 'pop/soft-pop.wav', 0.25]),
+	[32.71, 'impact/bass-hit-futuristic.mp3', 0.4], [37.8, 'whoosh/transition-snap.mp3', 0.35],
+	[40.3, 'typing/typewriter-digital.mp3', 0.15, 10.2],
+	[50.75, 'sparkle/shimmer-sparkle-sweep.mp3', 0.35], [53.4, 'whoosh/whoosh-fast.mp3', 0.3],
+	...ROUTE.map(([, at]): [number, string, number] => [at, 'pop/soft-pop.wav', 0.35]),
+	[66.3, 'whoosh/transition-snap.mp3', 0.35], [70.45, 'impact/impact-cine-big.mp3', 0.45], [71.7, 'pop/soft-pop.wav', 0.5], [72.95, 'pop/soft-pop.wav', 0.5],
+	[80.5, 'whoosh/whoosh-fast.mp3', 0.3], [83.5, 'whoosh/whoosh-fast.mp3', 0.35],
+	[91.3, 'whoosh/whoosh-effect-382717.mp3', 0.35], [95.9, 'whoosh/whoosh-cinematic-376875.mp3', 0.3], [98.6, 'click/lock-digital.mp3', 0.45],
+	[103.4, 'impact/impact-movie-epic.mp3', 0.45],
 ];
 const MUSIC = `${DIR}/music/hazy-after-hours.mp3`;
 // музика тихо під голосом, гучніше на хвості без голосу
@@ -473,7 +473,7 @@ export const Idea001Short: React.FC<{n: string}> = ({n}) => {
 				))}
 				<Audio src={staticFile(MUSIC)} volume={(x) => musicVol(x, voiceEnd, total)} />
 				{SFX.filter(([at]) => inSeg(at)).map(([at, src, vol, dur], i) => <Sfx key={i} at={S(toOut(at))} src={src} vol={vol} dur={dur ? S(dur) : 90} />)}
-				{m.slice(1).map((s, i) => <Sfx key={`cut${i}`} at={S(s.o) - 2} src="transition-snap.mp3" vol={0.25} dur={20} />)}
+				{m.slice(1).map((s, i) => <Sfx key={`cut${i}`} at={S(s.o) - 2} src="whoosh/transition-snap.mp3" vol={0.25} dur={20} />)}
 				<AbsoluteFill style={{transform: `scale(${1 + punch * 0.04})`}}>
 					<Scenes t={t} />
 				</AbsoluteFill>

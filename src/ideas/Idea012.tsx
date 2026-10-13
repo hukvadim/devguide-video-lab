@@ -68,11 +68,11 @@ export const Scenes = (t: number) => {
 };
 
 export const SFX: Cue[] = [
-	[0.2, 'warp-slide.mp3', 0.2], [a('переписує'), 'bass-hit-futuristic.mp3', 0.2],
-	[a('Для'), 'whoosh-swirl.mp3', 0.3], [a('Shift'), 'switch-tap.mp3', 0.4], [a('Shift') + 0.25, 'switch-tap.mp3', 0.4],
-	[a('нічого'), 'lock-digital.mp3', 0.3], [a('Наприклад'), 'typewriter-hit-soft.mp3', 0.22],
-	[a('Прочитай'), 'soft-pop.wav', 0.35], [a('подобається'), 'switch-tap.mp3', 0.3], [a('Усе'), 'soft-pop.wav', 0.4],
-	[a('Тільки'), 'lock-digital.mp3', 0.3], [a('Правило'), 'shimmer-sparkle-sweep.mp3', 0.3],
+	[0.2, 'whoosh/whoosh-effect-382717.mp3', 0.2], [a('переписує'), 'impact/bass-hit-futuristic.mp3', 0.2],
+	[a('Для'), 'whoosh/whoosh-cinematic-376875.mp3', 0.3], [a('Shift'), 'click/switch-tap.mp3', 0.4], [a('Shift') + 0.25, 'click/switch-tap.mp3', 0.4],
+	[a('нічого'), 'click/lock-digital.mp3', 0.3], [a('Наприклад'), 'typing/typewriter-hit-soft.mp3', 0.22],
+	[a('Прочитай'), 'pop/soft-pop.wav', 0.35], [a('подобається'), 'click/switch-tap.mp3', 0.3], [a('Усе'), 'pop/soft-pop.wav', 0.4],
+	[a('Тільки'), 'click/lock-digital.mp3', 0.3], [a('Правило'), 'sparkle/shimmer-sparkle-sweep.mp3', 0.3],
 ];
 
 export const Idea012: React.FC = () => <StepVideo dir="ideas/idea-012" words={WORDS} next="AI зламав — що робити" sfx={SFX} scenes={Scenes} />;

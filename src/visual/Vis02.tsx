@@ -45,14 +45,14 @@ const Fan: React.FC<{t: number; a: number}> = ({t, a}) => (
 
 const CARDS: Card[] = [
 	{beats: nb(3.2), el: (t, a) => <Intro t={t} a={a} kicker="Проєкт для портфоліо" l1="Кінотеатр:" l2="MVP за 5 екранів" size={100} sub="збережи як ТЗ для себе" />},
-	...NAMES.map((name, i): Card => ({beats: nb(5.4), sfx: i ? 'whoosh-fast.mp3' : undefined, vol: 0.18, el: (t, a) => (
+	...NAMES.map((name, i): Card => ({beats: nb(5.4), sfx: i ? 'whoosh/whoosh-fast.mp3' : undefined, vol: 0.18, el: (t, a) => (
 		<>
 			<CardHead t={t} a={a} n={`ЕКРАН ${i + 1}/5`} title={name} y={180} size={88} />
 			<Swipe t={t} a={a} i={i} />
 		</>
 	)})),
 	{beats: nb(4.4), el: (t, a) => <Fan t={t} a={a} />},
-	{beats: nb(5.5), sfx: 'impact-movie-epic.mp3', vol: 0.3, off: 0.2, el: (t, a) => <Outro t={t} a={a} ask={<>Який проєкт розкласти<br /><L>наступним?</L> Пиши в коментарях</>} />},
+	{beats: nb(5.5), sfx: 'impact/impact-movie-epic.mp3', vol: 0.3, off: 0.2, el: (t, a) => <Outro t={t} a={a} ask={<>Який проєкт розкласти<br /><L>наступним?</L> Пиши в коментарях</>} />},
 ];
 export const Vis02: React.FC = () => <BeatVideo theme="neon" track={TRACK} cards={CARDS} />;
 export const VIS02_FRAMES = beatFrames(TRACK, CARDS);

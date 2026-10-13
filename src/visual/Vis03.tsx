@@ -78,7 +78,7 @@ const PairCard: React.FC<{t: number; a: number; i: number}> = ({t, a, i}) => {
 const CARDS: Card[] = [
 	{beats: nb(3.2), el: (t, a) => <Intro t={t} a={a} kicker="Дизайн для проєкту" l1="Колір + шрифт:" l2="5 готових пар" size={100} sub="бери для свого сайту" />},
 	...PAIRS.map((_, i): Card => ({beats: nb(6), el: (t, a) => <PairCard t={t} a={a} i={i} />})),
-	{beats: nb(5.5), sfx: 'impact-movie-epic.mp3', vol: 0.3, off: 0.2, el: (t, a) => <Outro t={t} a={a} ask={<>Яка пара твоя?<br /><L>Напиши номер у коментарях</L></>} />},
+	{beats: nb(5.5), sfx: 'impact/impact-movie-epic.mp3', vol: 0.3, off: 0.2, el: (t, a) => <Outro t={t} a={a} ask={<>Яка пара твоя?<br /><L>Напиши номер у коментарях</L></>} />},
 ];
 export const Vis03: React.FC = () => <BeatVideo theme="drop07" track={TRACK} cards={CARDS} />;
 export const VIS03_FRAMES = beatFrames(TRACK, CARDS);

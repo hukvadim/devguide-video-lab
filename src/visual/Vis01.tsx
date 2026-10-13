@@ -156,7 +156,7 @@ const CARDS: Card[] = [
 			<Skills t={t} a={a} y={1500} items={skills} />
 		</>
 	)})),
-	{beats: nb(5.5), sfx: 'impact-movie-epic.mp3', vol: 0.3, off: 0.2, el: (t, a) => <Outro t={t} a={a} ask={<>Який зробиш першим?<br /><L>Напиши номер у коментарях</L></>} />},
+	{beats: nb(5.5), sfx: 'impact/impact-movie-epic.mp3', vol: 0.3, off: 0.2, el: (t, a) => <Outro t={t} a={a} ask={<>Який зробиш першим?<br /><L>Напиши номер у коментарях</L></>} />},
 ];
 export const Vis01: React.FC = () => <BeatVideo theme="drop02" track={TRACK} cards={CARDS} />;
 export const VIS01_FRAMES = beatFrames(TRACK, CARDS);

@@ -80,10 +80,10 @@ const Scenes = (t: number) => {
 };
 
 const SFX: Cue[] = [
-	[0, 'whoosh-swirl.mp3', 0.35], [a('ніколи'), 'bass-hit-futuristic.mp3', 0.3],
-	[a('знеособлені'), 'typewriter-hit-soft.mp3', 0.22], [a('телефонів'), 'typewriter-hit-soft.mp3', 0.18], [a('адрес'), 'typewriter-hit-soft.mp3', 0.18],
-	[a('потрібних'), 'lock-digital.mp3', 0.3], [a('прихований'), 'warp-slide.mp3', 0.2],
-	[a('Є', a('Перед')), 'typewriter-hit-soft.mp3', 0.22], [a('Далі'), 'shimmer-sparkle-sweep.mp3', 0.3],
+	[0, 'whoosh/whoosh-cinematic-376875.mp3', 0.35], [a('ніколи'), 'impact/bass-hit-futuristic.mp3', 0.3],
+	[a('знеособлені'), 'typing/typewriter-hit-soft.mp3', 0.22], [a('телефонів'), 'typing/typewriter-hit-soft.mp3', 0.18], [a('адрес'), 'typing/typewriter-hit-soft.mp3', 0.18],
+	[a('потрібних'), 'click/lock-digital.mp3', 0.3], [a('прихований'), 'whoosh/whoosh-effect-382717.mp3', 0.2],
+	[a('Є', a('Перед')), 'typing/typewriter-hit-soft.mp3', 0.22], [a('Далі'), 'sparkle/shimmer-sparkle-sweep.mp3', 0.3],
 ];
 
 export const Idea014: React.FC = () => <StepVideo dir="ideas/idea-014" words={WORDS} next="Skills і MCP" sfx={SFX} scenes={Scenes} />;

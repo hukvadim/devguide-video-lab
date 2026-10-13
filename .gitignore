@@ -15,6 +15,12 @@ out/
 !.claude/skills/devguide-*/
 /ElevenLabs_*.mp3
 
-# кандидати музики й звуків (переслуховування; вибрані переносимо поруч і комітимо)
-public/assets/music/_кандидати/
-public/assets/audio/_кандидати/
+# музика Mixkit (188 МБ): не в git, на новому ПК node scripts/fetch-music.mjs
+public/assets/music/*.mp3
+!public/assets/music/cat-walk.mp3
+
+# логи Playwright MCP
+.playwright-mcp/
+
+# записи для клону голосу (130 МБ, приватне)
+/voice_clone_mp3/

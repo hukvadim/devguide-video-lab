@@ -8,12 +8,12 @@ import {spawnSync} from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 
-const BEATS = JSON.parse(fs.readFileSync('public/assets/music/_кандидати/beats.json', 'utf8'));
+const BEATS = JSON.parse(fs.readFileSync('public/assets/music/beats.json', 'utf8'));
 const DAY5 = '5/epic', FIN = 'Сирий матеріал';
 const base = (p) => JSON.parse(fs.readFileSync(path.join(p, 'edit.json'), 'utf8'));
 const day5 = base(`${DAY5}/work/day5-epic`), fin = base(`${FIN}/work/Finish`);
 // трек з кандидатів; drop — секунда треку на удар інтро (або старт без інтро): перший біт + 8 тактів
-const music = (project, file, volume, bars = 8) => ({file: path.relative(project, `public/assets/music/_кандидати/${file}`).replaceAll('\\', '/'),
+const music = (project, file, volume, bars = 8) => ({file: path.relative(project, `public/assets/music/${file}`).replaceAll('\\', '/'),
 	drop: +(BEATS[file].offset + (bars * 4 * 60) / BEATS[file].bpm).toFixed(3), volume});
 // UGC з Flow: найкращий шматок кліпу (як UGC у src/system/ugc.tsx); шляхи відносно проєкту «Сирий матеріал»
 const UGC_FROM = {Stop: 1.8, facepalm: 1.4, 'point-up': 2.6, smile: 5.0, typing: 0.3, wow: 1.8};

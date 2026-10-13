@@ -55,10 +55,10 @@ const Scenes = (t: number) => {
 };
 
 const SFX: Cue[] = [
-	[0, 'whoosh-swirl.mp3', 0.35],
-	[a('Щоразу'), 'switch-tap.mp3', 0.25], [a('вкладку'), 'switch-tap.mp3', 0.25],
-	[a('завантаження'), 'typewriter-hit-soft.mp3', 0.22], [a('Завантаж', 10), 'soft-pop.wav', 0.4], [a('програму'), 'lock-digital.mp3', 0.3],
-	[a('поруч'), 'whoosh-fast.mp3', 0.25], [a('Без'), 'shimmer-sparkle-sweep.mp3', 0.3],
+	[0, 'whoosh/whoosh-cinematic-376875.mp3', 0.35],
+	[a('Щоразу'), 'click/switch-tap.mp3', 0.25], [a('вкладку'), 'click/switch-tap.mp3', 0.25],
+	[a('завантаження'), 'typing/typewriter-hit-soft.mp3', 0.22], [a('Завантаж', 10), 'pop/soft-pop.wav', 0.4], [a('програму'), 'click/lock-digital.mp3', 0.3],
+	[a('поруч'), 'whoosh/whoosh-fast.mp3', 0.25], [a('Без'), 'sparkle/shimmer-sparkle-sweep.mp3', 0.3],
 ];
 
 export const Idea006: React.FC = () => <StepVideo dir="ideas/idea-006" words={WORDS} next="Встанови VS Code" sfx={SFX} scenes={Scenes} />;

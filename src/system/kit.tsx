@@ -80,7 +80,7 @@ export const Sfx: React.FC<{at: number; src: string; vol?: number; dur?: number}
 /** Background music with fade in/out and optional ducking windows. */
 export const Bgm: React.FC<{offsetSec: number; total: number; vol?: number; fadeIn?: number; fadeOut?: number}> = ({offsetSec, total, vol = 0.32, fadeIn = 45, fadeOut = 75}) => (
 	<Audio
-		src={staticFile('assets/audio/cat-walk.mp3')}
+		src={staticFile('assets/music/cat-walk.mp3')}
 		trimBefore={Math.round(offsetSec * 30)}
 		volume={(f) => interpolate(f, [0, fadeIn, total - fadeOut, total], [0, vol, vol, 0], clamp)}
 	/>

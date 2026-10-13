@@ -3,11 +3,11 @@ import {AbsoluteFill, Audio, interpolate, staticFile, useCurrentFrame} from 'rem
 import {F, Sfx, Stage, clamp} from './kit';
 import {ThemeProvider, useTheme} from './theme';
 import {Big, PatternBg, S, pop} from './step';
-import BEATS from '../../public/assets/music/_кандидати/beats.json';
+import BEATS from '../../public/assets/music/beats.json';
 
 // Ролики без голосу в ритм музики (лаб. 15–20, 24; серія «Секретні коди» src/tips). Картка триває N бітів треку.
 // Музика поки з кандидатів (public/assets/music/_кандидати); після вибору Вадима шляхи міняються на public/assets/music/<файл>.
-export const M = (f: string) => `assets/music/_кандидати/${f}`;
+export const M = (f: string) => `assets/music/${f}`;
 export const beat = (f: string) => (BEATS as Record<string, {bpm: number; offset: number}>)[f];
 
 // off — зсув звуку картки від її початку, с (звук на подію всередині картки, а не на склейку)
@@ -31,7 +31,7 @@ export const BeatVideo: React.FC<{theme: string; track: string; cards: Card[]; v
 				<PatternBg t={t} />
 				<Audio src={staticFile(M(track))} trimBefore={S(offset)} volume={(f) => interpolate(f, [0, 6, S(end - 1.5), S(end)], [0, vol, vol, 0], clamp)} />
 				{/* звук лише там, де картка його явно просить (+ удар на старті); без whoosh на кожну склейку — повтор дратує */}
-				{spans.map(({c, a}, i) => (c.sfx || !i ? <Sfx key={i} at={S(a + (c.off ?? 0))} src={c.sfx ?? 'impact-cine-big.mp3'} vol={c.vol ?? 0.22} dur={45} /> : null))}
+				{spans.map(({c, a}, i) => (c.sfx || !i ? <Sfx key={i} at={S(a + (c.off ?? 0))} src={c.sfx ?? 'impact/impact-cine-big.mp3'} vol={c.vol ?? 0.22} dur={45} /> : null))}
 				{spans.filter(({a, z}) => t >= a && t < z).map(({c, a, z}, i) => (
 					<AbsoluteFill key={i}>{c.theme ? <ThemeProvider theme={c.theme}><Stage glow={[760, 420]}><PatternBg t={t} />{c.el(t, a, z)}</Stage></ThemeProvider> : c.el(t, a, z)}</AbsoluteFill>
 				))}

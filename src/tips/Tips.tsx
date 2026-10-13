@@ -279,9 +279,9 @@ const Cta: React.FC<{t: number; a: number}> = ({t, a}) => {
 // ---------- збирання відео з data/tips.json ----------
 const PER: Record<string, number> = {classic: 4.8, sheet: 4.6, beforeAfter: 5.6, phone: 5.6, deck: 4.8, terminal: 4.8, grid: 5, styles: 5.2, countdown: 4.8, combo: 3.8};
 const SFX: Record<string, Partial<Card>> = {
-	classic: {sfx: '_кандидати/37-typing-single-key-type.mp3', vol: 0.3, off: 0.5},
-	phone: {sfx: '_кандидати/32-notify-message-pop-alert.mp3', vol: 0.3},
-	deck: {sfx: 'whoosh-fast.mp3', vol: 0.22},
+	classic: {sfx: 'typing/typewriter-hit-soft.mp3', vol: 0.3, off: 0.5},
+	phone: {sfx: 'notify/ding-101492.mp3', vol: 0.3},
+	deck: {sfx: 'whoosh/whoosh-fast.mp3', vol: 0.22},
 };
 const LOOK: Record<string, React.FC<P>> = {classic: Classic, beforeAfter: BeforeAfter, phone: Phone, deck: Deck, terminal: Terminal, styles: Styles, countdown: Countdown, combo: Combo};
 
@@ -306,8 +306,8 @@ const build = (v: Video): {cards: Card[]; cover?: number} => {
 	const intro: Card = {beats: nb(3.2), el: (t, a) => <Intro t={t} a={a} v={v} />};
 	const extra: Card[] = v.look === 'sheet' ? [{beats: nb(3.6), el: (t, a) => <Sheet t={t} a={a} v={v} cur={n} />}]
 		: v.look === 'grid' ? [{beats: nb(3.2), el: (t, a) => <Grid t={t} a={a} v={v} cur={n} />}]
-		: v.look === 'combo' ? [{beats: nb(7), sfx: 'impact-movie-epic.mp3', vol: 0.3, el: (t, a) => <ComboResult t={t} a={a} v={v} />}] : [];
-	const outro: Card = {beats: nb(5.5), sfx: 'impact-movie-epic.mp3', vol: 0.3, off: 0.35, el: (t, a) => <Cta t={t} a={a} />};
+		: v.look === 'combo' ? [{beats: nb(7), sfx: 'impact/impact-movie-epic.mp3', vol: 0.3, el: (t, a) => <ComboResult t={t} a={a} v={v} />}] : [];
+	const outro: Card = {beats: nb(5.5), sfx: 'impact/impact-movie-epic.mp3', vol: 0.3, off: 0.35, el: (t, a) => <Cta t={t} a={a} />};
 	const cards = [intro, ...v.items.map((_, i) => item(i)), ...extra, outro];
 	// шпаргалка: обкладинка = вся таблиця (її й зберігають), решта — постер-інтро
 	const cover = v.look === 'sheet' ? sec(cards.slice(0, n + 1).reduce((s, c) => s + c.beats, 0)) + 1.5 : undefined;

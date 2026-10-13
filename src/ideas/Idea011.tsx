@@ -66,12 +66,12 @@ export const Scenes = (t: number) => {
 };
 
 export const SFX: Cue[] = [
-	[0.2, 'warp-slide.mp3', 0.2], [a('ламає'), 'bass-hit-futuristic.mp3', 0.3],
-	[a('коду'), 'sparkle-touch.mp3', 0.35], [a('Встав'), 'typewriter-hit-soft.mp3', 0.22],
-	[a('node_modules'), 'soft-pop.wav', 0.35], [a('.env'), 'soft-pop.wav', 0.35],
-	[a("з'являються"), 'soft-pop.wav', 0.3], [a('точки'), 'soft-pop.wav', 0.3], [a('можна'), 'soft-pop.wav', 0.3],
-	[a('Зміна'), 'bass-hit-futuristic.mp3', 0.2], [a('Одна'), 'typewriter-hit-soft.mp3', 0.22], [a('знову'), 'whoosh-fast.mp3', 0.25],
-	[a('Перевір'), 'shimmer-sparkle-sweep.mp3', 0.3],
+	[0.2, 'whoosh/whoosh-effect-382717.mp3', 0.2], [a('ламає'), 'impact/bass-hit-futuristic.mp3', 0.3],
+	[a('коду'), 'sparkle/sparkle-touch.mp3', 0.35], [a('Встав'), 'typing/typewriter-hit-soft.mp3', 0.22],
+	[a('node_modules'), 'pop/soft-pop.wav', 0.35], [a('.env'), 'pop/soft-pop.wav', 0.35],
+	[a("з'являються"), 'pop/soft-pop.wav', 0.3], [a('точки'), 'pop/soft-pop.wav', 0.3], [a('можна'), 'pop/soft-pop.wav', 0.3],
+	[a('Зміна'), 'impact/bass-hit-futuristic.mp3', 0.2], [a('Одна'), 'typing/typewriter-hit-soft.mp3', 0.22], [a('знову'), 'whoosh/whoosh-fast.mp3', 0.25],
+	[a('Перевір'), 'sparkle/shimmer-sparkle-sweep.mp3', 0.3],
 ];
 
 export const Idea011: React.FC = () => <StepVideo dir="ideas/idea-011" words={WORDS} next="Спершу план, потім код" sfx={SFX} scenes={Scenes} />;

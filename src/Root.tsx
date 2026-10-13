@@ -16,6 +16,7 @@ import {Idea013, IDEA_013} from './ideas/Idea013';
 import {Idea014, IDEA_014} from './ideas/Idea014';
 import {Idea015, IDEA_015} from './ideas/Idea015';
 import {Idea016, IDEA_016} from './ideas/Idea016';
+import {Sites01, SITES_01} from './ideas/Sites01';
 import {StepPreview} from './system/step';
 import {LAB, LAB_FRAMES} from './lab/Lab';
 import {TIPS_LIST} from './tips/Tips';
@@ -38,6 +39,10 @@ export const Root: React.FC = () => <>
  <Folder name="Shorts">
   <Composition id="Idea-002-Short1" component={Idea002Short} {...V} durationInFrames={SHORT_FRAMES}/>
  </Folder>
+</Folder>
+{/* шлях «Сайти»: Sites-NN = крок NN (C:/DevGuide/helpers/websites-videos), theme — палітра (src/system/theme.tsx) */}
+<Folder name="Sites">
+	<Composition id="Sites-01" component={Sites01} {...V} durationInFrames={SITES_01} defaultProps={{theme: 'brand'}}/>
 </Folder>
 {STEPS.map(([n, C, d]) => <Folder key={n} name={`ID-${n}`}><Composition id={`Idea-${n}`} component={C} {...V} durationInFrames={d}/></Folder>)}
 <Folder name="Lab">
