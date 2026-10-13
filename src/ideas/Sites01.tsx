@@ -1,11 +1,11 @@
 import React from 'react';
 import {F} from '../system/kit';
-import {Big, Box, Browser, Cue, L, Pill, Reply, Show, StepVideo, Title, UserMsg, Win, at, pop, stepFrames, useTheme} from '../system/step';
+import {Big, Box, Browser, Cue, L, LiveShot, Pill, Reply, Show, StepVideo, Title, UserMsg, Win, at, pop, stepFrames, useTheme} from '../system/step';
 import {ugc} from '../system/ugc';
 import WORDS from '../../public/ideas/sites-01/words.json';
 
 // Sites-01 «Що потрібно: VS Code і Claude Code» (шлях websites, крок setup-tools). Сценарій: public/ideas/sites-01/scenario.md.
-// Браузер і редактор — схеми без чужих логотипів. theme — палітра з src/system/theme.tsx (brand, drop01, drop02, drop07, drop12, neon).
+// theme — конкретна палітра; seed — вигляд рендеру (палітра з LIVELY + варіанти руху), його дає render-timed.mjs.
 const a = (w: string, after = 0) => at(WORDS, w, after);
 export const SITES_01 = stepFrames(WORDS);
 
@@ -41,12 +41,11 @@ const Scenes = (t: number) => {
 			<Show t={t} a={first} b={second}>
 				<Box y={300}><Big size={110}>1 · <L>VS Code</L></Big></Box>
 				<Box y={450} o={pop(t, a('редактор'))}><span style={{fontSize: 48, fontWeight: 700}}>редактор коду</span></Box>
-				<Browser t={t} y={640} url="code.visualstudio.com" typeAt={a('Ставимо')} o={pop(t, a('Ставимо') - 0.3)} h={460}>
-					<div style={{position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 30}}>
-						<span style={{fontSize: 40, fontWeight: 700, opacity: pop(t, a('версію'))}}>остання версія</span>
-						<Download t={t} at0={a('офіційного')} />
-					</div>
+				<Browser t={t} y={600} url="code.visualstudio.com" typeAt={a('Ставимо')} o={pop(t, a('Ставимо') - 0.3)} h={520}>
+					{/* справжня сторінка (shots/vscode-home.png, 1280×900): наїзд на «Download for Windows» */}
+					<LiveShot t={t} src="ideas/sites-01/shots/vscode-home.png" w={1280} a={a('Ставимо') + 0.7} focus={{x: 465, y: 335, w: 335, h: 52, at: a('офіційного'), zoom: 1.5}} />
 				</Browser>
+				<Box y={1262} o={pop(t, a('версію'))}><Pill>остання версія</Pill></Box>
 			</Show>
 			<Show t={t} a={second} b={mix}>
 				<Box y={440}><Big size={110}>2 · <L>Claude Code</L></Big></Box>
@@ -84,12 +83,6 @@ const Scenes = (t: number) => {
 	);
 };
 
-const Download: React.FC<{t: number; at0: number}> = ({t, at0}) => {
-	const T = useTheme();
-	const p = pop(t, at0, 0.4);
-	return <span style={{opacity: p, transform: `scale(${0.85 + p * 0.15})`, padding: '26px 60px', borderRadius: 20, background: T.accent, color: T.onAccent, fontWeight: 800, fontSize: 52}}>Download ↓</span>;
-};
-
 const SFX: Cue[] = [
 	[0, 'whoosh/whoosh-cinematic-376875.mp3', 0.3],
 	[a('Перше'), 'pop/bubble-pop-406640.mp3', 0.35],
@@ -100,7 +93,7 @@ const SFX: Cue[] = [
 	[a('VS Code', 30), 'sparkle/shimmer-sparkle-sweep.mp3', 0.3],
 ];
 
-export const Sites01: React.FC<{theme?: string}> = ({theme}) => (
-	<StepVideo theme={theme} dir="ideas/sites-01" words={WORDS} next={'Claude Code: VS Code, Desktop, Browser'} nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={Scenes}
+export const Sites01: React.FC<{theme?: string; seed?: number}> = ({theme, seed}) => (
+	<StepVideo theme={theme} seed={seed} dir="ideas/sites-01" words={WORDS} next={'Claude Code: VS Code, Desktop, Browser'} nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={Scenes}
 		inserts={[ugc('Man_typing_at_desk', a('потрібен'), a('Перше') - a('потрібен') - 0.15, {label: <>Дуже простий <L>набір</L></>})]} />
 );

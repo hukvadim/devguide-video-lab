@@ -41,9 +41,9 @@ export const Root: React.FC = () => <>
   <Composition id="Idea-002-Short1" component={Idea002Short} {...V} durationInFrames={SHORT_FRAMES}/>
  </Folder>
 </Folder>
-{/* шлях «Сайти»: Sites-NN = крок NN (C:/DevGuide/helpers/websites-videos), theme — палітра (src/system/theme.tsx) */}
+{/* шлях «Сайти»: Sites-NN = крок NN (C:/DevGuide/helpers/websites-videos), seed — вигляд рендеру (палітра + рух), у Studio міняй seed у props */}
 <Folder name="Sites">
-	<Composition id="Sites-01" component={Sites01} {...V} durationInFrames={SITES_01} defaultProps={{theme: 'brand'}}/>
+	<Composition id="Sites-01" component={Sites01} {...V} durationInFrames={SITES_01} defaultProps={{seed: 0}}/>
 </Folder>
 {STEPS.map(([n, C, d]) => <Folder key={n} name={`ID-${n}`}><Composition id={`Idea-${n}`} component={C} {...V} durationInFrames={d}/></Folder>)}
 {/* Meta-реклама менторства: ADS/, src/ideas/Ads.tsx */}

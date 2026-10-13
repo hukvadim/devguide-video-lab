@@ -1,5 +1,5 @@
 import React from 'react';
-import {AbsoluteFill, Audio, interpolate, staticFile, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, Audio, Img, interpolate, random, staticFile, useCurrentFrame} from 'remotion';
 import {F, Sfx, Stage, Wordmark, brand, clamp, ramp} from './kit';
 import {Caret} from './Code';
 import {chunkEnd, chunkWords, Word} from './captions';
@@ -33,9 +33,20 @@ export const at = (words: Word[], word: string, after = 0) => {
 	return w.s;
 };
 
+// входи сцени; без seed (старі ролики) — завжди перший, з seed — свій для кожної сцени й кожного рендеру
+const ENTERS: ((p: number, rise: number) => React.CSSProperties)[] = [
+	(p, rise) => ({transform: `translateY(${(1 - p) * rise}px)`}),
+	(p) => ({transform: `scale(${0.9 + p * 0.1})`, filter: `blur(${(1 - p) * 12}px)`}),
+	(p) => ({transform: `translateX(${(1 - p) * 90}px)`}),
+	(p) => ({transform: `translateX(${-(1 - p) * 90}px)`}),
+	(p) => ({clipPath: `inset(0 ${(1 - p) * 100}% 0 0)`}),
+	(p) => ({transform: `perspective(1400px) rotateX(${(1 - p) * 18}deg) translateY(${(1 - p) * 40}px)`, transformOrigin: '50% 100%'}),
+];
 export const Show: React.FC<{t: number; a: number; b: number; children: React.ReactNode; rise?: number}> = ({t, a, b, children, rise = 24}) => {
+	const {seed} = useTheme();
 	if (t < a || t > b) return null;
-	return <AbsoluteFill style={{opacity: io(t, a, b), transform: `translateY(${(1 - ramp(t, a, a + 0.5)) * rise}px)`}}>{children}</AbsoluteFill>;
+	const v = seed == null ? 0 : Math.floor(random(`show-${seed}-${a.toFixed(2)}`) * ENTERS.length);
+	return <AbsoluteFill style={{opacity: io(t, a, b), ...ENTERS[v](ramp(t, a, a + 0.5), rise)}}>{children}</AbsoluteFill>;
 };
 /** Великий заголовок; у постерній темі (echo) — з контурним «відлунням» позаду. */
 export const Big: React.FC<{children: React.ReactNode; size?: number; style?: React.CSSProperties}> = ({children, size = 96, style}) => {
@@ -181,6 +192,25 @@ export const Browser: React.FC<{t: number; y: number; url: string; typeAt?: numb
 				</div>
 			</div>
 			<div style={{position: 'relative', height: h}}>{children}</div>
+		</div>
+	);
+};
+
+/** Живий скрін у children Browser: справжня сторінка (public/ideas/<id>/shots/, w — ширина PNG у px), плавний скрол на scroll px
+ *  між a і b, наїзд на focus (координати PNG) з рамкою акцентом у момент focus.at. */
+export const LiveShot: React.FC<{t: number; src: string; w: number; a: number; b?: number; scroll?: number; focus?: {x: number; y: number; w: number; h: number; at: number; zoom?: number}}> = ({t, src, w, a, b = a + 4, scroll = 0, focus}) => {
+	const T = useTheme();
+	const k = W / w;
+	const y = scroll * k * ramp(t, a, b);
+	const z = focus ? 1 + ((focus.zoom ?? 1.6) - 1) * ramp(t, focus.at, focus.at + 0.7) : 1;
+	const cx = focus ? (focus.x + focus.w / 2) * k : 0, cy = focus ? (focus.y + focus.h / 2) * k - y : 0;
+	const ring = focus ? pop(t, focus.at + 0.3, 0.35) : 0;
+	return (
+		<div style={{position: 'absolute', inset: 0, overflow: 'hidden', opacity: pop(t, a, 0.4)}}>
+			<div style={{position: 'absolute', inset: 0, transform: `scale(${z})`, transformOrigin: `${cx}px ${cy}px`}}>
+				<Img src={staticFile(src)} style={{position: 'absolute', left: 0, top: -y, width: W}} />
+				{focus ? <div style={{position: 'absolute', left: focus.x * k - 10, top: focus.y * k - y - 10, width: focus.w * k + 20, height: focus.h * k + 20, borderRadius: 14, border: `${4 / z}px solid ${T.accent}`, boxShadow: `0 0 ${40 * ring}px ${T.accent}`, opacity: ring}} /> : null}
+			</div>
 		</div>
 	);
 };
@@ -334,11 +364,11 @@ const MUSIC = 'ideas/idea-001/music/hazy-after-hours.mp3';
 
 type StepProps = {
 	dir: string; words: Word[]; next: string; nextLabel?: string; nextUrl?: string; sfx: Cue[]; scenes?: (t: number) => React.ReactNode;
-	theme?: string | Theme; music?: string; musicVol?: number; look?: 'scenes' | 'word' | 'karaoke'; captions?: 'bottom' | 'center' | false; inserts?: Insert[];
+	theme?: string | Theme; seed?: number; music?: string; musicVol?: number; look?: 'scenes' | 'word' | 'karaoke'; captions?: 'bottom' | 'center' | false; inserts?: Insert[];
 };
 /** Шорт кроку: голос, музика, SFX, субтитри, сцени (render-функція від t) і фінальна картка «Наступний крок». */
-export const StepVideo: React.FC<StepProps> = ({theme, ...p}) => <ThemeProvider theme={theme}><StepInner {...p} /></ThemeProvider>;
-const StepInner: React.FC<Omit<StepProps, 'theme'>> = ({dir, words, next, nextLabel, nextUrl, sfx, scenes, music = MUSIC, musicVol = 0.085, look = 'scenes', captions = 'bottom', inserts = []}) => {
+export const StepVideo: React.FC<StepProps> = ({theme, seed, ...p}) => <ThemeProvider theme={theme} seed={seed}><StepInner {...p} /></ThemeProvider>;
+const StepInner: React.FC<Omit<StepProps, 'theme' | 'seed'>> = ({dir, words, next, nextLabel, nextUrl, sfx, scenes, music = MUSIC, musicVol = 0.085, look = 'scenes', captions = 'bottom', inserts = []}) => {
 	const frame = useCurrentFrame();
 	// кадр 0 = обкладинка: Instagram бере його за cover, тож показуємо вже проявлену заставку (t = 1.2 с), а не порожній фон
 	const t = frame === 0 ? 1.2 : frame / 30;
@@ -348,8 +378,12 @@ const StepInner: React.FC<Omit<StepProps, 'theme'>> = ({dir, words, next, nextLa
 	const chunks = React.useMemo(() => chunkWords(words, 30), [words]);
 	const vol = (f: number) => interpolate(f, [0, 30, S(end), S(end) + 15, S(total - 1.5), S(total)], [0, musicVol, musicVol, 0.2, 0.2, 0], clamp);
 	const body = look === 'scenes' ? scenes?.(t) : <Kinetic t={t} words={words} mode={look} />;
+	// фон: без seed — як було; з seed — світло в іншому місці, сітка не завжди
+	const {seed} = useTheme();
+	const glow: [number, number] = seed == null ? [760, 420] : [180 + random(`gx${seed}`) * 720, 280 + random(`gy${seed}`) * 1200];
+	const grid = seed == null || random(`grid${seed}`) > 0.4;
 	return (
-		<Stage glow={[760, 420]} grid>
+		<Stage glow={glow} grid={grid}>
 			<PatternBg t={t} />
 			<Audio src={staticFile(`${dir}/voice.mp3`)} volume={(f) => (f < S(end) + 6 ? 1 : 0)} />
 			<Audio src={staticFile(music)} volume={vol} />

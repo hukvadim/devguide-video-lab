@@ -14,8 +14,11 @@
 | Claude Code поради (тема) | https://www.youtube.com/shorts/MBAwGQTOOe4 · https://www.youtube.com/shorts/jZzETkErVuA · https://www.youtube.com/shorts/0YOHcH0VHlw | формат «N порад / N рівнів», хук-цифра в назві |
 | Стиль постерів | дошка Pinterest Вадима `devguide-lab` (скріншот у чаті) | «Color Drop»: дві кольорові плями, товстий гротеск з контурним відлунням, фон із повторених літер, наліпка-зірка |
 
-## Палітри (`src/system/theme.tsx`)
+## Палітри (`src/system/palettes.ts`)
 `brand` графіт/лайм · `drop07` #3D0814 на #E7F9A9 (світла) · `drop12` #F8F8F9 на #3FBFA2 · `drop01` #39D6CE на #6E10F7 · `drop02` #D9FF3A на #11121C · `neon` рожево-блакитний градієнт.
+
+Нові (2026-10-13): `ocean` · `amber` · `pink` · `paper` (світла) · `mint` (світла) · `sunset` (світла).
+**Вигляд рендеру:** композиції з `seed` (шлях «Сайти») на кожну чернетку беруть наступну палітру з тих, що проходять `node scripts/palettes.mjs` (зараз 10, без drop07 і drop12), і свої входи сцен/фон; фінал повторює погоджену чернетку (`out/<id>/look.json`). Конкретний вигляд: `render-timed.mjs draft Sites-01 --seed=7`.
 
 **Заборонено:** кораловий на синьому (Color Drop #14) — контраст ≈1.7:1, текст не читається (рішення Вадима 2026-10-11). Акцентний текст має бути ≥ 3:1 до фону.
 

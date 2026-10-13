@@ -5,3 +5,4 @@
 - Музика, SFX — бібліотека `public/assets/audio/` (походження в `ATTRIBUTION.md`); Hazy After Hours — `ideas/idea-001/music/`.
 - UGC — `public/assets/ugc/flow/Man_typing_at_desk.mp4` (Google Flow, `docs/UGC_FLOW.md`).
 - Браузер і редактор — схеми Remotion, без скрінів і логотипів сторонніх сайтів.
+- `shots/vscode-home.png` — https://code.visualstudio.com/ (головна, 1280×900, Playwright, 2026-10-13); скрін сторінки як ілюстрація кроку, логотип/кнопки — Microsoft.
