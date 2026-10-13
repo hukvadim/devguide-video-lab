@@ -1,6 +1,7 @@
 # ElevenLabs: озвучка для шляху навчання
 
-Статус (2026-10-10): **платний тариф**, озвучку можна публікувати. Перше відео з голосом ElevenLabs (Anton): ID-001, `public/ideas/idea-001/`. Голос Вадима (клон) — наступний крок.
+Статус (2026-10-13): **тариф Creator+**, озвучку можна публікувати. Шлях «Claude / AI» озвучено голосом Bogdan (з UI, таймінги `scripts/words.mjs`).
+Шлях «Сайти» — клон голосу Вадима (Professional Voice Clone) через API: `scripts/tts.mjs`.
 
 ## Тарифи (сторінка elevenlabs.io/pricing, перевірено 2026-10-10)
 
@@ -30,9 +31,9 @@
 
 ```
 сценарій (txt, ≤ 1 думка на речення)
-  → node scripts/tts.mjs --file script.txt public/voice/<крок>
-  → <крок>.mp3 + <крок>.words.json   (слова з таймінгами з endpoint with-timestamps, whisper не потрібен)
-  → Remotion: <Audio src={staticFile('voice/<крок>.mp3')}/> + субтитри зі words.json
+  → node scripts/tts.mjs public/ideas/<id>     (voice.txt у папці ідеї)
+  → voice.mp3 + words.json   (таймінги з endpoint with-timestamps + словник показу words.mjs)
+  → Remotion: StepVideo dir="ideas/<id>" (src/system/step.tsx) бере voice.mp3 і words.json
      або скіл devguide-reel: mp3 як окремий мікрофон (формат 2, --audio)
 ```
 
@@ -40,18 +41,40 @@
 
 ## Налаштування
 
-1. На elevenlabs.io: Profile → API Keys → створи ключ (на free варто обмежити права лише Text to Speech).
-2. Сам впиши його в `.env` у корені проєкту (файл не комітиться):
-   ```
-   ELEVENLABS_API_KEY=...
-   ELEVENLABS_VOICE_ID=...   # необов'язково; голос з Voice Library або твій клон
-   ELEVENLABS_MODEL=...      # необов'язково; типово eleven_multilingual_v2
-   ```
-3. Перевірка (≈ 100 кредитів):
-   ```bash
-   node scripts/tts.mjs "Привіт! Це DevGuide. Сьогодні зробимо перший сайт разом із нейромережею." out/voice/test
-   ```
-4. `node scripts/tts.mjs selftest` перевіряє розбір таймінгів без мережі.
+### API-ключ
+elevenlabs.io → Developers → API Keys → Create API Key:
+- Name `DevGuide video-lab`, Expire: Never (або рік), **Restrict Key: ON**, **Auto-disable if leaked: ON**, IP: OFF (домашній IP змінюється).
+- Usage limit: кап кредитів на місяць, не більше тарифу (помилка в циклі не з'їсть усе).
+- Access лише: **Text to Speech**, **Voices: Write** (список голосів і клон; Read, якщо клонуєш тільки в UI), **Models**, **User** (залишок кредитів).
+  Опційно: Speech to Text (перевірка вимови), Sound Effects. Решта: No Access.
+
+Ключ живе лише в `.env` у корені цього репо (`.env*` у .gitignore). На кожному ПК — свій `.env`, копія з `.env.example`.
+У чат, коміти й скріни ключ не потрапляє. Скіли (`devguide-ideas`, `devguide-reel`) озвучують через `scripts/tts.mjs`, який читає `.env` сам.
+```
+ELEVENLABS_API_KEY=...
+ELEVENLABS_VOICE_ID=...   # клон Вадима (node scripts/tts.mjs voices)
+ELEVENLABS_MODEL=...      # node scripts/tts.mjs models → модель з uk:так; порожньо = eleven_multilingual_v2
+ELEVENLABS_STABILITY= ELEVENLABS_SIMILARITY= ELEVENLABS_STYLE= ELEVENLABS_SPEED=   # порожньо = налаштування голосу з акаунта
+```
+Перевірка: `node scripts/tts.mjs credits` (тариф і залишок), `node scripts/tts.mjs voices`, `node scripts/tts.mjs models`.
+
+### Клон голосу (Professional Voice Clone)
+- Запис окремо від уроків (у Sound.wav уроків клавіатура й кліки). Тиха кімната з м'якими речами, один мікрофон і та сама відстань 15–20 см
+  в усіх файлах, пік ≈ −6 dB, без шумодаву, музики, ехо й компресії. WAV або mp3 від 192k.
+- Обсяг: мінімум 30 хв чистої мови, оптимум 1–2 год, файли по 10–30 хв, довгі паузи вирізані.
+- Що читати: `voice.txt` усіх кроків «Сайтів» (`C:/DevGuide/helpers/websites-videos/*/voice.txt`), тексти шляху Claude, вільна розповідь.
+  Темп і тон як в уроці: клон повторює манеру запису.
+- Voices → Add a new voice → Professional Voice Clone, мова Ukrainian → upload → верифікація голосом → тренування (кілька годин).
+- Поки тренується: Instant Voice Clone з 2–3 хв тих самих записів, щоб ганяти конвеєр. Після тренування — новий `ELEVENLABS_VOICE_ID` і переозвучка.
+
+### Озвучка кроку
+```bash
+node scripts/tts.mjs public/ideas/sites-01        # voice.txt → voice.mp3 + words.json (таймінги з API, whisper не потрібен)
+node scripts/tts.mjs --file voice.txt out/sites/_voice-test/01-v2   # проба голосу/моделі без папки ідеї
+```
+Терміни у `voice.txt` пиши фонетично («клод код»): `tts.mjs` після озвучки сам проганяє словник показу з `scripts/words.mjs`
+(«клод код» → Claude Code у субтитрах). Нове слово — додай у `DISPLAY` там же.
+`node scripts/tts.mjs selftest` перевіряє розбір таймінгів без мережі.
 
 ## Що оцінити на пробі
 

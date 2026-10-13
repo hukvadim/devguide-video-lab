@@ -61,7 +61,7 @@
 | 016 | Свій skill: процес в одну команду (`own-skill`) | так | 45 | готово: `out/idea-016/idea-016-1080x1920-14lufs.mp4` |
 | 017 | Йдемо до клієнта (`next-websites`) | так | 24 | чекає voice.mp3 |
 
-**Збірка:** `node scripts/words.mjs public/ideas/idea-0xx` (таймінги: whisper + voice.txt + словник показу) → `src/ideas/Idea0xx.tsx` на блоках `src/system/step.tsx` (сцени прив'язані до слів через `at()`) → `node scripts/render-timed.mjs final Idea-0xx` → `node scripts/master-audio.mjs out/idea-0xx/idea-0xx-1080x1920.mp4` → `node scripts/collect-path.mjs` (усі кроки по порядку в `out/_шлях-claude-ai/NN Назва.mp4`).
+**Збірка:** `node scripts/words.mjs public/ideas/idea-0xx` (таймінги: whisper + voice.txt + словник показу) → `src/ideas/Idea0xx.tsx` на блоках `src/system/step.tsx` (сцени прив'язані до слів через `at()`) → `node scripts/render-timed.mjs final Idea-0xx` → `node scripts/master-audio.mjs out/idea-0xx/idea-0xx-1080x1920.mp4` → `node scripts/collect-path.mjs [claude|websites]` (усі кроки по порядку в `out/_шлях-claude-ai/` або `out/sites/`, `NN Назва.mp4`).
 **Перевірити:** команду відкату `git restore .` (ID-011/013); порт `localhost:5173` підписано «може відрізнятися» (ID-009); ElevenLabs вимова «Клод», «Ві-Ес Код», «Ем-Сі-Пі», «точка енв».
 
 <!-- шаблон, копіювати під кожну ідею

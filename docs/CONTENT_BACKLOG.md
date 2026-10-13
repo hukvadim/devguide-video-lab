@@ -47,6 +47,38 @@
 | 35 | Реклама · 3 Агент веде по кабінету | Claude in Chrome в Ads Manager, я підтверджую | разом з №1 | АГЕНТ | F2 | P3 |
 | 36 | Клієнти · 2 Профіль Upwork | заголовок, опис, портфоліо, ставка | «Як я заповнював профіль на Upwork» | — | F6 | P3 |
 
+## Шлях «Сайти»: shorts (трекер)
+
+Кроки: `data/learning-websites.json` (з `C:/DevGuide/docs/learning/paths/websites.md`, 23 кроки). Сценарії: `C:/DevGuide/helpers/websites-videos/NN-<key>/`.
+Конвеєр: `tts.mjs` (клон Вадима) → `Sites-NN` на `StepVideo` → фінал → `collect-path.mjs websites` → `out/sites/` → YouTube Short → слайд у `websites.md` → `learning_import_md`.
+Статуси: сценарій → озвучено → чернетка → фінал → YouTube → на сайті.
+
+| # | key | Крок | Композиція | Статус | YouTube |
+|---|---|---|---|---|---|
+| 01 | setup-tools | Що потрібно: VS Code і Claude Code | Sites-01 | сценарій | |
+| 02 | claude-code-setup | Claude Code: VS Code, Desktop, Browser | Sites-02 | сценарій | |
+| 03 | git-github | Git і GitHub | Sites-03 | сценарій | |
+| 04 | domain-hosting | Домен, хостинг і де житиме сайт | Sites-04 | сценарій | |
+| 05 | stack | Один стек на всі сайти | Sites-05 | сценарій | |
+| 06 | skills-compare | Skills: та сама сторінка без і з ui-ux-pro-max | Sites-06 | сценарій | |
+| 07 | cinematic | Сайт за $10 000 | Sites-07 | сценарій | |
+| 08 | site-type | Який сайт насправді потрібен | — | без відео | |
+| 09 | client-chat | Два чати: клієнт і помічник | Sites-09 | сценарій | |
+| 10 | tz | ★ tz.md: без ТЗ не починаємо | Sites-10 | сценарій | |
+| 11 | estimate | Скільки часу і яка ціна | Sites-11 | сценарій | |
+| 12 | generate-v1 | Перша версія сайту з ТЗ | Sites-12 | сценарій | |
+| 13 | trello | День 2: де мої задачі? Trello | Sites-13 | сценарій | |
+| 14 | mcp-skills | Решта MCP і skills | Sites-14 | сценарій | |
+| 15 | variants | 5 варіантів: секрет швидкого дизайну | Sites-15 | сценарій | |
+| 16 | client-edits | Правки: 3 раунди і Trello | Sites-16 | сценарій | |
+| 17 | scope-done | Сайт працює | — | без відео | |
+| 18 | responsive | Телефон, планшет, різні браузери | — | довге відео окремо | |
+| 19 | error-pages | Помилки без білого екрана | — | без відео | |
+| 20 | deploy-vercel | Викладаємо на Vercel | Sites-20 | сценарій | |
+| 21 | performance | Швидкість і доступність | Sites-21 | сценарій | |
+| 22 | admin-docs | Керування після запуску | Sites-22 | сценарій | |
+| 23 | domain-simple | Домен клієнта | — | без відео | |
+
 ## Тільки для Instagram
 
 | # | Ідея | Акаунт | Формат | Слово |

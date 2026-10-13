@@ -7,7 +7,10 @@ description: Банк ідей DevGuide → картки за контент-с�
 
 Файли проєкту: `docs/IDEAS.md` (банк), `docs/CONTENT_STRATEGY.md` (канали, формати F1–F7, CTA),
 `docs/CONTENT_BACKLOG.md` (кроки шляху), `data/brand.json` (єдине джерело фактів), `AGENTS.md` (правила рендеру).
-Голос (ElevenLabs) поки **не використовуємо**: ролики на тексті, музиці й звукових ефектах.
+Голос (ElevenLabs): ключ і клон голосу Вадима в `.env`, озвучка `node scripts/tts.mjs public/ideas/<id>` (voice.txt → voice.mp3 + words.json),
+налаштування й права ключа — `docs/ELEVENLABS.md`. Немає `.env` — ролик на тексті, музиці й SFX, озвучку не вигадуємо.
+Шлях «Сайти»: сценарії `C:/DevGuide/helpers/websites-videos/NN-<key>/` (voice.txt, scenes.md), кроки — `data/learning-websites.json`,
+композиції `Sites-NN` на `StepVideo`, збірка `node scripts/collect-path.mjs websites` → `out/sites/`.
 
 ## Режим 1. Вадим накидає ідеї
 1. Дослівно додай кожну у «Вхідні» з датою. Нічого не викидай і не переформулюй там.
