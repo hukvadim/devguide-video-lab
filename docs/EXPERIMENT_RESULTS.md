@@ -48,3 +48,12 @@ node scripts/qa-sheet.mjs out/final/devguide-final-preview-540x960.mp4 out/final
 ```
 
 > 2026-10-10: лабораторні композиції (Lab/Pro/Posts/Scenes, Day5, Skia, snap-cn) видалено з коду; спільне перенесено в `src/system/`. Відновити: `git checkout 852b0d0 -- src/dg src/skia src/components src/lib`.
+
+## ADS: Meta-реклама менторства (2026-10-12)
+
+- `Ads-A-Abroad` (26 с, трек 20-edm-be-happy 120 BPM) і `Ads-B-Business` (27 с, 49-pop-close-up 105 BPM), `src/ideas/Ads.tsx`. v1 без голосу: `BeatVideo` з `src/system/beat.tsx`, картки = візуал + ≤6 слів, Flow-вставки (`UgcInsert`), скриншоти портфоліо (Playwright). Голос Вадима — v2.
+- Кодинг ~40 хв. Рендер: прев'ю 540×960 — 30.7 с і 39.0 с; фінал — див. `out/render-times.log`.
+- QA: стіли кадрів 0/285/690 (A) і 0/300/493 (B), смуги кадрів кожні 2 с з прев'ю обох роликів.
+- Обмеження: скриншоти 430 px завширшки (у телефоні масштабуються ~1.2×); музика з кандидатів (не вибрана Вадимом).
+- Лендінг: `ADS/landing` (Next.js 16, Tailwind 4, shadcn/ui, GSAP+ScrollTrigger+SplitText, Lenis, R3F+Drei), окремий package.json.
+- v2 (2026-10-12): А — картка сайту = 3 скриншоти babayaga.lviv.ua (Playwright, DPR 2, кожен через 5 с після прокрутки), + 3D-телефон «Шлях навчання» (`src/system/phone3d.tsx`, відновлено з 852b0d0 PhoneScene, без «острова», що закривав заголовок). Б — переписано: порівняння $1000/$300, 5 карток, 16.4 с. Текст озвучки: `ADS/03-video/voice.md`.

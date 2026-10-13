@@ -17,6 +17,7 @@ import {Idea014, IDEA_014} from './ideas/Idea014';
 import {Idea015, IDEA_015} from './ideas/Idea015';
 import {Idea016, IDEA_016} from './ideas/Idea016';
 import {Sites01, SITES_01} from './ideas/Sites01';
+import {AdsA, AdsAVoice, AdsAVoice45, AdsB, AdsBVoice, AdsBVoice45, AdsBanner, ADS_A, ADS_A_VOICE, ADS_B, ADS_B_VOICE} from './ideas/Ads';
 import {StepPreview} from './system/step';
 import {LAB, LAB_FRAMES} from './lab/Lab';
 import {TIPS_LIST} from './tips/Tips';
@@ -45,6 +46,17 @@ export const Root: React.FC = () => <>
 	<Composition id="Sites-01" component={Sites01} {...V} durationInFrames={SITES_01} defaultProps={{theme: 'brand'}}/>
 </Folder>
 {STEPS.map(([n, C, d]) => <Folder key={n} name={`ID-${n}`}><Composition id={`Idea-${n}`} component={C} {...V} durationInFrames={d}/></Folder>)}
+{/* Meta-реклама менторства: ADS/, src/ideas/Ads.tsx */}
+<Folder name="ADS">
+ <Composition id="Ads-A-Abroad" component={AdsA} {...V} durationInFrames={ADS_A}/>
+ <Composition id="Ads-A-Voice" component={AdsAVoice} {...V} durationInFrames={ADS_A_VOICE}/>
+ <Composition id="Ads-B-Voice" component={AdsBVoice} {...V} durationInFrames={ADS_B_VOICE}/>
+ <Composition id="Ads-A-Voice-45" component={AdsAVoice45} width={1080} height={1350} fps={30} durationInFrames={ADS_A_VOICE}/>
+ <Composition id="Ads-B-Voice-45" component={AdsBVoice45} width={1080} height={1350} fps={30} durationInFrames={ADS_B_VOICE}/>
+ <Composition id="Ads-Banner-45" component={AdsBanner} width={1080} height={1350} fps={30} durationInFrames={1}/>
+ <Composition id="Ads-Banner-Story" component={AdsBanner} width={1080} height={1920} fps={30} durationInFrames={1} defaultProps={{h: 1920}}/>
+ <Composition id="Ads-B-Business" component={AdsB} {...V} durationInFrames={ADS_B}/>
+</Folder>
 <Folder name="Lab">
  {Object.entries(LAB).map(([n, C]) => <Composition key={n} id={`Lab-${n.padStart(2, "0")}`} component={C} {...V} durationInFrames={LAB_FRAMES[+n]}/>)}
 </Folder>
