@@ -29,12 +29,12 @@ export const SceneView: React.FC<{t: number; a: number; b: number; s: Scene}> = 
 	const items = s.items ?? [];
 	const step = Math.max(0.35, Math.min(1.6, (b - a - 1) / Math.max(1, items.length)));
 	const ia = (i: number) => a + 0.5 + i * step;
-	const fit = (txt = '', max: number) => { const word = Math.max(...txt.replace(/\*/g, '').split(/\s+/).map((w) => w.length)); return Math.min(max, word > 12 ? 76 : word > 9 ? 92 : max); };
+	const fit = (txt = '', max: number) => { const word = Math.max(...txt.replace(/\*/g, '').split(/\s+/).map((w) => w.length)); return Math.min(max, word > 12 ? 76 : word > 8 ? 96 : max); };
 	const head = s.t ? <Box y={340}><Big size={fit(s.t, s.t.length > 16 ? 76 : 92)}><Rich s={s.t} /></Big></Box> : null;
 	const sub = s.sub ? <Box y={1240} o={pop(t, a + 1)}><Pill style={{fontSize: 44}}>{s.sub}</Pill></Box> : null;
 	switch (s.k) {
 		case 'big':
-			return <><Box y={620}><Big size={fit(s.t, (s.t ?? '').length > 24 ? 96 : 130)}><Rich s={s.t} /></Big></Box>{s.sub ? <Box y={1000} o={pop(t, a + 0.8)}><Pill style={{fontSize: 48}}>{s.sub}</Pill></Box> : null}</>;
+			return <><Box y={620}><Big size={fit(s.t, (s.t ?? '').length > 24 ? 96 : 130)}><Rich s={s.t} /></Big></Box>{s.sub ? <Box y={1160} o={pop(t, a + 0.8)}><Pill style={{fontSize: 48}}>{s.sub}</Pill></Box> : null}</>;
 		case 'num':
 			return <><Box y={360}><Big size={220}><L>{items[0]}</L></Big></Box><Box y={720} o={pop(t, a + 0.3)}><Big size={84}><Rich s={s.t} /></Big></Box>{s.sub ? <Box y={1080} o={pop(t, a + 1)}><Pill style={{fontSize: 46}}>{s.sub}</Pill></Box> : null}</>;
 		case 'prompt':
