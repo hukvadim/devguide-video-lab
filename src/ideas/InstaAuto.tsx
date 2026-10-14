@@ -29,11 +29,12 @@ export const SceneView: React.FC<{t: number; a: number; b: number; s: Scene}> = 
 	const items = s.items ?? [];
 	const step = Math.max(0.35, Math.min(1.6, (b - a - 1) / Math.max(1, items.length)));
 	const ia = (i: number) => a + 0.5 + i * step;
-	const head = s.t ? <Box y={380}><Big size={s.t.length > 28 ? 76 : 92}><Rich s={s.t} /></Big></Box> : null;
+	const fit = (txt = '', max: number) => { const word = Math.max(...txt.replace(/\*/g, '').split(/\s+/).map((w) => w.length)); return Math.min(max, word > 12 ? 76 : word > 9 ? 92 : max); };
+	const head = s.t ? <Box y={340}><Big size={fit(s.t, s.t.length > 16 ? 76 : 92)}><Rich s={s.t} /></Big></Box> : null;
 	const sub = s.sub ? <Box y={1240} o={pop(t, a + 1)}><Pill style={{fontSize: 44}}>{s.sub}</Pill></Box> : null;
 	switch (s.k) {
 		case 'big':
-			return <><Box y={620}><Big size={(s.t ?? '').length > 24 ? 96 : 130}><Rich s={s.t} /></Big></Box>{s.sub ? <Box y={1000} o={pop(t, a + 0.8)}><Pill style={{fontSize: 48}}>{s.sub}</Pill></Box> : null}</>;
+			return <><Box y={620}><Big size={fit(s.t, (s.t ?? '').length > 24 ? 96 : 130)}><Rich s={s.t} /></Big></Box>{s.sub ? <Box y={1000} o={pop(t, a + 0.8)}><Pill style={{fontSize: 48}}>{s.sub}</Pill></Box> : null}</>;
 		case 'num':
 			return <><Box y={360}><Big size={220}><L>{items[0]}</L></Big></Box><Box y={720} o={pop(t, a + 0.3)}><Big size={84}><Rich s={s.t} /></Big></Box>{s.sub ? <Box y={1080} o={pop(t, a + 1)}><Pill style={{fontSize: 46}}>{s.sub}</Pill></Box> : null}</>;
 		case 'prompt':
@@ -43,7 +44,7 @@ export const SceneView: React.FC<{t: number; a: number; b: number; s: Scene}> = 
 		case 'chips':
 			return <>{head}<Chips t={t} y={680} size={52} items={items.map((x, i) => [x, ia(i)] as [string, number])} />{sub}</>;
 		case 'code':
-			return <>{head}<Term t={t} y={640} label="Термінал" size={40} lines={items.map((x, i) => ({at: ia(i), text: x, kind: x.startsWith('✓') ? 'ok' : i === 0 ? 'cmd' : 'out'}))} />{sub}</>;
+			return <>{head}<Term t={t} y={640} label="Термінал" size={40} lines={items.map((x, i) => ({at: ia(i), text: x.replace(/^>\s*/, ''), kind: x.startsWith('✓') ? 'ok' : i === 0 ? 'cmd' : 'out'}))} />{sub}</>;
 		case 'flow': {
 			const cur = items.filter((_, i) => t >= ia(i)).length - 1;
 			return <>{head}{items.map((x, i) => <React.Fragment key={i}>{i ? <div style={{position: 'absolute', left: 536, top: 600 + i * 170 - 46, width: 8, height: 46, background: T.accent, opacity: pop(t, ia(i))}} /> : null}<Node t={t} at0={ia(i)} y={600 + i * 170} on={i === cur}>{x}</Node></React.Fragment>)}{sub}</>;
@@ -65,10 +66,10 @@ export const SceneView: React.FC<{t: number; a: number; b: number; s: Scene}> = 
 		case 'phone':
 			return (
 				<>{head}
-					<div style={{position: 'absolute', left: 290, top: 560, width: 500, minHeight: 640, borderRadius: 64, border: `10px solid ${T.text}`, background: T.panel, padding: '64px 30px 30px', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 18}}>
+					<div style={{position: 'absolute', left: 290, top: 620, width: 500, minHeight: 640, borderRadius: 64, border: `10px solid ${T.text}`, background: T.panel, padding: '64px 30px 30px', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 18}}>
 						{items.map((x, i) => <div key={i} style={{opacity: pop(t, ia(i)), padding: '18px 22px', borderRadius: 20, background: i === items.filter((_, j) => t >= ia(j)).length - 1 ? T.accent : 'transparent', color: i === items.filter((_, j) => t >= ia(j)).length - 1 ? T.onAccent : T.text, border: `2px solid ${T.line}`, fontWeight: 700, fontSize: 34}}><span style={{fontFamily: F.mono, opacity: 0.6}}>{pad(i + 1)} </span>{x}</div>)}
 					</div>
-					{s.sub ? <Box y={1280} o={pop(t, a + 1)}><Pill style={{fontSize: 44}}>{s.sub}</Pill></Box> : null}
+					{s.sub ? <Box y={1320} o={pop(t, a + 1)}><Pill style={{fontSize: 44}}>{s.sub}</Pill></Box> : null}
 				</>
 			);
 	}
