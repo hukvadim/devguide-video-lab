@@ -1,10 +1,13 @@
 // Перегляд готових роликів у браузері: сітка відео з папок out/, «Копіювати шлях», «Видалити» (переносить у out/_кошик/, не стирає).
 // usage: npm run review   → http://localhost:4321   (без залежностей, лише node)
-import {createReadStream, existsSync, mkdirSync, readdirSync, renameSync, statSync} from 'node:fs';
+import {createReadStream, existsSync, mkdirSync, readFileSync, readdirSync, renameSync, statSync, writeFileSync} from 'node:fs';
 import {createServer} from 'node:http';
 import {basename, join, resolve, sep} from 'node:path';
 
 const OUT = resolve('out'), TRASH = join(OUT, '_кошик'), PORT = 4321;
+// оцінки Вадима: docs/ratings.json {"<папка>/<файл>": {v: 'ok'|'redo', note, at}} — це читає Claude, коли переробляє ролики
+const RATINGS = resolve('docs/ratings.json');
+const readR = () => (existsSync(RATINGS) ? JSON.parse(readFileSync(RATINGS, 'utf8')) : {});
 const inOut = (p) => { const r = resolve(OUT, p); return r.startsWith(OUT + sep) ? r : null; };
 // зібрані добірки — першими, далі папки окремих рендерів
 const TOP = ['insta-50', 'sites', 'sites-full', '_шлях-claude-ai', '_ready', '_обране'];
@@ -13,16 +16,19 @@ const folders = () => readdirSync(OUT).filter((d) => statSync(join(OUT, d)).isDi
 
 const page = `<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Перегляд роликів</title>
 <style>body{margin:0;font:15px system-ui;background:#111;color:#eee}header{position:sticky;top:0;background:#111e;padding:12px 16px;display:flex;gap:12px;align-items:center;border-bottom:1px solid #333;z-index:2}
-select,button{font:inherit;border-radius:8px;border:1px solid #444;background:#222;color:#eee;padding:6px 10px;cursor:pointer}button:hover{background:#333}.del{border-color:#a33;color:#f88}
+select,button{font:inherit;border-radius:8px;border:1px solid #444;background:#222;color:#eee;padding:6px 10px;cursor:pointer}button:hover{background:#333}.del{border-color:#a33;color:#f88}.ok.on{background:#1f5f2a;border-color:#3c3}.redo.on{background:#6a4a10;border-color:#fa3}textarea{width:100%;box-sizing:border-box;margin-top:6px;background:#111;color:#eee;border:1px solid #333;border-radius:8px;font:13px system-ui;min-height:34px}.card.ok-c{outline:2px solid #3c3}.card.redo-c{outline:2px solid #fa3}#stat{color:#bbb}
 main{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;padding:16px}.card{background:#1b1b1b;border-radius:12px;padding:8px}.card video{width:100%;border-radius:8px;background:#000;aspect-ratio:9/16;object-fit:contain}
 .wide video{aspect-ratio:16/9}.name{margin:6px 2px;word-break:break-all;font-size:13px}.row{display:flex;gap:6px}.row button{flex:1}#n{color:#999}#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#2a2;color:#fff;padding:8px 14px;border-radius:8px;display:none}</style></head>
-<body><header><b>Ролики</b><select id="f"></select><span id="n"></span></header><main id="g"></main><div id="toast"></div>
+<body><header><b>Ролики</b><select id="f"></select><span id="n"></span><span id="stat"></span></header><main id="g"></main><div id="toast"></div>
 <script>
 const $=s=>document.querySelector(s), toast=t=>{const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(e._t);e._t=setTimeout(()=>e.style.display='none',1500)};
-async function load(){const d=$('#f').value;localStorage.setItem('f',d);const files=await (await fetch('/api/list?d='+encodeURIComponent(d))).json();$('#n').textContent=files.length+' відео';
+async function load(){const d=$('#f').value;localStorage.setItem('f',d);const files=await (await fetch('/api/list?d='+encodeURIComponent(d))).json();const R=await (await fetch('/api/ratings')).json();const stat=()=>{const k=files.map(f=>R[d+'/'+f.name]?.v);$('#stat').textContent='👍 '+k.filter(x=>x==='ok').length+' · переробити '+k.filter(x=>x==='redo').length};stat();$('#n').textContent=files.length+' відео';
 $('#g').innerHTML='';for(const f of files){const c=document.createElement('div');c.className='card'+(f.wide?' wide':'');
-c.innerHTML='<video controls preload="metadata" src="/v/'+encodeURIComponent(d)+'/'+encodeURIComponent(f.name)+'"></video><div class="name"></div><div class="row"><button class="cp">Копіювати шлях</button><button class="del">Видалити</button></div>';
-c.querySelector('.name').textContent=f.name;c.querySelector('.cp').onclick=()=>{navigator.clipboard.writeText(f.path);toast('Скопійовано')};
+c.innerHTML='<video controls preload="metadata" src="/v/'+encodeURIComponent(d)+'/'+encodeURIComponent(f.name)+'"></video><div class="name"></div><div class="row"><button class="cp">Копіювати шлях</button><button class="del">Видалити</button></div><div class="row" style="margin-top:6px"><button class="ok">👍 Подобається</button><button class="redo">↻ Переробити</button></div><textarea placeholder="Що змінити (зберігається саме)"></textarea>';
+c.querySelector('.name').textContent=f.name;const key=d+'/'+f.name,ta=c.querySelector('textarea');ta.value=R[key]?.note??'';
+const paint=()=>{const v=R[key]?.v;c.querySelector('.ok').classList.toggle('on',v==='ok');c.querySelector('.redo').classList.toggle('on',v==='redo');c.classList.toggle('ok-c',v==='ok');c.classList.toggle('redo-c',v==='redo');stat()};
+const save=async(v,note)=>{await fetch('/api/rate',{method:'POST',body:JSON.stringify({key,v,note})});R[key]={...(R[key]||{}),...(v!==undefined?{v}:{}),...(note!==undefined?{note}:{})};paint()};
+c.querySelector('.ok').onclick=()=>save(R[key]?.v==='ok'?null:'ok');c.querySelector('.redo').onclick=()=>save(R[key]?.v==='redo'?null:'redo');ta.onchange=()=>{save(undefined,ta.value);toast('Збережено')};paint();c.querySelector('.cp').onclick=()=>{navigator.clipboard.writeText(f.path);toast('Скопійовано')};
 c.querySelector('.del').onclick=async()=>{if(!confirm('Перенести в out/_кошик?\\n'+f.name))return;const r=await fetch('/api/del?d='+encodeURIComponent(d)+'&f='+encodeURIComponent(f.name),{method:'POST'});if(r.ok){c.remove();toast('У кошику');$('#n').textContent=(--files.length)+' відео'}else toast('Помилка')};
 $('#g').append(c)}}
 (async()=>{const fs=await (await fetch('/api/folders')).json();for(const x of fs){const o=document.createElement('option');o.textContent=x;$('#f').append(o)}const s=localStorage.getItem('f');if(fs.includes(s))$('#f').value=s;else if(fs.includes('insta-50'))$('#f').value='insta-50';$('#f').onchange=load;load()})();
@@ -36,6 +42,20 @@ createServer((req, res) => {
 	if (u.pathname === '/api/list') {
 		const d = inOut(u.searchParams.get('d') ?? ''); if (!d || !existsSync(d)) return json([], 404);
 		return json(readdirSync(d).filter((f) => f.endsWith('.mp4')).sort().map((f) => ({name: f, path: join(d, f), wide: /1920x1080|-wide|sites-full/.test(f)})));
+	}
+	if (u.pathname === '/api/ratings') return json(readR());
+	if (u.pathname === '/api/rate' && req.method === 'POST') {
+		let body = '';
+		req.on('data', (c) => (body += c));
+		req.on('end', () => {
+			const {key, v, note} = JSON.parse(body || '{}');
+			if (typeof key !== 'string' || !inOut(key)) return json({ok: false}, 400);
+			const r = readR();
+			if (!v && !note) delete r[key]; else r[key] = {v: v ?? r[key]?.v ?? null, note: note ?? r[key]?.note ?? '', at: new Date().toISOString().slice(0, 16)};
+			writeFileSync(RATINGS, JSON.stringify(r, null, 1) + '\n');
+			json({ok: true});
+		});
+		return;
 	}
 	if (u.pathname === '/api/del' && req.method === 'POST') {
 		const f = inOut(join(u.searchParams.get('d') ?? '', basename(u.searchParams.get('f') ?? '')));
