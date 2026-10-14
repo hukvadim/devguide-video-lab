@@ -1,0 +1,13 @@
+{
+ "n": 29,
+ "layout": "phone",
+ "theme": "light",
+ "title": "Як виглядає твоє посилання",
+ "sub": "у Telegram, Viber, Google",
+ "items": [
+  "без прев'ю ✗",
+  "з картинкою ✓"
+ ],
+ "cta": "ПРЕВЮ",
+ "account": "DevGuide"
+}

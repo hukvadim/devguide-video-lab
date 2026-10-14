@@ -1,0 +1,14 @@
+{
+ "n": 5,
+ "layout": "phone",
+ "theme": "light",
+ "title": "Звіт за 10 хвилин",
+ "sub": "deep research у ChatGPT і Claude",
+ "items": [
+  "джерела: 40+",
+  "таблиця конкурентів",
+  "висновки"
+ ],
+ "cta": "ЗВІТ",
+ "account": "особистий"
+}

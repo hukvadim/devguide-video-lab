@@ -1,0 +1,14 @@
+{
+ "n": 49,
+ "layout": "flow",
+ "theme": "violet",
+ "title": "n8n шпаргалка",
+ "sub": "тригер → AI → дія",
+ "items": [
+  "тригер",
+  "AI",
+  "дія"
+ ],
+ "cta": "АВТО",
+ "account": "DevGuide"
+}

@@ -1,0 +1,16 @@
+{
+ "n": 30,
+ "layout": "flow",
+ "theme": "cream",
+ "title": "MCP — це руки для AI",
+ "sub": "простими словами",
+ "items": [
+  "AI",
+  "MCP",
+  "Trello",
+  "GitHub",
+  "Vercel"
+ ],
+ "cta": "РУКИ",
+ "account": "особистий"
+}

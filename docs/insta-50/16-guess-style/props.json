@@ -1,0 +1,16 @@
+{
+ "n": 16,
+ "layout": "grid",
+ "theme": "mint",
+ "title": "Впізнай стиль за 3 с",
+ "sub": "квіз для дизайнерів",
+ "items": [
+  "bento",
+  "brutal",
+  "glass",
+  "swiss",
+  "neumorph"
+ ],
+ "cta": "СТИЛЬ",
+ "account": "DevGuide"
+}

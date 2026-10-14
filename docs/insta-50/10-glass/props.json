@@ -1,0 +1,14 @@
+{
+ "n": 10,
+ "layout": "code",
+ "theme": "violet",
+ "title": "Скло за 3 рядки CSS",
+ "sub": "glassmorphism",
+ "items": [
+  "backdrop-filter: blur(16px);",
+  "background: #ffffff1a;",
+  "border: 1px solid #ffffff33;"
+ ],
+ "cta": "СКЛО",
+ "account": "DevGuide"
+}

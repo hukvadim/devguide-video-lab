@@ -1,0 +1,14 @@
+{
+ "n": 28,
+ "layout": "code",
+ "theme": "dark",
+ "title": "Фейкові дані для сайту",
+ "sub": "MockAPI · DummyJSON",
+ "items": [
+  "GET /products",
+  "GET /users",
+  "GET /carts"
+ ],
+ "cta": "ДАНІ",
+ "account": "DevGuide"
+}

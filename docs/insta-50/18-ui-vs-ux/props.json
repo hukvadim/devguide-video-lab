@@ -1,0 +1,13 @@
+{
+ "n": 18,
+ "layout": "versus",
+ "theme": "violet",
+ "title": "UI vs UX",
+ "sub": "на одній кнопці",
+ "items": [
+  "як виглядає",
+  "як працює"
+ ],
+ "cta": "КНОПКА",
+ "account": "DevGuide"
+}

@@ -1,0 +1,14 @@
+{
+ "n": 25,
+ "layout": "phone",
+ "theme": "dark",
+ "title": "Компонент — це промпт",
+ "sub": "21st.dev",
+ "items": [
+  "Animated Hero",
+  "Gradient Button",
+  "Sign In Flow"
+ ],
+ "cta": "БЛОК",
+ "account": "DevGuide"
+}

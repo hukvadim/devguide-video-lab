@@ -1,0 +1,14 @@
+{
+ "n": 2,
+ "layout": "phone",
+ "theme": "dark",
+ "title": "AI, що сам пише сайт",
+ "sub": "Claude Code за 30 с",
+ "items": [
+  "index.html — створено",
+  "style.css — змінено",
+  "сайт запущено ✓"
+ ],
+ "cta": "КОД",
+ "account": "DevGuide"
+}

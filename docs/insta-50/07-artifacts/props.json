@@ -1,0 +1,14 @@
+{
+ "n": 7,
+ "layout": "phone",
+ "theme": "mint",
+ "title": "Міні-апка прямо в чаті",
+ "sub": "Claude Artifacts",
+ "items": [
+  "калькулятор ціни",
+  "трекер звичок",
+  "квіз для клієнта"
+ ],
+ "cta": "АПКА",
+ "account": "DevGuide"
+}

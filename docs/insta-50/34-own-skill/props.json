@@ -1,0 +1,14 @@
+{
+ "n": 34,
+ "layout": "code",
+ "theme": "mint",
+ "title": "Свій skill за 5 хвилин",
+ "sub": "процес в одну команду",
+ "items": [
+  "SKILL.md",
+  "name: …",
+  "description: …"
+ ],
+ "cta": "СВІЙ",
+ "account": "особистий"
+}
