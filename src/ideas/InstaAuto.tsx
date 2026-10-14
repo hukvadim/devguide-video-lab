@@ -116,7 +116,7 @@ export const InstaAuto: React.FC<Props> = ({n, words, theme, seed}) => {
 	const st = lineStarts(lines, W2);
 	const scenes = (t: number) => (
 		<>
-			<Show t={t} a={0} b={st[1]}><Title t={t} section={r.kicker} size={r.title.length > 22 ? 96 : 116}><Rich s={r.title} /></Title></Show>
+			<Show t={t} a={0} b={st[1]}><Title t={t} section={r.kicker} size={Math.min(r.title.length > 22 ? 96 : 116, Math.max(...r.title.replace(/\*/g, '').split(/\s+/).map((w) => w.length)) > 10 ? 84 : 999)}><Rich s={r.title} /></Title></Show>
 			{r.scenes!.map((s, i) => <Show key={i} t={t} a={st[i + 1]} b={st[i + 2]}><SceneView t={t} a={st[i + 1]} b={st[i + 2]} s={s} /></Show>)}
 			<Ask t={t} a={st[lines.length - 1]} word={r.cta} />
 		</>
