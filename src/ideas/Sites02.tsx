@@ -1,6 +1,7 @@
 import React from 'react';
 import {ramp} from '../system/kit';
-import {Big, Box, Browser, Chips, Cue, L, LiveShot, PromptCard, Show, StepVideo, Title, Win, at, pop, prompt, stepFrames, useTheme} from '../system/step';
+import {Big, Box, Browser, Chips, Cue, L, LiveShot, PromptCard, Show, StepVideo, Steps, Title, Win, at, pop, prompt, stepFrames, useTheme} from '../system/step';
+import {ugc} from '../system/ugc';
 import WORDS from '../../public/ideas/sites-02/words.json';
 
 // Sites-02 «Claude Code: VS Code, Desktop, Browser» (шлях websites, крок claude-code-setup). Сценарій: public/ideas/sites-02/scenario.md.
@@ -36,39 +37,55 @@ const Calc: React.FC<{t: number; a0: number}> = ({t, a0}) => {
 };
 
 const Scenes = (t: number) => {
-	const go = a('Заходиш'), main = a('Головне'), check = a('Встановили'), file = a('Файл', a('фону')), more = a('А', file);
+	const go = a('Заходиш'), ext = a('Розширення'), desk = a('Десктопна'), chrome = a('Chrome'), main = a('Головне'), check = a('Встановили'), write = a('пишеш'), file = a('Файл', a('фону')), more = a('калькулятор') - 0.1, fin = a('Ось', 56);
 	return (
 		<>
 			<Show t={t} a={0} b={go}>
 				<Title t={t} section="Організація">Де взяти <L>Claude Code</L>?</Title>
 			</Show>
-			<Show t={t} a={go} b={main}>
-				<Box y={280}><Big size={84}>Усе на <L>одній сторінці</L></Big></Box>
-				<Browser t={t} y={560} url="claude.ai/download" typeAt={go + 0.2} h={520}>
+			<Show t={t} a={go} b={desk}>
+				<Box y={260}><Big size={80}>{t >= ext ? <>1 · <L>VS Code</L></> : <>Усе на <L>одній сторінці</L></>}</Big></Box>
+				<Browser t={t} y={460} url="claude.ai/download" typeAt={go + 0.2} h={560}>
 					{/* справжня сторінка (shots/claude-download.png, 1265×2200): скрол до «Claude Code environments», рамка на VS Code */}
-					<LiveShot t={t} src="ideas/sites-02/shots/claude-download.png" w={1265} a={go + 1} b={a('розширення')} scroll={1440} focus={{x: 878, y: 1877, w: 295, h: 69, at: a('VS Code'), zoom: 1.4}} />
+					<LiveShot t={t} src="ideas/sites-02/shots/claude-download.png" w={1265} a={go + 1} b={ext} scroll={1440} focus={{x: 878, y: 1877, w: 295, h: 69, at: a('VS Code'), zoom: 1.4}} />
 				</Browser>
-				<Chips t={t} y={1230} items={[['VS Code', a('VS Code')], ['Desktop', a('десктопна')], ['Chrome', a('Chrome')]]} />
+				<Chips t={t} y={1170} items={[['файли', a('файли')], ['код', a('код')], ['чат поруч', a('чат')]]} />
+			</Show>
+			<Show t={t} a={desk} b={chrome}>
+				<Box y={380}><Big size={100}>2 · <L>Десктоп</L></Big></Box>
+				<Chips t={t} y={680} size={46} items={[['швидко спитати', a('спитати')], ['запустити задачу', a('задачу')], ['без редактора', a('редактора')]]} />
+			</Show>
+			<Show t={t} a={chrome} b={main}>
+				<Box y={380}><Big size={100}>3 · <L>Chrome</L></Big></Box>
+				<Box y={640} o={pop(t, a('браузері'))}><span style={{fontSize: 54, fontWeight: 700}}>нейромережа прямо <L>в браузері</L></span></Box>
 			</Show>
 			<Show t={t} a={main} b={check}>
 				<Box y={520}><Big size={110}>Головне — <L>VS Code</L></Big></Box>
-				<Box y={800} o={pop(t, a('тут'))}><span style={{fontSize: 52, fontWeight: 700}}>тут ми працюємо над сайтом</span></Box>
 			</Show>
-			<Show t={t} a={check} b={file}>
-				<Box y={300}><Big size={88}>Одразу <L>перевіряємо</L></Big></Box>
-				<PromptCard t={t} a={a('створи')} b={a('фону') + 0.3} text={prompt('claude-code-setup', 'first-file')} y={500} label="Claude Code" />
+			<Show t={t} a={check} b={write}>
+				<Box y={260}><Big size={88}>Одразу <L>перевіряємо</L></Big></Box>
+				<Steps t={t} y={500} items={[['1', 'порожня папка', a('Створюєш')], ['2', 'відкрити у VS Code', a('відкриваєш')]]} />
+			</Show>
+			<Show t={t} a={write} b={file}>
+				<PromptCard t={t} a={a('створи')} b={a('фону') + 0.3} text={prompt('claude-code-setup', 'first-file')} y={420} label="Claude Code" />
 			</Show>
 			<Show t={t} a={file} b={more}>
-				<Box y={300}><Big size={88}>Файл <L>з'явився</L></Big></Box>
-				<Browser t={t} y={500} url="index.html" o={pop(t, a("з'явився"))} h={560}>
-					<Hello t={t} flip={a('працює', a('браузері'))} />
+				<Box y={260}><Big size={88}>Файл <L>з'явився</L></Big></Box>
+				<Browser t={t} y={470} url="index.html" o={pop(t, file)} h={560}>
+					<Hello t={t} flip={a('змінюється') - 0.2} />
 				</Browser>
+				<Box y={1150} o={pop(t, a('працює', 43))}><Big size={72}>Все <L>працює ✓</L></Big></Box>
 			</Show>
-			<Show t={t} a={more} b={Infinity}>
-				<Box y={280}><Big size={96}>Хочеш <L>цікавіше</L>?</Big></Box>
-				<Win y={520} label="калькулятор" o={pop(t, a('калькулятор'))}>
+			<Show t={t} a={more} b={fin}>
+				<Box y={240}><Big size={84}>Хочеш <L>цікавіше</L>?</Big></Box>
+				<Win y={440} label="калькулятор" o={pop(t, a('калькулятор'))}>
 					<Calc t={t} a0={a('калькулятор') + 0.2} />
 				</Win>
+				<Chips t={t} y={1240} size={38} items={[['index.html', a('три')], ['style.css', a('три') + 0.2], ['script.js', a('три') + 0.4]]} />
+			</Show>
+			<Show t={t} a={fin} b={Infinity}>
+				<Box y={420}><Big size={92}>Описуєш <L>словами</L></Big></Box>
+				<Box y={680} o={pop(t, a('файли', 59))}><Big size={84}>файли з'являються <L>самі</L></Big></Box>
 			</Show>
 		</>
 	);
@@ -82,8 +99,12 @@ const SFX: Cue[] = [
 	[a('створи'), 'typing/typewriter-digital.mp3', 0.18],
 	[a("з'явився"), 'notify/ding-101492.mp3', 0.3],
 	[a('калькулятор'), 'pop/bubble-pop-389501.mp3', 0.35],
+	[a('Десктопна'), 'whoosh/simple-whoosh-382724.mp3', 0.3],
+	[a('Chrome'), 'whoosh/simple-whoosh-382724.mp3', 0.3],
+	[a('змінюється') - 0.2, 'click/mouse-click-352734.mp3', 0.4],
 ];
 
 export const Sites02: React.FC<{theme?: string; seed?: number}> = ({theme, seed}) => (
-	<StepVideo theme={theme} seed={seed} dir="ideas/sites-02" words={WORDS} next="Git і GitHub" nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={Scenes} />
+	<StepVideo theme={theme} seed={seed} dir="ideas/sites-02" words={WORDS} next="Git і GitHub" nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={Scenes}
+		inserts={[ugc('typing', a('А', 44), a('калькулятор') - a('А', 44) - 0.1, {label: <>Ще <L>цікавіше</L></>, labelY: 1000})]} />
 );

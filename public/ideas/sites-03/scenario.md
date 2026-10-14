@@ -1,5 +1,7 @@
 # Sites-03 · «Git і GitHub» (Short 1080×1920, ≈ 35 с)
 
+**v2 (2026-10-14):** розширений текст (docs/sites-voice-v2.md), голос ≈ 56 с + end card. Таблиця нижче — первісний план v1; актуальні сцени й таймінги — у src/ideas/Sites03.tsx (прив'язані до слів words.json).
+
 Крок `websites` → `git-github`. Джерело: `C:/DevGuide/helpers/websites-videos/03-git-github/`. Сцени прив'язані до слів (`src/ideas/Sites03.tsx`).
 
 | Слово | Екран |

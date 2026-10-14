@@ -1,6 +1,6 @@
 import React from 'react';
 import {F} from '../system/kit';
-import {Big, Box, Browser, Cue, L, LiveShot, Pill, Reply, Show, StepVideo, Title, UserMsg, Win, at, pop, stepFrames, useTheme} from '../system/step';
+import {Big, Box, Browser, Cue, L, LiveShot, Mono, Pill, PromptCard, Reply, Show, StepVideo, Term, Ticks, Title, UserMsg, Win, at, pop, prompt, stepFrames, useTheme} from '../system/step';
 import {ugc} from '../system/ugc';
 import WORDS from '../../public/ideas/sites-01/words.json';
 
@@ -24,15 +24,15 @@ const Tree: React.FC<{t: number}> = ({t}) => {
 	return (
 		<div style={{display: 'flex', flexDirection: 'column', gap: 18, padding: 18, borderRadius: 20, border: `3px solid ${all > 0 ? T.accent : 'transparent'}`, background: `${T.accent}${all > 0 ? '14' : '00'}`, textAlign: 'left'}}>
 			<div style={{fontSize: 40, color: T.text}}>▾ my-first-site</div>
-			{row('index.html', a('створює'), '+ створено')}
-			{row('style.css', a('створює') + 0.35, '+ створено', a('змінює'))}
-			{row('script.js', a('створює') + 0.7, '+ створено')}
+			{row('index.html', a('створює', 30), '+ створено')}
+			{row('style.css', a('створює', 30) + 0.35, '+ створено', a('змінює'))}
+			{row('script.js', a('створює', 30) + 0.7, '+ створено')}
 		</div>
 	);
 };
 
 const Scenes = (t: number) => {
-	const first = a('Перше'), second = a('Друге'), mix = a('ось'), chat = a('Claude', a('плутати')), agent = a('А', chat), so = a('Тобто'), fin = a('VS Code', a('зробить'));
+	const first = a('Перше'), second = a('Друге'), mix = a('ось'), chat = a('Claude', a('плутати')), agent = a('Claude Code', 26), so = a('Тобто'), ask = a('Не', 42.5), fin = a('VS Code', a('зробить'));
 	return (
 		<>
 			<Show t={t} a={0} b={first}>
@@ -48,28 +48,35 @@ const Scenes = (t: number) => {
 				<Box y={1262} o={pop(t, a('версію'))}><Pill>остання версія</Pill></Box>
 			</Show>
 			<Show t={t} a={second} b={mix}>
-				<Box y={440}><Big size={110}>2 · <L>Claude Code</L></Big></Box>
-				<Box y={760} o={pop(t, a('підписці'))}><Pill style={{fontSize: 52}}>підписка Pro</Pill></Box>
+				<Box y={400}><Big size={110}>2 · <L>Claude Code</L></Big></Box>
+				<Box y={720} o={pop(t, a('підписці'))}><Pill style={{fontSize: 52}}>підписка Pro</Pill></Box>
+				<Box y={880} o={pop(t, a('старті'))}><span style={{fontSize: 50, fontWeight: 700}}>на старті <L>вистачає</L></span></Box>
 			</Show>
 			<Show t={t} a={mix} b={chat}>
 				<Box y={620}><Big size={150}>Не <L>плутай</L></Big></Box>
 			</Show>
 			<Show t={t} a={chat} b={agent}>
-				<Box y={330}><Big size={96}>Claude = <L>чат</L></Big></Box>
-				<Win y={580} label="Claude · чат" minH={420}>
-					<UserMsg o={pop(t, a('питаєш'))}>Як зробити сайт?</UserMsg>
-					<Reply o={pop(t, a('відповідає'))}>Ось 5 кроків. Спершу…</Reply>
+				<Box y={300}><Big size={96}>Claude = <L>чат</L></Big></Box>
+				<Win y={500} label="Claude · чат" minH={380}>
+					<UserMsg o={pop(t, a('питаєш'))}>Зроби сайт кав'ярні</UserMsg>
+					<Reply o={pop(t, a('шматок'))}><Mono size={34}>{'<section class="hero">…'}</Mono></Reply>
 				</Win>
+				<Ticks t={t} y={960} gap={115} items={[[false, 'сам копіюєш', a('копіюєш')], [false, 'сам створюєш файли', a('створюєш')], [false, 'шукаєш, куди вставити', a('шукаєш')]]} />
 			</Show>
 			<Show t={t} a={agent} b={so}>
-				<Box y={330}><Big size={96}>Claude Code = <L>агент</L></Big></Box>
-				<Win y={580} label="Claude Code" mono minH={420}>
+				<Box y={300}><Big size={90}>Claude Code = <L>агент</L></Big></Box>
+				<Win y={500} label="Claude Code · твоя папка" mono minH={380}>
 					<Tree t={t} />
 				</Win>
+				<Term t={t} y={1000} label="Claude Code" lines={[{at: a('запустити'), text: '✓ сайт запущено', kind: 'ok'}, {at: a('показує'), text: '✓ ось результат', kind: 'ok'}]} />
 			</Show>
-			<Show t={t} a={so} b={fin}>
+			<Show t={t} a={so} b={ask}>
 				<Box y={380}><Big size={100}>Чат <L>порадить</L></Big></Box>
 				<Box y={720} o={pop(t, a('зробить') - 0.9)}><Big size={100}>Claude Code <L>зробить</L></Big></Box>
+			</Show>
+			<Show t={t} a={ask} b={fin}>
+				<Box y={260}><Big size={84}>Не впевнений? <L>Спитай</L></Big></Box>
+				<PromptCard t={t} a={a('Спитай')} b={a('промпт')} y={540} text={prompt('setup-tools', 'chat-vs-code')} />
 			</Show>
 			<Show t={t} a={fin} b={Infinity}>
 				<Box y={480} style={{display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 24}}>
@@ -89,7 +96,9 @@ const SFX: Cue[] = [
 	[a('офіційного'), 'click/mouse-click-352734.mp3', 0.4],
 	[a('Друге'), 'pop/bubble-pop-406640.mp3', 0.35],
 	[a('важливо'), 'impact/bass-hit-futuristic.mp3', 0.2],
-	[a('А', a('текстом')), 'click/lock-digital.mp3', 0.3],
+	[a('Claude Code', 26), 'click/lock-digital.mp3', 0.3],
+	[a('копіюєш'), 'glitch/small-electric-glitch-2595.wav', 0.2],
+	[a('Спитай'), 'typing/typewriter-digital.mp3', 0.18],
 	[a('VS Code', a('зробить')), 'sparkle/shimmer-sparkle-sweep.mp3', 0.3],
 ];
 

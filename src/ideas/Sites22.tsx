@@ -1,6 +1,6 @@
 import React from 'react';
 import {F} from '../system/kit';
-import {Big, Box, Browser, Chips, Cue, L, Mono, Pill, Reply, Show, StepVideo, Title, UserMsg, Win, X, at, pop, stepFrames, useTheme} from '../system/step';
+import {Big, Box, Browser, Chips, Cue, L, Mono, Pill, PromptCard, Reply, Show, StepVideo, Ticks, Title, UserMsg, Win, X, at, pop, prompt, stepFrames, useTheme} from '../system/step';
 import {ugc} from '../system/ugc';
 import WORDS from '../../public/ideas/sites-22/words.json';
 
@@ -23,7 +23,7 @@ const Road: React.FC<{t: number; a0: number; x: number; title: string; children?
 
 const Scenes = (t: number) => {
 	const T = useTheme();
-	const how = a('А'), two = a('Можна'), both = a('Найкраще'), forgot = a('Забув');
+	const how = a('А'), two = a('Можна'), both = a('Найкраще'), forgot = a('Забув'), plan = a('Як', 27), docs = a('І', 39), fin = a('Клієнт', 51);
 	return (
 		<>
 			<Show t={t} a={0} b={how}>
@@ -59,11 +59,28 @@ const Scenes = (t: number) => {
 				</Browser>
 				<Box y={1170} o={pop(t, a('без'))}><Big size={56}>без логіну й <L>пароля</L></Big></Box>
 			</Show>
-			<Show t={t} a={forgot} b={Infinity}>
+			<Show t={t} a={forgot} b={plan}>
 				<Win y={420} label="Claude · клієнт" minH={360}>
 					<UserMsg size={44} o={pop(t, forgot)}>Я забув посилання в адмінку</UserMsg>
 					<Reply o={pop(t, a('нагадає'))} size={42}>Ось воно ще раз: <Mono size={32}>zerno.com.ua/admin?token=•••</Mono></Reply>
 				</Win>
+			</Show>
+			<Show t={t} a={plan} b={docs}>
+				<Box y={230}><Big size={80}>Як це <L>зробити</L>?</Big></Box>
+				<PromptCard t={t} a={a('Описуєш')} b={a('діями')} y={400} size={34} text={prompt('admin-docs', 'admin').split('\n')[0]} />
+				<Ticks t={t} y={900} items={[[true, 'спершу план', a('Спершу')], [true, 'скільки це часу', a('скільки')], [true, 'потім «ок»', a('потім')]]} />
+			</Show>
+			<Show t={t} a={docs} b={fin}>
+				<Box y={230}><Big size={80}>Дві <L>інструкції</L></Big></Box>
+				<Road t={t} a0={a('README')} x={X} title="README"><span style={{fontSize: 34, color: T.dim}}>для розробника</span>
+					{[['запустити', a('запустити')], ['викласти', a('викласти')], ['бекап', a('бекап')]].map(([w, at0]) => <span key={w as string} style={{opacity: pop(t, at0 as number), fontSize: 40, fontWeight: 700}}>✓ {w}</span>)}
+				</Road>
+				<Road t={t} a0={a('коротка')} x={526} title="Клієнту"><span style={{fontSize: 34, color: T.dim}}>простими словами</span>
+					{[['меню', a('меню')], ['ціни', a('ціни', 50)], ['фото', a('фото')]].map(([w, at0]) => <span key={w as string} style={{opacity: pop(t, at0 as number), fontSize: 40, fontWeight: 700}}>✓ {w}</span>)}
+				</Road>
+			</Show>
+			<Show t={t} a={fin} b={Infinity}>
+				<Box y={520}><Big size={100}>Клієнт <L>сам</L> усе змінює</Big></Box>
 			</Show>
 		</>
 	);
@@ -77,6 +94,9 @@ const SFX: Cue[] = [
 	[a('посилання'), 'notify/notification-051-494246.mp3', 0.25],
 	[a('вхід'), 'click/lock-digital.mp3', 0.35],
 	[a('нагадає'), 'notify/ding-126626.mp3', 0.25],
+	[a('Описуєш'), 'typing/typewriter-digital.mp3', 0.18],
+	[a('README'), 'pop/bubble-pop-406640.mp3', 0.3],
+	[a('коротка'), 'pop/bubble-pop-389501.mp3', 0.3],
 ];
 
 export const Sites22: React.FC<{theme?: string; seed?: number}> = ({theme, seed}) => (

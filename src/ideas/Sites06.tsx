@@ -1,6 +1,6 @@
 import React from 'react';
-import {F} from '../system/kit';
-import {Big, Box, Browser, Cue, L, LiveShot, Mono, Pill, PromptCard, Show, StepVideo, Title, X, W, at, pop, prompt, stepFrames, useTheme} from '../system/step';
+import {F, ramp} from '../system/kit';
+import {Big, Box, Browser, Cue, L, LiveShot, Mono, Pill, PromptCard, Show, StepVideo, Steps, Strike, Chips, Title, X, W, at, pop, prompt, stepFrames, useTheme} from '../system/step';
 import {ugc} from '../system/ugc';
 import WORDS from '../../public/ideas/sites-06/words.json';
 
@@ -56,7 +56,7 @@ const CafeMock: React.FC<{t: number; a0: number; styled?: boolean; y?: number}> 
 const Tag: React.FC<{t: number; a0: number; children: React.ReactNode; y?: number}> = ({t, a0, children, y = 1340}) => <Box y={y} o={pop(t, a0)}><Big size={60}>{children}</Big></Box>;
 
 const Scenes = (t: number) => {
-	const def = a('для'), nn = a('Нейромережа'), one = a('Є'), test = a('Перевір'), w2 = a('Другий'), last = a('Головне');
+	const def = a('для'), nn = a('Нейромережа'), one = a('Є'), test = a('Перевір'), w2 = a('Другий'), cmp = a('Поклади'), mine = a('Свої'), last = a('Головне');
 	return (
 		<>
 			<Show t={t} a={0} b={def}>
@@ -69,6 +69,7 @@ const Scenes = (t: number) => {
 			<Show t={t} a={nn} b={one}>
 				<Box y={300}><Big size={84}>AI бере скіл <L>під задачу</L></Big></Box>
 				<SkillGrid t={t} a0={nn} pick={a('задачу')} />
+				<Box y={1150} o={pop(t, a('Ставити'))}><Big size={56}><Strike p={ramp(t, a('сенсу'), a('сенсу') + 0.5)}>сотня «про запас»</Strike></Big></Box>
 			</Show>
 			<Show t={t} a={one} b={test}>
 				<Box y={260}><Big size={84}>Став першим</Big></Box>
@@ -80,14 +81,24 @@ const Scenes = (t: number) => {
 				<Tag t={t} a0={a('дизайном')} y={1250}>Дизайн — <L>помітна різниця</L></Tag>
 			</Show>
 			<Show t={t} a={test} b={w2}>
-				<PromptCard t={t} a={a('Той')} b={a('Перший')} y={260} size={36} label="Без skills" text={prompt('skills-compare', 'without')} />
+				<PromptCard t={t} a={a('Той')} b={a('Перший', 30)} y={260} size={36} label="Без skills" text={prompt('skills-compare', 'without')} />
 				<CafeMock t={t} a0={a('працює')} />
 				<Tag t={t} a0={a('шаблон')}>виглядає як <span style={{color: useTheme().red}}>шаблон</span></Tag>
 			</Show>
-			<Show t={t} a={w2} b={last}>
+			<Show t={t} a={w2} b={cmp}>
 				<PromptCard t={t} a={a('пишеш')} b={a('ui-ux', w2) + 0.8} y={260} size={36} label="З ui-ux-pro-max" text={prompt('skills-compare', 'with')} />
 				<CafeMock t={t} a0={a('бачиш')} styled />
-				<Tag t={t} a0={a('палітру')}>стиль · <L>шрифти</L></Tag>
+				<Tag t={t} a0={a('палітра')}>стиль · <L>шрифти</L></Tag>
+			</Show>
+			<Show t={t} a={cmp} b={mine}>
+				<Box y={260}><Big size={84}>Назви <L>3 відмінності</L></Big></Box>
+				<Steps t={t} y={520} items={[['1', 'стиль під бізнес', a('три')], ['2', 'продумана палітра', a('три') + 0.4], ['3', 'шрифти', a('відмінності') + 0.5]]} />
+				<Box y={1080} o={pop(t, a('скіл', 52))}><Big size={60}>так видно, що дає <L>скіл</L></Big></Box>
+			</Show>
+			<Show t={t} a={mine} b={last}>
+				<Box y={260}><Big size={84}>Свої скіли — <L>у Claude</L></Big></Box>
+				<Chips t={t} y={520} size={46} items={[['скіли', mine + 0.2], ['конектори', a('конектори')], ['плагіни', a('плагіни')]]} />
+				<Box y={760} o={pop(t, a('профіль'))}><Pill style={{fontSize: 50, padding: '20px 40px'}}>профіль → налаштування</Pill></Box>
 			</Show>
 			<Show t={t} a={last} b={Infinity}>
 				<Box y={440}><Big size={96}>Кажи <L>прямо</L></Big></Box>

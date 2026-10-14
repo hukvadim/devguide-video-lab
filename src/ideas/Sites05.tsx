@@ -25,7 +25,7 @@ const Chaos: React.FC<{t: number; a0: number; join: number}> = ({t, a0, join}) =
 };
 
 const Scenes = (t: number) => {
-	const chaos = a('шукати'), one = a('Обери'), why = a('Так'), dep = a('Від'), host = a('Переважно'), ask = a('Спитай');
+	const chaos = a('шукати'), one = a('Обери'), why = a('Чому'), dep = a('Від'), host = a('Переважно'), what = a('Що', 36), last = a('Спитай', 49), next = a('Новий');
 	return (
 		<>
 			<Show t={t} a={0} b={chaos}>
@@ -38,16 +38,27 @@ const Scenes = (t: number) => {
 				<Chips t={t} y={860} size={46} items={[['лендинги', a('лендинги')], ['візитки', a('візитки')], ['сайти з адмінкою', a('адмінкою')]]} />
 			</Show>
 			<Show t={t} a={why} b={dep}>
-				<Box y={300}><Big size={92}>Так <L>швидше</L></Big></Box>
-				<Ticks t={t} y={560} items={[[true, 'працюєш швидше', a('швидше')], [true, 'знаєш, де що лежить', a('знаєш')], [true, <>однакові <L>вказівки</L></>, a('однакові')], [true, 'менше помилок', a('менше')]]} />
+				<Box y={260}><Big size={88}>Чому <L>так</L>?</Big></Box>
+				<Ticks t={t} y={480} items={[[true, 'працюєш швидше', a('швидше')], [true, 'знаєш, де що лежить', a('знаєш')], [true, <>однакові <L>вказівки</L> для AI</>, a('однакові')], [true, 'менше помилок', a('менше')], [true, 'інструменти — один раз', a('налаштував')]]} />
 			</Show>
-			<Show t={t} a={host} b={ask}>
-				<Box y={300}><Big size={88}>Залежить від того, <L>де житиме сайт</L></Big></Box>
+			<Show t={t} a={host} b={what}>
+				<Box y={300}><Big size={84}>Залежить від того, <L>де житиме сайт</L></Big></Box>
 				<Chips t={t} y={640} size={50} items={[['Vercel', a('Vercel')], ['свій сервер', a('свій')], ['звичайний хостинг', a('звичайний')]]} />
 			</Show>
-			<Show t={t} a={ask} b={Infinity}>
-				<Box y={250}><Big size={76}>Спитай <L>один раз</L></Big></Box>
-				<PromptCard t={t} a={ask + 0.3} b={ask + 2.6} y={420} size={38} text={prompt('stack', 'stack').split('\n').slice(0, 2).join('\n')} />
+			<Show t={t} a={what} b={last}>
+				<Box y={250}><Big size={84}>Що <L>питати</L>?</Big></Box>
+				<PromptCard t={t} a={a('Опиши')} b={a('форм')} y={420} size={36} text={prompt('stack', 'stack').split('\n').slice(0, 3).join('\n')} />
+				<Chips t={t} y={1110} size={44} items={[['верстка', a('верстки')], ['адмінка', a('адмінки')], ['форми', a('форм')]]} />
+				<Box y={1250} o={pop(t, a('інший'))}><Big size={56}>+ коли взяти <L>інший</L>?</Big></Box>
+			</Show>
+			<Show t={t} a={last} b={next}>
+				<Box y={440}><Big size={100}>Спитай <L>один раз</L></Big></Box>
+				<Box y={720} o={pop(t, a('працюй'))}><Big size={84}>і далі <L>просто працюй</L></Big></Box>
+			</Show>
+			<Show t={t} a={next} b={Infinity}>
+				<Box y={380}><Big size={92}>Новий клієнт</Big></Box>
+				<Box y={560} o={pop(t, a('той'))}><Big size={100}>→ <L>той самий стек</L></Big></Box>
+				<Ticks t={t} y={860} items={[[true, 'вже знаєш, як робити', a('знаєш', 55)]]} />
 			</Show>
 		</>
 	);
@@ -57,9 +68,10 @@ const SFX: Cue[] = [
 	[0, 'whoosh/whoosh-cinematic-376875.mp3', 0.3],
 	[a('шукати'), 'glitch/glitch-crackles-1044.wav', 0.2],
 	[a('Обери'), 'whoosh/transition-snap.mp3', 0.35],
-	[a('Так'), 'pop/bubble-pop-406640.mp3', 0.3],
+	[a('Чому'), 'pop/bubble-pop-406640.mp3', 0.3],
+	[a('Новий'), 'sparkle/shimmer-sparkle-sweep.mp3', 0.3],
 	[a('Vercel'), 'pop/bubble-pop-389501.mp3', 0.3],
-	[a('Спитай'), 'typing/typewriter-digital.mp3', 0.2],
+	[a('Опиши'), 'typing/typewriter-digital.mp3', 0.2],
 ];
 
 export const Sites05: React.FC<{theme?: string; seed?: number}> = ({theme, seed}) => (

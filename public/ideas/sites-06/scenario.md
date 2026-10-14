@@ -1,5 +1,7 @@
 # Sites-06 · «Skills: без і з ui-ux-pro-max» (Short 1080×1920)
 
+**v2 (2026-10-14):** розширений текст (docs/sites-voice-v2.md), голос ≈ 64 с + end card. Таблиця нижче — первісний план v1; актуальні сцени й таймінги — у src/ideas/Sites06.tsx (прив'язані до слів words.json).
+
 Крок `websites` → `skills-compare`. Джерело: `C:/DevGuide/helpers/websites-videos/06-skills-compare/`. Сцени прив'язані до слів (`src/ideas/Sites06.tsx`).
 
 | Слово | Екран |

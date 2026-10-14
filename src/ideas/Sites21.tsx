@@ -1,6 +1,6 @@
 import React from 'react';
 import {F, ramp} from '../system/kit';
-import {Big, Box, Browser, Cue, L, LiveShot, Show, StepVideo, Strike, Title, X, W, at, pop, stepFrames, useTheme} from '../system/step';
+import {Big, Box, Browser, Chips, Cue, L, LiveShot, PromptCard, Show, StepVideo, Strike, Title, X, W, at, pop, prompt, stepFrames, useTheme} from '../system/step';
 import WORDS from '../../public/ideas/sites-21/words.json';
 
 // Sites-21 «Швидкість і доступність» (шлях websites, крок performance). Сценарій: public/ideas/sites-21/scenario.md.
@@ -29,7 +29,8 @@ const Scale: React.FC<{t: number; bad: number; good: number}> = ({t, bad, good})
 
 const Scenes = (t: number) => {
 	const T = useTheme();
-	const check = a('перевіряємо'), rec = a('Важливо'), scale = a('Менше'), real = a('телефоні'), share = a('І', 16);
+	const check = a('перевіряємо'), rec = a('Важливо'), scale = a('Менше'), real = a('Ось'), low = a('Якщо'), usual = a('Зазвичай'), share = a('І', 39);
+	const pc = a('комп', 20), mob = a('телефоні', 22);
 	return (
 		<>
 			<Show t={t} a={0} b={check}>
@@ -49,21 +50,31 @@ const Scenes = (t: number) => {
 				<Box y={300}><Big size={84}>Межа — <L>50</L></Big></Box>
 				<Scale t={t} bad={a('погано')} good={a('Вище')} />
 			</Show>
-			<Show t={t} a={real} b={share}>
-				<Box y={230}><Big size={64}>телефон і ПК — <L>понад 50</L></Big></Box>
-				<Browser t={t} y={360} url="Мобільний" h={360}>
-					<LiveShot t={t} src={MOB} w={1280} a={real} b={real + 0.01} scroll={480} focus={{x: 322, y: 622, w: 124, h: 124, at: real + 0.2, zoom: 1.5}} />
+			<Show t={t} a={real} b={low}>
+				<Box y={230}><Big size={64}>Наш <L>DevGuide</L></Big></Box>
+				<Browser t={t} y={360} url="Комп'ютер · 97" h={360} o={pop(t, pc)}>
+					<LiveShot t={t} src={PC} w={1280} a={pc} b={pc + 0.01} scroll={480} focus={{x: 322, y: 622, w: 124, h: 124, at: pc + 0.2, zoom: 1.5}} />
 				</Browser>
-				<Browser t={t} y={830} url="Комп'ютер" h={360} o={pop(t, a('комп'))}>
-					<LiveShot t={t} src={PC} w={1280} a={a('комп')} b={a('комп') + 0.01} scroll={480} focus={{x: 322, y: 622, w: 124, h: 124, at: a('комп') + 0.2, zoom: 1.5}} />
+				<Browser t={t} y={830} url="Мобільний · 69" h={360} o={pop(t, mob)}>
+					<LiveShot t={t} src={MOB} w={1280} a={mob} b={mob + 0.01} scroll={480} focus={{x: 322, y: 622, w: 124, h: 124, at: mob + 0.2, zoom: 1.5}} />
 				</Browser>
+				<Box y={1250} o={pop(t, a('Нормально'))}><Big size={60}><L>Нормально</L> ✓</Big></Box>
+			</Show>
+			<Show t={t} a={low} b={usual}>
+				<Box y={230}><Big size={76}>Не все <span style={{color: T.red}}>підряд</span></Big></Box>
+				<PromptCard t={t} a={a('Кидаєш')} b={a('після')} y={420} size={36} text={prompt('performance', 'speed')} />
+				<Box y={1050} o={pop(t, a('топ'))}><Big size={60}>топ-3 · <L>до і після</L></Big></Box>
+			</Show>
+			<Show t={t} a={usual} b={share}>
+				<Box y={300}><Big size={80}>Зазвичай <L>це</L></Big></Box>
+				<Chips t={t} y={560} size={54} items={[['картинки', a('картинки')], ['шрифти', a('шрифти')], ['зайвий код', a('зайвий')]]} />
 			</Show>
 			<Show t={t} a={share} b={Infinity}>
 				<Box y={250}><Big size={80}>Звіт — <L>клієнту</L></Big></Box>
 				<Browser t={t} y={420} url="pagespeed.web.dev" h={560}>
 					<LiveShot t={t} src={PC} w={1280} a={share + 0.2} focus={{x: 969, y: 14, w: 196, h: 36, at: a('поділитися'), zoom: 1.5}} />
 				</Browser>
-				<Box y={1120} o={pop(t, a('Ось'))}><Big size={64}>Google каже: <span style={{color: '#2FBF71'}}>все добре ✓</span></Big></Box>
+				<Box y={1120} o={pop(t, a('Ось', 43))}><Big size={64}>Google каже: <span style={{color: '#2FBF71'}}>все добре ✓</span></Big></Box>
 			</Show>
 		</>
 	);
@@ -75,8 +86,10 @@ const SFX: Cue[] = [
 	[a('балів'), 'glitch/small-electric-glitch-2595.wav', 0.25],
 	[a('погано'), 'pop/bubble-pop-406640.mp3', 0.3],
 	[a('Вище'), 'pop/bubble-pop-389501.mp3', 0.3],
+	[a('комп', 20), 'pop/soft-pop.wav', 0.3],
+	[a('Кидаєш'), 'whoosh/simple-whoosh-382724.mp3', 0.3],
 	[a('поділитися') + 0.3, 'click/mouse-click-352734.mp3', 0.4],
-	[a('Ось'), 'sparkle/shimmer-sparkle-sweep.mp3', 0.3],
+	[a('Ось', 43), 'sparkle/shimmer-sparkle-sweep.mp3', 0.3],
 ];
 
 export const Sites21: React.FC<{theme?: string; seed?: number}> = ({theme, seed}) => (

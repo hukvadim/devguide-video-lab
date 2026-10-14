@@ -1,6 +1,6 @@
 import React from 'react';
 import {F} from '../system/kit';
-import {Big, Box, Browser, Chips, Cue, L, Reply, Show, StepVideo, Term, Ticks, Title, UserMsg, Win, at, pop, stepFrames, useTheme} from '../system/step';
+import {Big, Box, Browser, Chips, Cue, L, Pill, Reply, Show, StepVideo, Term, Ticks, Title, UserMsg, Win, at, pop, stepFrames, useTheme} from '../system/step';
 import {ugc} from '../system/ugc';
 import WORDS from '../../public/ideas/sites-12/words.json';
 
@@ -36,7 +36,7 @@ const Blocks: React.FC<{t: number; at: number[]}> = ({t, at: times}) => {
 };
 
 const Scenes = (t: number) => {
-	const put = a('Кладемо'), stack = a('Стек'), q = a('Він'), build = a('перший'), end = a('Наприкінці');
+	const put = a('Кладемо'), stack = a('Стек'), q = a('Він'), build = a('перший'), ctl = a('Не', 39), mob = a('Контент'), end = a('Наприкінці'), done = a('Усі');
 	return (
 		<>
 			<Show t={t} a={0} b={put}>
@@ -49,6 +49,7 @@ const Scenes = (t: number) => {
 			<Show t={t} a={stack} b={q}>
 				<Box y={420}><Big size={92}>Стек уже <L>в ТЗ</L></Big></Box>
 				<Chips t={t} y={700} size={44} items={[['той, що ти обрав раніше', a('той')]]} />
+				<Box y={900} o={pop(t, a('Додаткові'))}><Big size={60}>MCP поки <L>не потрібні</L></Big></Box>
 			</Show>
 			<Show t={t} a={q} b={a('І', 21)}>
 				<Win y={300} label="Claude Code" minH={900}>
@@ -58,14 +59,27 @@ const Scenes = (t: number) => {
 					<UserMsg size={40} o={pop(t, a('Кажеш'))}>ок</UserMsg>
 				</Win>
 			</Show>
-			<Show t={t} a={build} b={end}>
+			<Show t={t} a={build} b={ctl}>
 				<Box y={250}><Big size={84}>Блок за <L>блоком</L></Big></Box>
 				<Browser t={t} y={480} url="localhost:3000" h={600}><Blocks t={t} at={[build, a('меню'), a('відгуки')]} /></Browser>
 				<Box y={1210} o={pop(t, a("сказав"))}><Big size={72}>подивився → <L>«ок»</L></Big></Box>
 			</Show>
-			<Show t={t} a={end} b={Infinity}>
-				<Box y={300}><Big size={84}>AI сам каже, <L>що лишилось</L></Big></Box>
-				<Ticks t={t} y={620} items={[[false, 'форма бронювання', a('каже') + 0.3], [false, 'сторінка 404', a('не', a('каже'))]]} />
+			<Show t={t} a={ctl} b={mob}>
+				<Box y={320}><Big size={88}>Не все <L>одним махом</L></Big></Box>
+				<Ticks t={t} y={640} gap={130} items={[[true, 'легше контролювати', a('контролювати')], [true, 'простіше виправляти', a('виправляти')]]} />
+			</Show>
+			<Show t={t} a={mob} b={end}>
+				<Box y={360}><Big size={88}>Одразу — <L>по-справжньому</L></Big></Box>
+				<Chips t={t} y={640} size={50} items={[['реалістичний контент', a('реалістичний')], ['мобільна версія', a('мобільна')]]} />
+			</Show>
+			<Show t={t} a={end} b={done}>
+				<Box y={280}><Big size={84}>AI сам каже, <L>що лишилось</L></Big></Box>
+				<Ticks t={t} y={600} items={[[false, 'форма бронювання', a('каже') + 0.3], [false, 'сторінка 404', a('не', a('каже'))]]} />
+				<Box y={900} o={pop(t, a('список'))}><Pill style={{fontSize: 50}}>твій список на завтра</Pill></Box>
+			</Show>
+			<Show t={t} a={done} b={Infinity}>
+				<Box y={420}><Big size={92}>Усі сторінки з ТЗ <L>відкриваються</L></Big></Box>
+				<Box y={760} o={pop(t, a('перша'))}><Big size={84}>перша версія <L>готова ✓</L></Big></Box>
 			</Show>
 		</>
 	);
@@ -80,6 +94,8 @@ const SFX: Cue[] = [
 	[a('меню'), 'pop/soft-pop.wav', 0.35],
 	[a('відгуки'), 'pop/soft-pop.wav', 0.35],
 	[a('Наприкінці'), 'whoosh/simple-whoosh-382724.mp3', 0.3],
+	[a('Не', 39), 'whoosh/simple-whoosh-382724.mp3', 0.25],
+	[a('перша'), 'sparkle/shimmer-sparkle-sweep.mp3', 0.3],
 ];
 
 export const Sites12: React.FC<{theme?: string; seed?: number}> = ({theme, seed}) => (

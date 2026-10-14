@@ -1,5 +1,7 @@
 # Sites-15 · «5 варіантів: секрет швидкого дизайну» (Short 1080×1920)
 
+**v2 (2026-10-14):** розширений текст (docs/sites-voice-v2.md), голос ≈ 58 с + end card. Таблиця нижче — первісний план v1; актуальні сцени й таймінги — у src/ideas/Sites15.tsx (прив'язані до слів words.json).
+
 Крок `websites` → `variants`. Джерело: `C:/DevGuide/helpers/websites-videos/15-variants/`. Сцени прив'язані до слів (`src/ideas/Sites15.tsx`).
 
 | Слово | Екран |

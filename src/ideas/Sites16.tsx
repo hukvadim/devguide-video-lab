@@ -1,6 +1,6 @@
 import React from 'react';
 import {F} from '../system/kit';
-import {Big, Box, Chips, Cue, L, Pill, Reply, Show, StepVideo, Steps, Title, Win, at, pop, stepFrames, useTheme} from '../system/step';
+import {Big, Box, Chips, Cue, L, Pill, PromptCard, Reply, Show, StepVideo, Steps, Title, Win, at, pop, prompt, stepFrames, useTheme} from '../system/step';
 import {ugc} from '../system/ugc';
 import WORDS from '../../public/ideas/sites-16/words.json';
 
@@ -31,9 +31,21 @@ const Cycle: React.FC<{t: number; items: [string, number][]}> = ({t, items}) => 
 	);
 };
 
+/** Картка правки в колонці «від клієнта»; flag — поза ТЗ, з оцінкою в годинах. */
+const Card: React.FC<{t: number; at0: number; text: string; flag?: number; hours?: number}> = ({t, at0, text, flag, hours}) => {
+	const T = useTheme();
+	const p = pop(t, at0), bad = flag != null && t >= flag;
+	return (
+		<div style={{opacity: p, transform: `translateY(${(1 - p) * 24}px)`, padding: '20px 24px', borderRadius: 16, background: T.panel2, border: `3px solid ${bad ? T.red : T.line}`, fontSize: 40, fontWeight: 700, display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+			<span>{text}</span>
+			{bad ? <span style={{fontSize: 30, color: T.red, fontWeight: 800}}>не в ТЗ{hours != null && t >= hours ? ' · +6 год' : ''}</span> : null}
+		</div>
+	);
+};
+
 const Scenes = (t: number) => {
 	const T = useTheme();
-	const story = a('безкоштовно'), deal = a('Тому'), wait = a('І', 17), loop = a('Цикл'), msg = a('Правки', 28);
+	const story = a('безкоштовно'), deal = a('Тому'), wait = a('І', 17), loop = a('Цикл'), msg = a('Правки', 32), ai = a('Кидаєш'), talk = a('Спірне'), fin = a('Так', 54);
 	return (
 		<>
 			<Show t={t} a={0} b={a('Я')}>
@@ -59,13 +71,28 @@ const Scenes = (t: number) => {
 				<Box y={240}><Big size={84}>Цикл <L>простий</L></Big></Box>
 				<Cycle t={t} items={[['показав', a('показав')], ['правки', a('написав')], ['Trello', a('Trello')], ['зробив', a('зробив')], ['показав знову', a('показав', 27)]]} />
 			</Show>
-			<Show t={t} a={msg} b={Infinity}>
+			<Show t={t} a={msg} b={ai}>
 				<Chips t={t} y={250} size={42} items={[['Telegram', a('Telegram')], ['Viber', a('Viber')]]} />
 				<Win y={400} label="Месенджер · клієнт" minH={420}>
 					<div style={{alignSelf: 'flex-start', width: 420, height: 200, borderRadius: 18, background: T.panel2, border: `2px dashed ${T.line}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F.mono, fontSize: 30, color: T.dim, opacity: pop(t, a('скріни'))}}>скрін сайту</div>
-					<Reply o={pop(t, a('копіюєш'))} size={42}>Кнопку зробіть зеленою, і телефон у контактах інший</Reply>
+					<Reply o={pop(t, a('копіюєш'))} size={42}>Кнопку зробіть зеленою, і телефон у контактах інший. І ще онлайн-оплату</Reply>
 				</Win>
-				<Box y={980} o={pop(t, a('текст'))}><Big size={64}>→ картки в <L>Trello</L></Big></Box>
+			</Show>
+			<Show t={t} a={ai} b={talk}>
+				<PromptCard t={t} a={ai + 0.2} b={a('трьох')} y={220} size={34} text={prompt('client-edits', 'apply').split('\n')[0]} />
+				<Win y={640} label="Trello · від клієнта" minH={560} o={pop(t, a('кладе'))}>
+					<Card t={t} at0={a('розбиває')} text="Кнопка — зелена" />
+					<Card t={t} at0={a('розбиває') + 0.3} text="Новий телефон у контактах" />
+					<Card t={t} at0={a('розбиває') + 0.6} text="Онлайн-оплата" flag={a('суперечить')} hours={a('оцінкою')} />
+				</Win>
+			</Show>
+			<Show t={t} a={talk} b={fin}>
+				<Box y={380}><Big size={84}>Спірне — <L>обговорюєш</L></Big></Box>
+				<Box y={640} o={pop(t, a('решту'))}><Big size={84}>решту — <L>робиш</L></Big></Box>
+			</Show>
+			<Show t={t} a={fin} b={Infinity}>
+				<Box y={420}><Big size={96}>Не пів року <span style={{color: T.red}}>безкоштовно</span></Big></Box>
+				<Box y={760} o={pop(t, a('пів', 55))}><Big size={84}>3 раунди — <L>і крапка</L></Big></Box>
 			</Show>
 		</>
 	);
@@ -80,6 +107,9 @@ const SFX: Cue[] = [
 	[a('три'), 'impact/bass-hit-futuristic.mp3', 0.3],
 	[a('Цикл'), 'whoosh/simple-whoosh-382724.mp3', 0.3],
 	[a('Telegram'), 'notify/notification-3-398649.mp3', 0.25],
+	[a('кладе'), 'pop/soft-pop.wav', 0.3],
+	[a('суперечить'), 'glitch/small-electric-glitch-2595.wav', 0.25],
+	[a('Так', 54), 'sparkle/shimmer-sparkle-sweep.mp3', 0.3],
 ];
 
 export const Sites16: React.FC<{theme?: string; seed?: number}> = ({theme, seed}) => (

@@ -1,7 +1,7 @@
 import React from 'react';
 import {Img, staticFile} from 'remotion';
 import {F} from '../system/kit';
-import {Big, Box, Browser, Cue, L, LiveShot, Pill, Show, StepVideo, Steps, Title, X, W, at, pop, stepFrames, useTheme} from '../system/step';
+import {Big, Box, Browser, Cue, L, LiveShot, Pill, PromptCard, Show, StepVideo, Steps, Ticks, Title, X, W, at, pop, prompt, stepFrames, useTheme} from '../system/step';
 import {ugc} from '../system/ugc';
 import WORDS from '../../public/ideas/sites-14/words.json';
 
@@ -37,7 +37,7 @@ const Map: React.FC<{t: number; rows: [string, string, number][]}> = ({t, rows})
 
 const Scenes = (t: number) => {
 	const T = useTheme();
-	const sad = a('Без'), pw = a('Playwright'), mcp = a('Chrome'), sk = a('Скіли'), main = a('Головне');
+	const sad = a('Без'), pw = a('Playwright'), mcp = a('Chrome'), sk = a('Скіли'), inst = a('Ставити'), chk = a('Перевірка'), main = a('Головне');
 	return (
 		<>
 			<Show t={t} a={0} b={sad}>
@@ -56,16 +56,28 @@ const Scenes = (t: number) => {
 			</Show>
 			<Show t={t} a={mcp} b={sk}>
 				<Box y={240}><Big size={84}>Ще <L>MCP</L></Big></Box>
-				<Steps t={t} y={400} gap={200} size={44} nsize={60} items={[
-					['01', <>Chrome DevTools, CodeGraph<br /><span style={{color: T.dim, fontSize: 36}}>швидко шукати код</span></>, mcp],
-					['02', 'GitHub', a('GitHub')],
-					['03', <>context7<br /><span style={{color: T.dim, fontSize: 36}}>свіжа документація</span></>, a('context7')],
-					['04', <>Vercel<br /><span style={{color: T.dim, fontSize: 36}}>викладати сайт</span></>, a('Vercel')],
+				<Steps t={t} y={390} gap={150} size={40} nsize={48} items={[
+					['01', <>Chrome DevTools <span style={{color: T.dim, fontSize: 32}}>· помилки, швидкість</span></>, mcp],
+					['02', <>CodeGraph <span style={{color: T.dim, fontSize: 32}}>· пошук коду</span></>, a('CodeGraph')],
+					['03', <>GitHub <span style={{color: T.dim, fontSize: 32}}>· версії, публікація</span></>, a('GitHub')],
+					['04', <>context7 <span style={{color: T.dim, fontSize: 32}}>· свіжа документація</span></>, a('context7')],
+					['05', <>Vercel <span style={{color: T.dim, fontSize: 32}}>· викладати</span></>, a('Vercel')],
+					['06', <>Postgres <span style={{color: T.dim, fontSize: 32}}>· якщо є база</span></>, a('Postgres')],
 				]} />
 			</Show>
-			<Show t={t} a={sk} b={main}>
+			<Show t={t} a={sk} b={inst}>
 				<Box y={260}><Big size={84}>Skills <L>під задачу</L></Big></Box>
 				<Map t={t} rows={[['Велика сторінка, варіанти', 'ui-ux-pro-max', a('ui-ux')], ['Дрібна правка кнопки', 'frontend-design', a('frontend')], ['Тексти', 'humanizer', a('humanizer')]]} />
+			</Show>
+			<Show t={t} a={inst} b={chk}>
+				<Box y={240}><Big size={80}>Руками <L>не треба</L></Big></Box>
+				<PromptCard t={t} a={a('даєш')} b={a('команди')} y={420} size={34} text={prompt('mcp-skills', 'install').split('\n')[0]} />
+				<Ticks t={t} y={780} items={[[true, 'показує команди', a('показує')], [true, 'ти кажеш «ок»', a('кажеш')], [true, 'все встановлено', a('встановлено')]]} />
+			</Show>
+			<Show t={t} a={chk} b={main}>
+				<Box y={240}><Big size={80}>Перевірка</Big></Box>
+				<PromptCard t={t} a={a('попроси')} b={a('сайту')} y={400} size={36} text={prompt('mcp-skills', 'check')} />
+				<Devices t={t} a0={a('скріни', 54)} y={900} />
 			</Show>
 			<Show t={t} a={a('свої')} b={Infinity}>
 				<Box y={440}><Big size={100}>Знай свої <L>інструменти</L></Big></Box>
@@ -83,6 +95,9 @@ const SFX: Cue[] = [
 	[a('context7'), 'pop/soft-pop.wav', 0.3],
 	[a('Скіли'), 'whoosh/simple-whoosh-382724.mp3', 0.3],
 	[a('humanizer'), 'pop/bubble-pop-406640.mp3', 0.3],
+	[a('Ставити'), 'whoosh/simple-whoosh-382724.mp3', 0.3],
+	[a('встановлено'), 'sparkle/sparkle-touch.mp3', 0.3],
+	[a('скріни', 54), 'camera/camera-shutter-click-1133.wav', 0.35],
 ];
 
 export const Sites14: React.FC<{theme?: string; seed?: number}> = ({theme, seed}) => (

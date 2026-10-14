@@ -34,7 +34,7 @@ const Board: React.FC<{t: number; cols: number[]; move: number; y: number}> = ({
 
 const Scenes = (t: number) => {
 	const T = useTheme();
-	const think = a('думаєш'), what = a('За', 4.5), trello = a('Тут'), board = a('Робиш'), ai = a('А', 16);
+	const think = a('думаєш'), what = a('За', 4.5), trello = a('Тут'), board = a('Робиш'), easy = a('Найпростіше'), ai = a('А', 32), cl = a('Клієнт', 46), end = a('І', 51.5);
 	return (
 		<>
 			<Show t={t} a={0} b={think}>
@@ -49,12 +49,14 @@ const Scenes = (t: number) => {
 				<Browser t={t} y={400} url="trello.com" h={560}>
 					<LiveShot t={t} src="ideas/sites-13/shots/trello-home.png" w={1280} a={trello + 0.3} focus={{x: 395, y: 587, w: 164, h: 50, at: a('безкоштовний'), zoom: 1.5}} />
 				</Browser>
-				<Chips t={t} y={1080} size={42} items={[['безкоштовний', a('безкоштовний')], ['є мобільний додаток', a('мобільний')]]} />
+				<Chips t={t} y={1080} size={42} items={[['безкоштовний', a('безкоштовний')], ['є мобільний додаток', a('мобільний')], ['запис з телефона', a('телефона')]]} />
 			</Show>
 			<Show t={t} a={board} b={Infinity}>
-				<Box y={260}><Big size={80}>{t >= ai ? <>AI сам бере <L>задачі</L></> : <>Дошка з <L>колонками</L></>}</Big></Box>
+				<Box y={260}><Big size={76}>{t >= end ? <>Жодна задача <L>не губиться</L></> : t >= ai ? <>AI сам бере <L>задачі</L></> : t >= easy ? <>AI створює <L>дошку</L></> : <>Дошка з <L>колонками</L></>}</Big></Box>
 				<Board t={t} y={510} cols={[a('роботі'), a('зробити', 12.5), a('від', 13), a('баги'), a('готово')]} move={a('переносить')} />
-				<Term t={t} y={1070} label="Claude Code" lines={[{at: a('продовжуємо'), text: 'продовжуємо роботу'}, {at: a('бере'), text: '✓ взяв задачу «Меню»', kind: 'ok'}]} />
+				{t >= easy && t < ai ? <Term t={t} y={1070} label="Claude Code" lines={[{at: a('створи'), text: 'ось tz.md, створи дошку'}, {at: a('картки'), text: '✓ ТЗ розкладено на картки', kind: 'ok'}]} /> : null}
+				{t >= ai && t < cl ? <Term t={t} y={1070} label="Claude Code" lines={[{at: a('продовжуємо'), text: 'продовжуємо роботу'}, {at: a('бере'), text: '✓ взяв задачу «Меню»', kind: 'ok'}, {at: a('план'), text: '→ план готовий, чекаю «ок»', kind: 'out'}]} /> : null}
+				{t >= cl ? <Chips t={t} y={1090} size={40} items={[['правка → «від клієнта»', a('правку')], ['баг → «баги»', a('баг', 50)]]} /> : null}
 			</Show>
 		</>
 	);
@@ -69,6 +71,8 @@ const SFX: Cue[] = [
 	[a('продовжуємо'), 'typing/typewriter-digital.mp3', 0.2],
 	[a('переносить'), 'whoosh/arrow-whoosh-1491.wav', 0.3],
 	[a('переносить') + 0.9, 'sparkle/sparkle-touch.mp3', 0.3],
+	[a('створи'), 'typing/typewriter-digital.mp3', 0.18],
+	[a('правку'), 'pop/soft-pop.wav', 0.3],
 ];
 
 export const Sites13: React.FC<{theme?: string; seed?: number}> = ({theme, seed}) => (

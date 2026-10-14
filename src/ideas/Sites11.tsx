@@ -1,6 +1,6 @@
 import React from 'react';
 import {F} from '../system/kit';
-import {Big, Box, Cue, L, PromptCard, Reply, Show, StepVideo, Title, Win, at, pop, prompt, stepFrames, useTheme} from '../system/step';
+import {Big, Box, Chips, Cue, L, Pill, Reply, Show, StepVideo, Ticks, Title, UserMsg, Win, at, pop, prompt, stepFrames, useTheme} from '../system/step';
 import {ugc} from '../system/ugc';
 import WORDS from '../../public/ideas/sites-11/words.json';
 
@@ -8,7 +8,7 @@ import WORDS from '../../public/ideas/sites-11/words.json';
 // Задачі й години в таблиці — приклад оцінки, а не реальний проєкт.
 const a = (w: string, after = 0) => at(WORDS, w, after);
 export const SITES_11 = stepFrames(WORDS);
-const TASKS: [string, string][] = [['Перший екран', '2 год'], ['Меню', '2 год'], ['Відгуки', '1,5 год'], ['Контакти і форма', '2,5 год'], ['+20% на правки', '1,6 год']];
+const TASKS: [string, string, string][] = [['Перший екран', '2 год', 'перший'], ['Меню', '2 год', 'меню'], ['Відгуки', '1,5 год', 'відгуки'], ['Контакти', '1 год', 'контакти'], ['Форма', '1,5 год', 'форма']];
 
 const Formula: React.FC<{t: number; parts: [React.ReactNode, number][]}> = ({t, parts}) => (
 	<Box y={620} style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'baseline', gap: '10px 22px'}}>
@@ -18,7 +18,7 @@ const Formula: React.FC<{t: number; parts: [React.ReactNode, number][]}> = ({t, 
 
 const Scenes = (t: number) => {
 	const T = useTheme();
-	const q = a('часу'), calc = a('Рахунок'), rate = a('Ставку'), split = a('Даєш'), deal = a('домовляєшся');
+	const q = a('часу'), calc = a('Рахунок'), rate = a('Ставку'), hours = a('А', 19), sum = a('Внизу'), deal = a('домовляєшся'), last = a('І', 50.5);
 	return (
 		<>
 			<Show t={t} a={0} b={q}>
@@ -34,20 +34,37 @@ const Scenes = (t: number) => {
 			</Show>
 			<Show t={t} a={calc} b={rate}>
 				<Box y={330}><Big size={80}>ставка <L>×</L> години</Big></Box>
-				<Formula t={t} parts={[['20 $/год', a('Двадцять')], [<L key="x">×</L>, a('десять')], ['10 год', a('десять')], ['=', a('двісті')], [<span key="r" style={{color: T.accent}}>200 $</span>, a('двісті')]]} />
+				<Formula t={t} parts={[['20 $/год', a('двадцять')], [<L key="x">×</L>, a('десять')], ['10 год', a('десять')], ['=', a('двісті')], [<span key="r" style={{color: T.accent}}>200 $</span>, a('двісті')]]} />
+				<Box y={900} o={pop(t, a('Наприклад'))}><span style={{fontSize: 40, color: T.dim, fontWeight: 700}}>приклад</span></Box>
 			</Show>
-			<Show t={t} a={rate} b={a('Резервуєш')}>
-				<PromptCard t={t} a={rate + 0.2} b={split} y={250} size={34} text={prompt('estimate', 'estimate').split('\n')[0]} />
-				<Win y={760} label="Оцінка" o={pop(t, a('розбиває'))}>
-					{TASKS.map(([task, h], i) => (
-						<div key={task} style={{display: 'flex', justifyContent: 'space-between', fontSize: 40, fontWeight: 700, opacity: pop(t, a('задачі') + i * 0.3)}}><span>{task}</span><span style={{fontFamily: F.mono, color: T.accent}}>{h}</span></div>
+			<Show t={t} a={rate} b={hours}>
+				<Box y={380}><Big size={92}>Ставка — <L>твоя</L></Big></Box>
+				<Chips t={t} y={660} size={48} items={[['обираєш сам', a('обираєш')], ['або питаєш AI', a('питаєш')], ['на старті', a('старті')]]} />
+			</Show>
+			<Show t={t} a={hours} b={sum}>
+				<Box y={240}><Big size={84}>Години рахує <L>AI</L></Big></Box>
+				<Win y={430} label="Оцінка за ТЗ" o={pop(t, a('розбиває'))}>
+					{TASKS.map(([task, h, w]) => (
+						<div key={task} style={{display: 'flex', justifyContent: 'space-between', fontSize: 42, fontWeight: 700, opacity: pop(t, a(w, 25))}}><span>{task}</span><span style={{fontFamily: F.mono, color: T.accent}}>{h}</span></div>
 					))}
-					<div style={{display: 'flex', justifyContent: 'space-between', fontSize: 46, fontWeight: 900, borderTop: `2px solid ${T.line}`, paddingTop: 16, opacity: pop(t, a('кожну'))}}><span>Разом</span><span style={{color: T.accent}}>≈ 10 год</span></div>
+					<div style={{display: 'flex', justifyContent: 'space-between', fontSize: 42, fontWeight: 800, color: T.accent, opacity: pop(t, a('відсотків'))}}><span>+20% на правки</span><span style={{fontFamily: F.mono}}>1,6 год</span></div>
+					<div style={{display: 'flex', justifyContent: 'space-between', fontSize: 48, fontWeight: 900, borderTop: `2px solid ${T.line}`, paddingTop: 16, opacity: pop(t, a('завжди'))}}><span>Разом</span><span style={{color: T.accent}}>≈ 10 год</span></div>
 				</Win>
+				<Box y={1220} o={pop(t, a('правки'))}><Big size={56}>правки будуть <L>завжди</L></Big></Box>
 			</Show>
-			<Show t={t} a={deal} b={Infinity}>
-				<Box y={420}><Big size={100}>Домовляйся <L>гнучко</L></Big></Box>
-				<Box y={720} o={pop(t, a('вчишся'))}><Big size={76}>і вчишся <L>оцінювати</L> себе</Big></Box>
+			<Show t={t} a={sum} b={a('Резервуєш')}>
+				<Box y={260}><Big size={84}>Підсумок <L>для клієнта</L></Big></Box>
+				<Win y={480} label="Месенджер" minH={300}>
+					<UserMsg size={44} o={pop(t, a('термін'))}>Сайт — ≈ 10 годин роботи, 200 $. Термін узгодимо.</UserMsg>
+				</Win>
+				<Box y={900} o={pop(t, a('месенджер'))}><Pill style={{fontSize: 48}}>майже без змін → в месенджер</Pill></Box>
+			</Show>
+			<Show t={t} a={deal} b={last}>
+				<Box y={300}><Big size={96}>Домовляйся <L>гнучко</L></Big></Box>
+				<Ticks t={t} y={620} gap={150} items={[[true, 'пішло швидше — добре', a('Пішло')], [true, 'захотів більше — видно, що це нове', a('видно')]]} />
+			</Show>
+			<Show t={t} a={last} b={Infinity}>
+				<Box y={520}><Big size={96}>і вчишся <L>оцінювати</L> себе</Big></Box>
 			</Show>
 		</>
 	);
@@ -56,10 +73,11 @@ const Scenes = (t: number) => {
 const SFX: Cue[] = [
 	[0, 'whoosh/whoosh-cinematic-376875.mp3', 0.3],
 	[a('коштувати') - 0.1, 'notify/notification-3-398649.mp3', 0.25],
-	[a('Двадцять'), 'pop/bubble-pop-406640.mp3', 0.3],
+	[a('двадцять'), 'pop/bubble-pop-406640.mp3', 0.3],
+	[a('Внизу'), 'notify/notification-051-494246.mp3', 0.25],
 	[a('двісті'), 'impact/bass-hit-futuristic.mp3', 0.3],
 	[a('задачі'), 'typing/typewriter-hit-soft.mp3', 0.25],
-	[a('кожну'), 'sparkle/sparkle-touch.mp3', 0.3],
+	[a('завжди'), 'sparkle/sparkle-touch.mp3', 0.3],
 ];
 
 export const Sites11: React.FC<{theme?: string; seed?: number}> = ({theme, seed}) => (

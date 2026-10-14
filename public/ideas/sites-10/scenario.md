@@ -1,5 +1,7 @@
 # Sites-10 · «★ tz.md: без ТЗ не починаємо» (Short 1080×1920)
 
+**v2 (2026-10-14):** розширений текст (docs/sites-voice-v2.md), голос ≈ 64 с + end card. Таблиця нижче — первісний план v1; актуальні сцени й таймінги — у src/ideas/Sites10.tsx (прив'язані до слів words.json).
+
 Крок `websites` → `tz`. Джерело: `C:/DevGuide/helpers/websites-videos/10-tz/`. Сцени прив'язані до слів (`src/ideas/Sites10.tsx`).
 
 | Слово | Екран |

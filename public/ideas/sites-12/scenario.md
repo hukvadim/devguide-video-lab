@@ -1,5 +1,7 @@
 # Sites-12 · «Перша версія сайту з ТЗ» (Short 1080×1920)
 
+**v2 (2026-10-14):** розширений текст (docs/sites-voice-v2.md), голос ≈ 57 с + end card. Таблиця нижче — первісний план v1; актуальні сцени й таймінги — у src/ideas/Sites12.tsx (прив'язані до слів words.json).
+
 Крок `websites` → `generate-v1`. Джерело: `C:/DevGuide/helpers/websites-videos/12-generate-v1/`. Сцени прив'язані до слів (`src/ideas/Sites12.tsx`).
 
 | Слово | Екран |

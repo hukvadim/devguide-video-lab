@@ -1,5 +1,7 @@
 # Sites-22 · «Керування після запуску» (Short 1080×1920)
 
+**v2 (2026-10-14):** розширений текст (docs/sites-voice-v2.md), голос ≈ 56 с + end card. Таблиця нижче — первісний план v1; актуальні сцени й таймінги — у src/ideas/Sites22.tsx (прив'язані до слів words.json).
+
 Крок `websites` → `admin-docs`. Джерело: `C:/DevGuide/helpers/websites-videos/22-admin-docs/`. Сцени прив'язані до слів (`src/ideas/Sites22.tsx`).
 
 | Слово | Екран |

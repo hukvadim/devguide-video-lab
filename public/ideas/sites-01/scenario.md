@@ -1,5 +1,7 @@
 # Sites-01 · «Що потрібно: VS Code і Claude Code» — сценарій (Short 1080×1920, 30 fps, ≈ 40 с)
 
+**v2 (2026-10-14):** розширений текст (docs/sites-voice-v2.md), голос ≈ 52 с + end card. Таблиця нижче — первісний план v1; актуальні сцени й таймінги — у src/ideas/Sites01.tsx (прив'язані до слів words.json).
+
 Крок шляху `websites` → `setup-tools` (розділ «Організація»). Джерело: `C:/DevGuide/helpers/websites-videos/01-setup-tools/` (scenes.md, voice.txt).
 Стиль як шлях «Claude / AI»: `StepVideo` (`src/system/step.tsx`), графіт + лайм, субтитри знизу, музика Hazy After Hours.
 Голос: клон Vadim Huk, eleven_v4 (`tts.mjs`); сцени прив'язані до слів через `at()`.
