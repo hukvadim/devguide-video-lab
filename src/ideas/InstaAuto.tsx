@@ -4,6 +4,7 @@ import {F} from '../system/kit';
 import {BeatVideo, Card, Poster, beatFrames} from '../system/beat';
 import {Big, Box, Chips, Cue, L, NextCard, Pill, PromptCard, Show, StepVideo, Term, Ticks, Title, X, W, pop, stepFrames, useTheme} from '../system/step';
 import {Word} from '../system/captions';
+import {ugc} from '../system/ugc';
 import REELS from '../../docs/insta-50/reels.json';
 
 // Рілси банку docs/insta-50 з даних (docs/insta-50/reels.json), без ручного коду на кожен.
@@ -100,6 +101,22 @@ export const lineStarts = (lines: string[], words: Word[]) => {
 	});
 };
 
+const SFX_BY_KIND: Record<Scene['k'], string[]> = {
+	prompt: ['typing/typewriter-hit-soft.mp3', 'typing/typewriter-digital.mp3'],
+	code: ['typing/typewriter-digital.mp3', 'click/mouse-click-02-383961.mp3'],
+	list: ['pop/bubble-pop-406640.mp3', 'pop/bubble-pop-04-323580.mp3', 'pop/bubble-pop-06-351337.mp3'],
+	chips: ['pop/bubble-pop-389501.mp3', 'pop/pop-423717.mp3', 'pop/soft-pop.wav'],
+	flow: ['whoosh/simple-whoosh-382724.mp3', 'whoosh/transition-snap.mp3'],
+	num: ['impact/bass-hit-futuristic.mp3', 'whoosh/air-woosh-deep.mp3'],
+	versus: ['glitch/small-electric-glitch-2595.wav', 'glitch/glitch-static-1457.wav'],
+	phone: ['notify/notification-040-493469.mp3', 'notify/notification-3-398649.mp3'],
+	big: ['whoosh/whoosh-effect-382717.mp3', 'sparkle/sparkle-touch.mp3', 'whoosh/transition-snap.mp3'],
+};
+// спокійна музика під голос — своя на кожен ролик
+const CALM = ['21-lofi-sweet-september.mp3', '22-lofi-sleepy-cat.mp3', '23-chill-digital-clouds.mp3', '24-chill-day-dreamin-with-u.mp3', '25-chill-thinking-about-you.mp3', '26-chill-pop-07.mp3', '27-lofi-night-sky-hip-hop.mp3', '37-synthwave-better-times-are-coming.mp3', '38-synthwave-sun-in-your-eyes.mp3', '39-synthwave-lonerism.mp3', '40-synthwave-south-waves.mp3', '41-synthwave-solitude.mp3'];
+// реакції Вадима (public/assets/ugc/flow)
+const REACT = ['wow', 'smile', 'point-up', 'Man_reacting_to_smartphone', 'Man_nodding_by_window', 'Man_typing_at_desk', 'Man_holding_mug_and_laptop_', 'typing'];
+
 type Props = {n: number; words?: Word[]; theme?: string; seed?: number};
 export const InstaAuto: React.FC<Props> = ({n, words, theme, seed}) => {
 	const r = REEL_LIST.find((x) => x.n === n)!;
@@ -121,8 +138,24 @@ export const InstaAuto: React.FC<Props> = ({n, words, theme, seed}) => {
 			<Ask t={t} a={st[lines.length - 1]} word={r.cta} />
 		</>
 	);
-	const sfx: Cue[] = [[0, 'whoosh/whoosh-cinematic-376875.mp3', 0.3], ...st.slice(1, -1).map((x): Cue => [x, 'pop/soft-pop.wav', 0.25])];
-	return <StepVideo theme={theme} seed={seed} dir={`ideas/insta-${pad(n)}`} words={W2} sfx={sfx} scenes={scenes} endCard={cta(r.cta)} />;
+	// звук за типом сцени; один файл — не більше двох разів за ролик (CLAUDE.md: не повторювати короткий звук)
+	const used: Record<string, number> = {};
+	const pick = (k: Scene['k'], i: number) => {
+		const opts = SFX_BY_KIND[k];
+		for (let j = 0; j < opts.length; j++) {
+			const f = opts[(i + j) % opts.length];
+			if ((used[f] ?? 0) < 2) { used[f] = (used[f] ?? 0) + 1; return f; }
+		}
+		return null;
+	};
+	const sfx: Cue[] = [[0, 'whoosh/whoosh-cinematic-376875.mp3', 0.3]];
+	r.scenes!.forEach((s, i) => { const f = pick(s.k, i + n); if (f) sfx.push([st[i + 1], f, 0.28]); });
+	sfx.push([st[lines.length - 1], 'notify/ding-101492.mp3', 0.3]);
+	// одна вставка з Вадимом після титулу (2,2 с), підпис — перший заголовок сцени
+	const clip = REACT[n % REACT.length];
+	const firstHead = r.scenes![0].t;
+	const inserts = st[2] - st[1] > 3.4 ? [ugc(clip, st[1], 2.2, {label: firstHead ? <Rich s={firstHead} /> : undefined, labelY: 1000})] : [];
+	return <StepVideo theme={theme} seed={seed} dir={`ideas/insta-${pad(n)}`} words={W2} sfx={sfx} scenes={scenes} inserts={inserts} music={`assets/music/${CALM[n % CALM.length]}`} musicVol={0.07} endCard={cta(r.cta)} />;
 };
 
 /** Тривалість: голос — з words.json (fetch staticFile), музика — з бітів. */

@@ -1,12 +1,13 @@
 // Рілси банку insta-50 з docs/insta-50/reels.json: голос (ElevenLabs) → фінал → мастеринг → out/insta-50/NN-slug.mp4.
 // Пропускає готові (є out/insta-50/NN-*.mp4), тож можна перезапускати скільки завгодно (вручну або заплановане завдання).
-// usage: node scripts/insta-batch.mjs [NN ...]     (без аргументів — усі, яких ще нема)
+// usage: node scripts/insta-batch.mjs [NN ...] [--force]     (без номерів — усі; --force — перерендерити й готові; голос не перегенеровується, якщо текст той самий)
 import {spawnSync} from 'node:child_process';
 import {copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync} from 'node:fs';
 
 const {reels} = JSON.parse(readFileSync('docs/insta-50/reels.json', 'utf8'));
 const pad = (n) => String(n).padStart(2, '0');
-const want = process.argv.slice(2).map(Number);
+const force = process.argv.includes('--force');
+const want = process.argv.slice(2).filter((a) => !a.startsWith('--')).map(Number);
 const slugs = readdirSync('docs/insta-50').filter((d) => /^\d\d-/.test(d));
 const outDir = 'out/insta-50';
 mkdirSync(outDir, {recursive: true});
@@ -15,7 +16,7 @@ const done = [], failed = [];
 for (const r of reels) {
 	const nn = pad(r.n), slug = slugs.find((d) => d.startsWith(`${nn}-`)) ?? `${nn}-insta`;
 	if (want.length && !want.includes(r.n)) continue;
-	if (existsSync(`${outDir}/${slug}.mp4`)) continue;
+	if (!force && existsSync(`${outDir}/${slug}.mp4`)) continue;
 	const dir = `public/ideas/insta-${nn}`;
 	if (r.voice) {
 		mkdirSync(dir, {recursive: true});
