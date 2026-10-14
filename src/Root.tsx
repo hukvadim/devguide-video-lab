@@ -16,6 +16,7 @@ import {Idea013, IDEA_013} from './ideas/Idea013';
 import {Idea014, IDEA_014} from './ideas/Idea014';
 import {Idea015, IDEA_015} from './ideas/Idea015';
 import {Idea016, IDEA_016} from './ideas/Idea016';
+import {SitesFullThumb} from './ideas/SitesFullThumb';
 import {Sites01, Sites01Wide, SITES_01} from './ideas/Sites01';
 import {Sites02, Sites02Wide, SITES_02} from './ideas/Sites02';
 import {Sites03, Sites03Wide, SITES_03} from './ideas/Sites03';
@@ -34,6 +35,9 @@ import {Sites16, Sites16Wide, SITES_16} from './ideas/Sites16';
 import {Sites20, Sites20Wide, SITES_20} from './ideas/Sites20';
 import {Sites21, Sites21Wide, SITES_21} from './ideas/Sites21';
 import {Sites22, Sites22Wide, SITES_22} from './ideas/Sites22';
+import {Ematbox, EMATBOX} from './ideas/Ematbox';
+import {EmatboxUa, EMATBOX_UA} from './ideas/EmatboxUa';
+import {VoiceAi, VOICE_AI} from './ideas/VoiceAi';
 import {AdsA, AdsAVoice, AdsAVoice45, AdsB, AdsBVoice, AdsBVoice45, AdsBanner, ADS_A, ADS_A_VOICE, ADS_B, ADS_B_VOICE} from './ideas/Ads';
 import {Insta50Cover} from './ideas/Insta50Cover';
 import {InstaAuto, REEL_LIST, instaMeta} from './ideas/InstaAuto';
@@ -47,6 +51,7 @@ const V = {width: 1080, height: 1920, fps: 30} as const;
 const STEPS: [string, React.FC, number][] = [['004', Idea004, IDEA_004], ['005', Idea005, IDEA_005], ['006', Idea006, IDEA_006], ['007', Idea007, IDEA_007], ['008', Idea008, IDEA_008], ['009', Idea009, IDEA_009], ['010', Idea010, IDEA_010], ['011', Idea011, IDEA_011], ['012', Idea012, IDEA_012], ['013', Idea013, IDEA_013], ['014', Idea014, IDEA_014], ['015', Idea015, IDEA_015], ['016', Idea016, IDEA_016]];
 // одне відео = папка ID-xxx: головне (16:9), мініатюра й похідні шорти в Shorts/. Спільне — System/.
 export const Root: React.FC = () => <>
+<Composition id="Sites-Full-Thumb" component={SitesFullThumb} width={1920} height={1080} fps={30} durationInFrames={1}/>
 <Folder name="ID-001">
  <Composition id="Idea-001" component={Idea001} width={1920} height={1080} fps={30} durationInFrames={IDEA_001}/>
  <Composition id="Idea-001-Thumb" component={Idea001Thumb} width={1920} height={1080} fps={30} durationInFrames={1}/>
@@ -100,6 +105,11 @@ export const Root: React.FC = () => <>
 	<Composition id="Sites-22" component={Sites22} {...V} durationInFrames={SITES_22} defaultProps={{seed: 0}}/>
 	<Composition id="Sites-22-Wide" component={Sites22Wide} width={1920} height={1080} fps={30} durationInFrames={SITES_22} defaultProps={{seed: 0, kicker: 'Крок 22 · Запуск'}}/>
 </Folder>
+{/* Reel для @hukvadim: нейромережа говорить моїм голосом (клон), public/ideas/voice-ai */}
+<Composition id="Ematbox-UA" component={EmatboxUa} {...V} durationInFrames={EMATBOX_UA}/>
+<Composition id="Ematbox" component={Ematbox} {...V} durationInFrames={EMATBOX}/>
+<Composition id="Voice-AI-Ugc" component={VoiceAi} {...V} durationInFrames={VOICE_AI} defaultProps={{seed: 0, withUgc: true}}/>
+<Composition id="Voice-AI" component={VoiceAi} {...V} durationInFrames={VOICE_AI} defaultProps={{seed: 0}}/>
 {STEPS.map(([n, C, d]) => <Folder key={n} name={`ID-${n}`}><Composition id={`Idea-${n}`} component={C} {...V} durationInFrames={d}/></Folder>)}
 {/* Meta-реклама менторства: ADS/, src/ideas/Ads.tsx */}
 {/* Банк «50 ідей рілсів без зйомки»: обкладинки docs/insta-50/NN-slug/cover.png (node scripts/insta50.mjs) */}

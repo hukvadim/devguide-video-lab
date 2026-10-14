@@ -137,10 +137,10 @@ const Offer: React.FC<{t: number; a: number; sub: string}> = ({t, a, sub}) => {
 				<div style={{fontWeight: 700, fontSize: 52, lineHeight: 1.3, color: T.text}}>{sub}</div>
 			</Box>
 			<Box y={1130} o={pop(t, a + 0.8, 0.4)}>
-				<span style={{display: 'inline-block', padding: '30px 52px', borderRadius: 999, background: T.accent, color: T.onAccent, fontWeight: 900, fontSize: 52, boxShadow: `0 30px 80px ${T.accent}40`}}>Пиши в Telegram →</span>
+				<span style={{display: 'inline-block', padding: '30px 52px', borderRadius: 999, background: T.accent, color: T.onAccent, fontWeight: 900, fontSize: 52, boxShadow: `0 30px 80px ${T.accent}40`}}>Напиши мені →</span>
 			</Box>
 			<Box y={1300} o={pop(t, a + 1.1, 0.4)}>
-				<div style={{fontFamily: F.mono, fontSize: 40, color: T.text}}>t.me/hukvadim</div>
+				<div style={{fontFamily: F.mono, fontSize: 40, color: T.text}}>@hukvadim</div>
 				<div style={{marginTop: 22, fontSize: 34, color: T.dim}}>Вадим Гук · devguide.com.ua</div>
 			</Box>
 		</AbsoluteFill>
@@ -173,7 +173,7 @@ const CARDS_A: Card[] = [
 	{beats: 5, el: (t, a) => (
 		<>
 			<Head t={t} a={a}>Як <L>навчаємось</L></Head>
-			{['10 годин 1:1', '2 рази на тиждень', '1 твій проєкт'].map((s, i) => (
+			{['10 годин 1:1', 'у зручний час', '1 твій проєкт'].map((s, i) => (
 				<Box key={s} y={620 + i * 200} o={pop(t, a + 0.3 + i * 0.3, 0.3)}><Pill style={{fontSize: 56, padding: '26px 50px'}}>{s}</Pill></Box>
 			))}
 		</>
@@ -218,7 +218,7 @@ export const ADS_B = beatFrames(TRACK_B, CARDS_B);
 export const AdsA: React.FC = () => <BeatVideo theme="brand" track={TRACK_A} cards={CARDS_A} />;
 export const AdsB: React.FC = () => <BeatVideo theme="brand" track={TRACK_B} cards={CARDS_B} />;
 
-// ---------- Версії з голосом (ElevenLabs, Yevhen, 2026-10-12): ті самі картки, межі — за словами озвучки ----------
+// ---------- Версії з голосом (А: клон голосу Вадима, 2026-10-13; Б: Yevhen, 2026-10-12): ті самі картки, межі — за словами озвучки ----------
 type Word = {w: string; s: number; e: number};
 const TAIL = 3; // фінальна картка тримається після голосу
 const voiceFrames = (words: Word[]) => S(words[words.length - 1].e + TAIL);
@@ -249,8 +249,8 @@ const VoiceCards: React.FC<{cards: Card[]; words: Word[]; dir: string; track: st
 const aw = (w: string, after = 0) => at(WORDS_A, w, after);
 export const ADS_A_VOICE = voiceFrames(WORDS_A);
 export const AdsAVoice: React.FC = () => (
-	<VoiceCards cards={CARDS_A} words={WORDS_A} dir="ideas/ads-a" track={TRACK_A} cover={1.2} caps={[1, 2, 3, 4, 5, 6, 7]}
-		starts={[0, aw('Поки'), aw('розмови'), aw('кілька'), aw('підключити'), aw('запустити'), aw('Я', aw('запустити')), aw('Десять'), aw('плюс'), aw('Перше')]} />
+	<VoiceCards cards={CARDS_A.filter((_, i) => i !== 2)} words={WORDS_A} dir="ideas/ads-a" track={TRACK_A} cover={1.2} caps={[1, 2, 3, 4, 5, 6]}
+		starts={[0, aw('Поки'), aw('кілька'), aw('підключити'), aw('запустити'), aw('Я', aw('запустити')), aw('Десять'), aw('плюс'), aw('Перші')]} />
 );
 
 // Б: «від $1000» закреслюється після «доларів», «$300» з'являється на «Навчити»
