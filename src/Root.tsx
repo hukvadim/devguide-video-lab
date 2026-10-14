@@ -36,6 +36,7 @@ import {Sites21, Sites21Wide, SITES_21} from './ideas/Sites21';
 import {Sites22, Sites22Wide, SITES_22} from './ideas/Sites22';
 import {AdsA, AdsAVoice, AdsAVoice45, AdsB, AdsBVoice, AdsBVoice45, AdsBanner, ADS_A, ADS_A_VOICE, ADS_B, ADS_B_VOICE} from './ideas/Ads';
 import {Insta50Cover} from './ideas/Insta50Cover';
+import {InstaAuto, REEL_LIST, instaMeta} from './ideas/InstaAuto';
 import {Insta04, Insta09, Insta17, Insta23, Insta49, INSTA_04, INSTA_09, INSTA_17, INSTA_23, INSTA_49} from './ideas/Insta';
 import {StepPreview} from './system/step';
 import {LAB, LAB_FRAMES} from './lab/Lab';
@@ -110,6 +111,8 @@ export const Root: React.FC = () => <>
 	<Composition id="Insta-17" component={Insta17} {...V} durationInFrames={INSTA_17}/>
 	<Composition id="Insta-23" component={Insta23} {...V} durationInFrames={INSTA_23} defaultProps={{seed: 0}}/>
 	<Composition id="Insta-49" component={Insta49} {...V} durationInFrames={INSTA_49} defaultProps={{seed: 0}}/>
+	{/* решта 45 — з даних docs/insta-50/reels.json */}
+	{REEL_LIST.map((r) => <Composition key={r.n} id={`Insta-${String(r.n).padStart(2, '0')}`} component={InstaAuto} {...V} durationInFrames={300} calculateMetadata={instaMeta} defaultProps={{n: r.n, seed: 0}}/>)}
 </Folder>
 <Folder name="ADS">
  <Composition id="Ads-A-Abroad" component={AdsA} {...V} durationInFrames={ADS_A}/>
