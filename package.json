@@ -19,7 +19,8 @@
     "clean": "node scripts/clean.mjs",
     "bootstrap": "npm run setup:skills && node .claude/skills/devguide-reel/scripts/setup.mjs && node scripts/fetch-music.mjs && npm run check",
     "insta:rerender": "node scripts/insta-batch.mjs --force",
-    "insta": "node scripts/insta-batch.mjs"
+    "insta": "node scripts/insta-batch.mjs",
+    "review": "node scripts/review.mjs"
   },
   "dependencies": {
     "@fontsource/caveat": "5.3.0",
