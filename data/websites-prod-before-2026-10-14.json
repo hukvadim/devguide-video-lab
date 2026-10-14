@@ -1,0 +1,798 @@
+{
+ "slug": "websites",
+ "title": "Сайти",
+ "subtitle": "клієнт, ТЗ, генерація, запуск",
+ "description": "Сайт для справжнього клієнта, як я роблю, коли приходить замовлення: з'ясувати, що потрібно бізнесу, оцінити, скласти tz.md, згенерувати кілька варіантів, пережити правки, запустити і здати.",
+ "icon": "color-browser",
+ "order": 2,
+ "relatedSlugs": [
+  "business",
+  "google",
+  "ads"
+ ],
+ "heroVideo": null,
+ "isPublished": true,
+ "steps": [
+  {
+   "key": "site-type",
+   "section": "Клієнт",
+   "title": "Який сайт насправді потрібен",
+   "description": "Лендинг — одна пропозиція й заявки. Візитка — кілька сторінок про бізнес. Сайт з адмінкою — клієнт сам змінює зміст. Магазин — кошик і оплата. Іноді сайт не потрібен зовсім: вистачить Google-профілю та Instagram.",
+   "outcome": "Не продаєш магазин тому, кому вистачить лендингу, і не робиш лендинг тому, кому потрібна адмінка.",
+   "check": "Ти можеш одним реченням пояснити клієнту, чому йому підходить саме цей тип сайту.",
+   "optional": false,
+   "minutes": 10,
+   "icon": "website",
+   "url": null,
+   "linkLabel": null,
+   "action": "prompt",
+   "prompts": [
+    {
+     "key": "choose",
+     "body": "Бізнес: [кав'ярня «Зерно», 2 заклади у Львові]. Мета: [бронювання столиків і замовлення кави з собою]. Бюджет: [до 600 $].\nЯкий сайт підходить: лендинг, візитка на кілька сторінок, сайт з адмінкою чи магазин? А може, вистачить Google-профілю та Instagram?\nДай 1 рекомендацію, 1 альтернативу і що буде, якщо обрати «більше, ніж треба». Коротко.",
+     "label": "Визначити тип сайту",
+     "openIn": "claude"
+    }
+   ],
+   "slides": [
+    {
+     "media": "media/websites/type-landing.webp",
+     "caption": "Лендинг: одна пропозиція, одна дія — заявка. Швидко і недорого."
+    },
+    {
+     "media": "media/websites/type-card.webp",
+     "caption": "Візитка: кілька сторінок — послуги, ціни, контакти. Для бізнесу, який хочуть знайти в Google."
+    },
+    {
+     "media": "media/websites/type-cms.webp",
+     "caption": "З адмінкою: клієнт сам змінює меню, ціни, новини без програміста."
+    },
+    {
+     "media": "media/websites/type-shop.webp",
+     "caption": "Магазин: кошик, оплата, доставка. Найдорожчий у запуску і підтримці."
+    }
+   ],
+   "materialSlugs": [],
+   "needsVideo": false,
+   "videoNote": null
+  },
+  {
+   "key": "client-chat",
+   "section": "Клієнт",
+   "title": "Чат-клієнт",
+   "description": "Окремий чат — окрема роль. Так я працюю з учнями: в одному чаті клієнт, в іншому — помічник-розробник.",
+   "outcome": "«Замовник», який відповідає як справжній: плутається, хоче «як у конкурентів» і має обмежений бюджет.",
+   "check": "Клієнт у чаті розповів про бізнес щось, чого ти не знав на початку.",
+   "optional": false,
+   "minutes": 15,
+   "icon": "user",
+   "url": null,
+   "linkLabel": null,
+   "action": "prompt",
+   "prompts": [
+    {
+     "key": "client-role",
+     "body": "Зіграй роль мого клієнта. Ти — [Оксана, власниця кав'ярні «Зерно» у Львові, 2 заклади].\nТи не розбираєшся в технологіях і не знаєш термінів. Сайт хочеш, бо [бронювання йде через Instagram і губиться, а конкуренти вже мають сайти].\nБюджет: [до 600 $]. Термін: [місяць].\nПравила: відповідай як людина в месенджері — коротко, інколи розмито. Не видавай усі деталі одразу, лише коли я правильно спитаю. Маєш 2–3 побажання, які суперечать одне одному.\nПочни з повідомлення: «Привіт! Мені вас порадили. Потрібен сайт, скільки це коштуватиме?»",
+     "label": "Створити клієнта",
+     "openIn": "claude"
+    }
+   ],
+   "slides": [],
+   "materialSlugs": [],
+   "needsVideo": false,
+   "videoNote": null
+  },
+  {
+   "key": "interview",
+   "section": "Клієнт",
+   "title": "Інтерв'ю з клієнтом",
+   "description": "Питання готує помічник у другому чаті, а ставиш їх ти — у чаті-клієнті. Справжньому клієнту можна дати бриф із шляху «Сайт для бізнесу»: він заповнить його сам із AI.",
+   "outcome": "Знаєш, що питати, щоб потім не почути «а я думала, що це входить у ціну».",
+   "check": "У тебе є відповіді на всі 8 груп питань або чесне «клієнт ще не знає».",
+   "optional": false,
+   "minutes": 20,
+   "icon": "document",
+   "url": null,
+   "linkLabel": null,
+   "action": "auto",
+   "prompts": [
+    {
+     "key": "questions",
+     "body": "Я веду перше інтерв'ю з клієнтом щодо сайту. Дай 12 питань, згрупованих так: бізнес і цілі, аудиторія, конкуренти, сторінки і зміст, функції (оплата, бронювання, адмінка), дизайн, бюджет і терміни, хто наповнює сайт після запуску.\nБіля кожного питання — навіщо його ставити. Коротко.",
+     "label": "Питання для інтерв'ю",
+     "openIn": "claude"
+    },
+    {
+     "key": "gaps",
+     "body": "Ось наше листування з клієнтом: [вставити]. Що я не з'ясував і що може вилізти пізніше як «а я думала, що це входить»? До 7 пунктів, від найдорожчого.",
+     "label": "Що я пропустив",
+     "openIn": "claude"
+    }
+   ],
+   "slides": [],
+   "materialSlugs": [],
+   "needsVideo": false,
+   "videoNote": null
+  },
+  {
+   "key": "competitors",
+   "section": "Клієнт",
+   "title": "Конкуренти за 10 хвилин",
+   "description": null,
+   "outcome": "Приклади, які можна показати клієнту, і 3 висновки для його сайту.",
+   "check": "У тебе таблиця з 5 сайтів і 3 ідеї, які клієнт погодив.",
+   "optional": false,
+   "minutes": 15,
+   "icon": "search",
+   "url": null,
+   "linkLabel": null,
+   "action": "prompt",
+   "prompts": [
+    {
+     "key": "research",
+     "body": "Знайди 5 сайтів [кав'ярень у Львові] або схожих бізнесів в Україні, які виглядають сучасно.\nДля кожного: адреса, що добре (1 речення), що погано, яку ідею варто взяти.\nПотім — 3 висновки для сайту мого клієнта. Таблицею.",
+     "label": "Аналіз конкурентів",
+     "openIn": "claude"
+    }
+   ],
+   "slides": [],
+   "materialSlugs": [],
+   "needsVideo": false,
+   "videoNote": null
+  },
+  {
+   "key": "estimate",
+   "section": "Клієнт",
+   "title": "Оцінка і ціна",
+   "description": "Три пакети — найпростіший спосіб не торгуватися: клієнт обирає, а не збиває ціну.",
+   "outcome": "Ціна, яку ти можеш пояснити, і три пакети замість одного «скільки коштує сайт».",
+   "check": "Клієнт отримав 3 пакети з чітким «що входить / що не входить» і обрав один.",
+   "optional": false,
+   "minutes": 20,
+   "icon": "credit-card",
+   "url": null,
+   "linkLabel": null,
+   "action": "prompt",
+   "prompts": [
+    {
+     "key": "estimate",
+     "body": "Ось що хоче клієнт: [вставити підсумок інтерв'ю]. Розбий роботу на задачі й оціни кожну в годинах, з урахуванням, що я працюю з Claude Code. Додай 20% на правки.\nПотім запропонуй 3 пакети (мінімум / оптимально / максимум): що входить, що не входить, термін, ціна при ставці [15 $/год].",
+     "label": "Оцінити роботу",
+     "openIn": "claude"
+    }
+   ],
+   "slides": [],
+   "materialSlugs": [],
+   "needsVideo": false,
+   "videoNote": null
+  },
+  {
+   "key": "tz",
+   "section": "Клієнт",
+   "title": "tz.md",
+   "description": "Головний крок шляху. Хороше ТЗ економить більше часу, ніж будь-яка бібліотека.",
+   "outcome": "Документ, з яким AI генерує сайт з першого разу, а клієнт не скаже «я не це просила».",
+   "check": "Клієнт прочитав tz.md і сказав «так, це воно» (або дав правки, які ти вніс).",
+   "optional": false,
+   "minutes": 20,
+   "icon": "document",
+   "url": null,
+   "linkLabel": null,
+   "action": "prompt",
+   "prompts": [
+    {
+     "key": "tz",
+     "body": "На основі листування з клієнтом (нижче) склади tz.md у Markdown:\n1. Мета сайту і як зрозуміємо, що він працює\n2. Аудиторія\n3. Сторінки і блоки на кожній\n4. Функції (форми, бронювання, оплата, адмінка): що входить і що НЕ входить\n5. Контент: що дає клієнт, що генеруємо\n6. Дизайн: настрій, кольори, приклади\n7. Технічне: стек, хостинг, домен, аналітика\n8. Критерії готовності — чекліст\n9. Відкриті питання до клієнта\nКоротко, без води. Листування: [вставити]",
+     "label": "Скласти tz.md",
+     "openIn": "claude"
+    },
+    {
+     "key": "client-review",
+     "body": "Ось ТЗ на ваш сайт: [вставити tz.md]. Прочитайте його як власниця кав'ярні і скажіть, що не так або чого не вистачає.",
+     "label": "Клієнт перевіряє ТЗ",
+     "openIn": "claude"
+    }
+   ],
+   "slides": [],
+   "materialSlugs": [],
+   "needsVideo": true,
+   "videoNote": "Повний цикл на живому прикладі: чат-клієнт → інтерв'ю → tz.md → клієнт перевіряє ТЗ."
+  },
+  {
+   "key": "stack",
+   "section": "Генерація",
+   "title": "Стек під ТЗ",
+   "description": null,
+   "outcome": "Стек, який підходить саме цьому клієнту, а не «модний».",
+   "check": "Ти можеш пояснити, чому обрав саме цей стек і що було б з іншим.",
+   "optional": false,
+   "minutes": 10,
+   "icon": "layers",
+   "url": null,
+   "linkLabel": null,
+   "action": "prompt",
+   "prompts": [
+    {
+     "key": "stack",
+     "body": "Ось tz.md: [вставити]. Який стек обрати для цього сайту у 2026 році, коротко?\nВрахуй: роблю сам з Claude Code, бюджет клієнта [600 $], клієнт сам змінює меню й ціни.\nДай 1 рекомендацію і 1 запасний варіант з причинами.",
+     "label": "Обрати стек",
+     "openIn": "claude"
+    }
+   ],
+   "slides": [
+    {
+     "media": "media/websites/stack-landing.webp",
+     "caption": "Візитка чи лендинг без змін контенту — статичний сайт: найдешевше в підтримці."
+    },
+    {
+     "media": "media/websites/stack-cms.webp",
+     "caption": "Клієнт сам змінює контент — потрібна адмінка (CMS). Питай AI про компроміси."
+    },
+    {
+     "media": "media/websites/stack-shop.webp",
+     "caption": "Магазин — платежі, склад, доставка. Спершу порівняй готові платформи з власною розробкою."
+    }
+   ],
+   "materialSlugs": [],
+   "needsVideo": false,
+   "videoNote": null
+  },
+  {
+   "key": "generate-v1",
+   "section": "Генерація",
+   "title": "Перша версія з tz.md",
+   "description": "Поклади tz.md у корінь проєкту. AI читає його сам — не треба щоразу пояснювати.",
+   "outcome": "Робочий сайт з усіма сторінками з ТЗ і чесний список того, що ще не зроблено.",
+   "check": "Усі сторінки з tz.md відкриваються, і є список «що ще не зроблено».",
+   "optional": false,
+   "minutes": 45,
+   "icon": "terminal",
+   "url": null,
+   "linkLabel": null,
+   "action": "auto",
+   "prompts": [
+    {
+     "key": "v1",
+     "body": "У корені проєкту лежить tz.md. Прочитай його і склади план реалізації: сторінки, компоненти, порядок робіт. Дочекайся мого «ок».\nПісля цього зроби першу версію: усі сторінки з tz.md, реалістичний контент, мобільна версія.\nНаприкінці звір результат з розділом «Критерії готовності» і скажи, що ще не зроблено.",
+     "label": "Згенерувати з ТЗ",
+     "openIn": "claude"
+    }
+   ],
+   "slides": [],
+   "materialSlugs": [
+    "3-200-chatgpt-claude-code",
+    "stvoriuiemo-realnyi-sait-z-ai-react-tailwind-gpt-claude-code"
+   ],
+   "needsVideo": false,
+   "videoNote": null
+  },
+  {
+   "key": "variants",
+   "section": "Генерація",
+   "title": "Варіанти: з бібліотеками і без",
+   "description": "Той самий сайт у кількох варіантах. Кожен — окрема гілка git, щоб можна було повернутися.",
+   "outcome": "Бачиш, що дає кожна бібліотека, а клієнт обирає з готового, а не з уяви.",
+   "check": "У тебе 2+ гілки з варіантами і скріни, які можна показати клієнту.",
+   "optional": false,
+   "minutes": 40,
+   "icon": "sparkles",
+   "url": null,
+   "linkLabel": null,
+   "action": "slides",
+   "prompts": [
+    {
+     "key": "tailwind",
+     "body": "Зроби [перший екран і блок меню] лише на Tailwind CSS, без бібліотек компонентів і анімацій. Чисто і швидко.",
+     "label": "Лише Tailwind",
+     "openIn": "claude"
+    },
+    {
+     "key": "shadcn",
+     "body": "Перероби ці ж блоки з shadcn/ui: кнопки, картки, діалог бронювання. Кольори — з tz.md.",
+     "label": "З shadcn/ui",
+     "openIn": "claude"
+    },
+    {
+     "key": "gsap",
+     "body": "Додай GSAP: плавна поява блоків при скролі, паралакс фото на першому екрані, анімований лічильник відгуків. Поважай prefers-reduced-motion.",
+     "label": "З GSAP",
+     "openIn": "claude"
+    },
+    {
+     "key": "motion",
+     "body": "Зроби ті самі анімації через Motion (Framer Motion) замість GSAP і порівняй коротко: розмір бандла, зручність, що краще для цього сайту.",
+     "label": "З Motion",
+     "openIn": "claude"
+    },
+    {
+     "key": "hero",
+     "body": "Зроби 3 різні варіанти першого екрана в окремих гілках git: мінімалізм, смілива типографіка, фото на весь екран. Після кожного — скріншот і назва гілки.",
+     "label": "3 стилі першого екрана",
+     "openIn": "claude"
+    }
+   ],
+   "slides": [
+    {
+     "media": "media/websites/variant-tailwind.webp",
+     "caption": "Лише Tailwind: швидко, чисто, але «як у всіх»."
+    },
+    {
+     "media": "media/websites/variant-shadcn.webp",
+     "caption": "+ shadcn/ui: готові доступні компоненти — діалоги, форми, меню."
+    },
+    {
+     "media": "media/websites/variant-gsap.mp4",
+     "ctaUrl": "https://gsap.com/docs/v3/",
+     "caption": "+ GSAP: сайт оживає при скролі. Видно силу, але й ціну — час і вага.",
+     "ctaLabel": "Документація GSAP"
+    },
+    {
+     "media": "media/websites/variant-motion.mp4",
+     "caption": "+ Motion: анімації як React-компоненти. Для простих ефектів зручніше."
+    }
+   ],
+   "materialSlugs": [],
+   "needsVideo": true,
+   "videoNote": "Один сайт у 4 варіантах: Tailwind / shadcn/ui / GSAP / Motion. Що змінюється і скільки це коштує по часу."
+  },
+  {
+   "key": "client-edits",
+   "section": "Правки клієнта",
+   "title": "Клієнт вносить правки",
+   "description": "Повертаємося в чат-клієнт зі скріншотами. Правки, як у житті, — у месенджер, без структури.",
+   "outcome": "Відділяєш «змінити колір кнопки» від «а давайте ще онлайн-оплату» і не працюєш безкоштовно.",
+   "check": "Кожна правка позначена «входить» або «поза ТЗ» з ціною, і клієнт це бачив.",
+   "optional": false,
+   "minutes": 30,
+   "icon": "user",
+   "url": null,
+   "linkLabel": null,
+   "action": "prompt",
+   "prompts": [
+    {
+     "key": "feedback",
+     "body": "Ось скріни сайту, який ми зробили за вашим ТЗ: [прикріпити скріни]. Подивіться як власниця кав'ярні й напишіть правки так, як написали б мені в месенджер.",
+     "label": "Клієнт дивиться сайт",
+     "openIn": "claude"
+    },
+    {
+     "key": "apply",
+     "body": "Ось правки клієнта: [вставити]. Розбий їх на задачі, познач ті, що суперечать tz.md або не входять у бюджет (з оцінкою в годинах), і спитай мене про спірні. Решту зроби і покажи, що змінилося.",
+     "label": "Розібрати і внести правки",
+     "openIn": "claude"
+    }
+   ],
+   "slides": [],
+   "materialSlugs": [],
+   "needsVideo": false,
+   "videoNote": null
+  },
+  {
+   "key": "agent-qa",
+   "section": "Правки клієнта",
+   "title": "Агент тестує сайт",
+   "description": null,
+   "outcome": "Список багів ще до того, як їх знайде клієнт.",
+   "check": "Усі баги зі списку агента виправлені, повторний прогін чистий.",
+   "optional": false,
+   "minutes": 15,
+   "icon": "check-circle",
+   "url": null,
+   "linkLabel": null,
+   "action": "prompt",
+   "prompts": [
+    {
+     "key": "qa",
+     "body": "Відкрий [http://localhost:5173]. Ти — клієнт з телефона. Перевір: усі кнопки працюють, форма бронювання відправляється і показує повідомлення, текст не вилазить за екран.\nДай список проблем: що, де, як відтворити.",
+     "label": "Пройти сайт з телефона",
+     "openIn": "claude"
+    }
+   ],
+   "slides": [],
+   "materialSlugs": [],
+   "needsVideo": false,
+   "videoNote": null
+  },
+  {
+   "key": "existing-site",
+   "section": "Правки клієнта",
+   "title": "Чужий сайт: розібратися і поправити",
+   "description": "У житті часто приходять не з нуля: сайт на WordPress, конструкторі чи чужому коді. Спершу розібратися, потім чіпати.",
+   "outcome": "Не боїшся замовлень «у нас уже є сайт, треба поправити».",
+   "check": "Ти отримав мапу чужого проєкту і вніс одну правку, нічого не зламавши.",
+   "optional": false,
+   "minutes": 30,
+   "icon": "code",
+   "url": null,
+   "linkLabel": null,
+   "action": "prompt",
+   "prompts": [
+    {
+     "key": "map",
+     "body": "Це чужий проєкт, я бачу його вперше. Нічого не змінюй. Розкажи: на чому зроблений, як запускається, де які сторінки, де форми і куди йдуть заявки, що виглядає ризиковано. Коротко, списками.",
+     "label": "Мапа чужого проєкту",
+     "openIn": "claude"
+    },
+    {
+     "key": "safe-change",
+     "body": "Клієнт просить: [правка]. Знайди, де це змінюється, покажи план і що може зачепити. Після мого «ок» зміни мінімально і перевір, що решта працює.",
+     "label": "Безпечна правка",
+     "openIn": "claude"
+    }
+   ],
+   "slides": [],
+   "materialSlugs": [],
+   "needsVideo": false,
+   "videoNote": null
+  },
+  {
+   "key": "scope-done",
+   "section": "Готовність",
+   "title": "Усе з ТЗ зроблено",
+   "description": null,
+   "outcome": "Ніяких «цю кнопку доробимо пізніше» в день запуску.",
+   "check": "Усі пункти «Критеріїв готовності» з tz.md позначені ✅.",
+   "optional": false,
+   "minutes": 20,
+   "icon": "check-circle",
+   "url": null,
+   "linkLabel": null,
+   "action": "auto",
+   "prompts": [
+    {
+     "key": "audit",
+     "body": "Звір проєкт з tz.md: пройди кожен пункт «Критеріїв готовності» і познач ✅ або ❌ з поясненням. Для ❌ — план, як доробити.",
+     "label": "Звірити з ТЗ",
+     "openIn": "claude"
+    }
+   ],
+   "slides": [],
+   "materialSlugs": [
+    "stvoriuiemo-realnyi-sait-z-ai-react-tailwind-gpt-claude-code"
+   ],
+   "needsVideo": false,
+   "videoNote": null
+  },
+  {
+   "key": "responsive",
+   "section": "Готовність",
+   "title": "Телефон, планшет, різні браузери",
+   "description": "Не лише Chrome на твоєму ПК: Safari, Firefox і мобільні браузери.",
+   "outcome": null,
+   "check": "На 375, 768, 1280 і 1920 нічого не вилазить, Safari на iPhone поводиться так само.",
+   "optional": false,
+   "minutes": 20,
+   "icon": "pc",
+   "url": null,
+   "linkLabel": null,
+   "action": "auto",
+   "prompts": [
+    {
+     "key": "responsive",
+     "body": "Перевір верстку на ширинах 375, 768, 1280 і 1920: що ламається? Виправ, не змінюючи дизайн. Окремо — що може поводитися інакше в Safari.",
+     "label": "Перевірити ширини",
+     "openIn": "claude"
+    }
+   ],
+   "slides": [
+    {
+     "media": "https://youtube.com/shorts/No2Qsbf8eIs",
+     "caption": "Режим пристрою в DevTools: сайт на ширині телефона без телефона в руках (англ., 29 с)."
+    }
+   ],
+   "materialSlugs": [],
+   "needsVideo": true,
+   "videoNote": "Як перевіряти сайт на різних екранах і браузерах: DevTools device mode, реальний телефон, Safari."
+  },
+  {
+   "key": "error-pages",
+   "section": "Готовність",
+   "title": "Помилки без білого екрана",
+   "description": null,
+   "outcome": null,
+   "check": "Неіснуюча адреса показує сторінку 404 у стилі сайту з кнопкою «На головну».",
+   "optional": false,
+   "minutes": 15,
+   "icon": "alert",
+   "url": null,
+   "linkLabel": null,
+   "action": "auto",
+   "prompts": [
+    {
+     "key": "errors",
+     "body": "Додай сторінки 404 і 500 у стилі сайту: що сталося, кнопка «На головну», контакт. Перевір, що помилка API не дає білого екрана.",
+     "label": "Сторінки помилок",
+     "openIn": "claude"
+    }
+   ],
+   "slides": [],
+   "materialSlugs": [],
+   "needsVideo": false,
+   "videoNote": null
+  },
+  {
+   "key": "performance",
+   "section": "Готовність",
+   "title": "Швидкість і доступність",
+   "description": "Core Web Vitals (LCP, CLS, INP): картинки, шрифти, JS. Доступність: клавіатура, підписи форм, alt, контраст.",
+   "outcome": null,
+   "check": "PageSpeed на мобільному ≥ 80, форму можна заповнити з клавіатури.",
+   "optional": false,
+   "minutes": 20,
+   "icon": "flash",
+   "url": "https://pagespeed.web.dev/",
+   "linkLabel": "PageSpeed Insights",
+   "action": "auto",
+   "prompts": [
+    {
+     "key": "speed",
+     "body": "Ось звіт PageSpeed: [вставити]. Що з цього дасть найбільший виграш за найменше часу? Зроби топ-3 і покажи результат до/після.",
+     "label": "Пришвидшити",
+     "openIn": "claude"
+    }
+   ],
+   "slides": [],
+   "materialSlugs": [],
+   "needsVideo": false,
+   "videoNote": null
+  },
+  {
+   "key": "security",
+   "section": "Готовність",
+   "title": "Безпека перед запуском",
+   "description": null,
+   "outcome": "Ціну -100000 відхиляє сервер, а адмінку не відкрити, підібравши адресу.",
+   "check": "Критичних пунктів у security-рев'ю немає, секретів у репозиторії немає.",
+   "optional": false,
+   "minutes": 30,
+   "icon": "shield-key",
+   "url": null,
+   "linkLabel": null,
+   "action": "auto",
+   "prompts": [
+    {
+     "key": "review",
+     "body": "Проведи security-рев'ю проєкту перед запуском: валідація на бекенді, секрети в коді та історії git, захист адмінки, rate limit, завантаження файлів, XSS, CSRF, SQL injection.\nДай список ризиків від критичного до дрібного, з конкретним місцем у коді.",
+     "label": "Security-рев'ю",
+     "openIn": "claude"
+    }
+   ],
+   "slides": [],
+   "materialSlugs": [],
+   "needsVideo": true,
+   "videoNote": "Базовий security-чекліст перед запуском: валідація на backend, rate limit, захист адмінки."
+  },
+  {
+   "key": "admin-docs",
+   "section": "Готовність",
+   "title": "Клієнт керує сам",
+   "description": null,
+   "outcome": "Клієнт сам змінює тексти й ціни, а ти не отримуєш дзвінків о 23:00.",
+   "check": "Клієнт за інструкцією сам змінив одну ціну.",
+   "optional": false,
+   "minutes": 20,
+   "icon": "document",
+   "url": null,
+   "linkLabel": null,
+   "action": "auto",
+   "prompts": [
+    {
+     "key": "readme",
+     "body": "Напиши README для розробника (встановлення, запуск, деплой, env, бекап) і окрему коротку інструкцію для клієнта: як змінити меню, ціни, фото. Простими словами, зі скрінами-заглушками [скрін].",
+     "label": "README і інструкція для клієнта",
+     "openIn": "claude"
+    }
+   ],
+   "slides": [],
+   "materialSlugs": [],
+   "needsVideo": false,
+   "videoNote": null
+  },
+  {
+   "key": "deploy-vercel",
+   "section": "Публікація: простий маршрут",
+   "title": "Деплой на Vercel",
+   "description": "Для більшості сайтів малого бізнесу цього достатньо. Свій сервер — наступна секція, для досвідчених.",
+   "outcome": "Сайт в інтернеті, і кожен git push оновлює його сам.",
+   "check": "Сайт відкривається за адресою *.vercel.app, а після push зміни з'являються за хвилину.",
+   "optional": false,
+   "minutes": 20,
+   "icon": "upload",
+   "url": "https://vercel.com/docs/getting-started-with-vercel",
+   "linkLabel": "Vercel: початок",
+   "action": "prompt",
+   "prompts": [
+    {
+     "key": "vercel",
+     "body": "Підготуй проєкт до деплою на Vercel: перевір build, env-змінні, що не має потрапити в репозиторій. Потім веди мене по кроках: GitHub → Vercel → перший деплой. Після кожного кроку питай, що в мене на екрані.",
+     "label": "Підготувати й задеплоїти",
+     "openIn": "claude"
+    }
+   ],
+   "slides": [
+    {
+     "media": "https://youtube.com/shorts/7r9yOHFv1dA",
+     "caption": "Імпорт репозиторію з GitHub у Vercel — і сайт онлайн (англ., 50 с)."
+    }
+   ],
+   "materialSlugs": [],
+   "needsVideo": false,
+   "videoNote": null
+  },
+  {
+   "key": "domain-simple",
+   "section": "Публікація: простий маршрут",
+   "title": "Домен клієнта",
+   "description": null,
+   "outcome": "Сайт відкривається за адресою клієнта з https.",
+   "check": "Адреса клієнта відкриває сайт з замочком https, і www теж працює.",
+   "optional": false,
+   "minutes": 20,
+   "icon": "website",
+   "url": "https://vercel.com/docs/domains",
+   "linkLabel": "Домени у Vercel",
+   "action": "prompt",
+   "prompts": [
+    {
+     "key": "dns",
+     "body": "Домен [zerno.com.ua] куплено у [реєстратор]. Сайт на Vercel. Які DNS-записи додати для основного домену і www? Покажи як таблицю: тип, ім'я, значення. Як перевірити, що все працює?",
+     "label": "Що прописати в DNS",
+     "openIn": "claude"
+    }
+   ],
+   "slides": [
+    {
+     "media": "https://youtube.com/shorts/2LdROl8U6uo",
+     "caption": "Куплений домен → Vercel: додати домен і прописати записи в DNS (англ., 23 с)."
+    }
+   ],
+   "materialSlugs": [],
+   "needsVideo": false,
+   "videoNote": null
+  },
+  {
+   "key": "leads",
+   "section": "Публікація: простий маршрут",
+   "title": "Заявки не губляться",
+   "description": "Форма, яка нікуди не шле, — найчастіша причина «сайт не працює». Покроково — у шляху «Автоматизації».",
+   "outcome": "Заявка з форми за секунду приходить клієнту в Telegram.",
+   "check": "Тестова заявка з телефона прийшла в Telegram клієнта.",
+   "optional": false,
+   "minutes": 20,
+   "icon": "message",
+   "url": "https://devguide.com.ua/learning/automations",
+   "linkLabel": "Крок «Заявки → Telegram»",
+   "action": "auto",
+   "prompts": [],
+   "slides": [],
+   "materialSlugs": [],
+   "needsVideo": false,
+   "videoNote": null
+  },
+  {
+   "key": "domain",
+   "section": "Публікація: свій сервер",
+   "title": "Домен і DNS",
+   "description": null,
+   "outcome": "Сайт відкривається за адресою клієнта, а api. і admin. — на піддоменах.",
+   "check": "dig або nslookup показує IP твого сервера для домену й піддоменів.",
+   "optional": false,
+   "minutes": 30,
+   "icon": "website",
+   "url": null,
+   "linkLabel": null,
+   "action": "auto",
+   "prompts": [],
+   "slides": [
+    {
+     "media": "https://youtube.com/shorts/_3IJLgcdFog",
+     "caption": "Що таке DNS простими словами: як адреса сайту перетворюється на сервер (англ., 54 с)."
+    }
+   ],
+   "materialSlugs": [],
+   "needsVideo": true,
+   "videoNote": "Купити домен і прописати DNS (A, CNAME, піддомени) на живому прикладі."
+  },
+  {
+   "key": "https",
+   "section": "Публікація: свій сервер",
+   "title": "HTTPS",
+   "description": null,
+   "outcome": null,
+   "check": "http перенаправляє на https, сертифікат оновлюється автоматично.",
+   "optional": false,
+   "minutes": 15,
+   "icon": "shield-key",
+   "url": "https://letsencrypt.org/getting-started/",
+   "linkLabel": "Let's Encrypt",
+   "action": "auto",
+   "prompts": [],
+   "slides": [],
+   "materialSlugs": [],
+   "needsVideo": false,
+   "videoNote": null
+  },
+  {
+   "key": "production-server",
+   "section": "Публікація: свій сервер",
+   "title": "Сайт на сервері",
+   "description": "Не npm run dev, а production build. Попереду nginx як reverse proxy.",
+   "outcome": "Сайт працює на твоєму VPS і переживає перезавантаження сервера.",
+   "check": "Після перезавантаження VPS сайт піднімається сам.",
+   "optional": false,
+   "minutes": 45,
+   "icon": "terminal",
+   "url": null,
+   "linkLabel": null,
+   "action": "auto",
+   "prompts": [],
+   "slides": [],
+   "materialSlugs": [],
+   "needsVideo": true,
+   "videoNote": "Від VPS до запущеного сайту: build, start через systemd або Docker, nginx reverse proxy."
+  },
+  {
+   "key": "prod-db-env",
+   "section": "Публікація: свій сервер",
+   "title": "База і секрети",
+   "description": "Окрема production-база, міграції, індекси. Паролі, API-ключі й DATABASE_URL — не в GitHub, а в .env на сервері.",
+   "outcome": null,
+   "check": "Production-база окрема, секрети лише в .env на сервері, у git їх немає.",
+   "optional": false,
+   "minutes": 20,
+   "icon": "layers",
+   "url": null,
+   "linkLabel": null,
+   "action": "auto",
+   "prompts": [
+    {
+     "key": "secrets",
+     "body": "Перевір репозиторій: чи немає в коді або історії git паролів, токенів, ключів API? Чи .env у .gitignore? Що винести в змінні оточення перед запуском?",
+     "label": "Перевірити секрети",
+     "openIn": "claude"
+    }
+   ],
+   "slides": [
+    {
+     "media": "https://youtube.com/shorts/zC63USKm0m4",
+     "caption": ".env, який хоч раз потрапив у коміт, лишається в історії git. Тому секрети — лише на сервері (англ., 54 с)."
+    }
+   ],
+   "materialSlugs": [],
+   "needsVideo": false,
+   "videoNote": null
+  },
+  {
+   "key": "handover",
+   "section": "Здача",
+   "title": "Здаємо сайт клієнту",
+   "description": "Фінал шляху. Після нього — шлях «Перші клієнти»: як з цього кейсу отримати наступне замовлення.",
+   "outcome": "Закритий проєкт, задоволений клієнт і кейс у портфоліо.",
+   "check": "Клієнт отримав лист зі здачею, доступи й інструкцію, а в тебе є кейс з посиланням.",
+   "optional": false,
+   "minutes": 30,
+   "icon": "sparkles",
+   "url": null,
+   "linkLabel": null,
+   "action": "prompt",
+   "prompts": [
+    {
+     "key": "handover",
+     "body": "Підготуй лист клієнту про здачу сайту: що зроблено (за tz.md), посилання, доступи (без паролів у листі — окремо), як змінювати контент, що робити, якщо щось не працює, і що пропоную далі (аналітика, реклама, підтримка). Тепло і коротко.",
+     "label": "Лист про здачу",
+     "openIn": "claude"
+    },
+    {
+     "key": "case",
+     "body": "Ось tz.md і посилання на сайт: [вставити]. Напиши кейс для портфоліо: задача клієнта, що зробили, результат, стек — до 120 слів.",
+     "label": "Кейс для портфоліо",
+     "openIn": "claude"
+    }
+   ],
+   "slides": [],
+   "materialSlugs": [],
+   "needsVideo": false,
+   "videoNote": null
+  }
+ ]
+}
