@@ -1,6 +1,6 @@
 import React from 'react';
 import {F, ramp} from '../system/kit';
-import {Big, Box, Browser, Cue, L, LiveShot, Mono, Pill, PromptCard, Show, StepVideo, Steps, Strike, Chips, Title, X, W, at, pop, prompt, stepFrames, useTheme} from '../system/step';
+import {at, Big, Box, Browser, Chips, Cue, Fit, L, LHead, LiveShot, Mono, Pill, pop, prompt, PromptCard, Show, stepFrames, Steps, StepVideo, Strike, Title, useTheme, W, X} from '../system/step';
 import {ugc} from '../system/ugc';
 import WORDS from '../../public/ideas/sites-06/words.json';
 
@@ -120,5 +120,82 @@ const SFX: Cue[] = [
 
 export const Sites06: React.FC<{theme?: string; seed?: number}> = ({theme, seed}) => (
 	<StepVideo theme={theme} seed={seed} dir="ideas/sites-06" words={WORDS} next="Сайт за $10 000" nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={Scenes}
+		inserts={[ugc('point-up', a('Є'), 1.3, {label: <>Один <L>скіл</L> першим</>, labelY: 1000})]} />
+);
+
+// ---------- 16:9 (велике відео шляху): заголовок зліва, візуал справа ----------
+const ScenesWide = (t: number) => {
+	const def = a('для'), nn = a('Нейромережа'), one = a('Є'), test = a('Перевір'), w2 = a('Другий'), cmp = a('Поклади'), mine = a('Свої'), last = a('Головне');
+	return (
+		<>
+			<Show t={t} a={0} b={def}>
+				<Fit from={420} to={1100} center>
+					<Title t={t} section="Організація" size={92}>Skills: без і з <L>ui-ux-pro-max</L></Title>
+				</Fit>
+			</Show>
+			<Show t={t} a={def} b={nn}>
+				<Fit from={320} to={1020} center>
+					<Box y={360}><Big size={84}>Skill = <L>інструкція</L> для AI</Big></Box>
+					<Box y={800} o={pop(t, a('більше'))}><Big size={110}>більше <span style={{color: useTheme().red}}>≠</span> краще</Big></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={nn} b={one}>
+				<LHead size={84}>AI бере скіл <L>під задачу</L></LHead>
+				<Fit from={420} to={1370}>
+					<SkillGrid t={t} a0={nn} pick={a('задачу')} />
+					<Box y={1150} o={pop(t, a('Ставити'))}><Big size={56}><Strike p={ramp(t, a('сенсу'), a('сенсу') + 0.5)}>сотня «про запас»</Strike></Big></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={one} b={test}>
+				<LHead size={84}>Став першим</LHead>
+				<Fit from={330} to={1470}>
+					<Box y={370} o={pop(t, a('ui-ux'))}><Big size={76}><Mono>ui-ux-pro-max</Mono></Big></Box>
+					{/* справжня сторінка (shots/uiux-repo.png, 1280×900), рамка на назві репозиторію */}
+					<Browser t={t} y={520} url="github.com/nextlevelbuilder" h={600}>
+						<LiveShot t={t} src="ideas/sites-06/shots/uiux-repo.png" w={1280} a={a('ui-ux')} focus={{x: 30, y: 190, w: 272, h: 36, at: a('ui-ux') + 0.5, zoom: 1.8}} />
+					</Browser>
+					<Tag t={t} a0={a('дизайном')} y={1250}>Дизайн — <L>помітна різниця</L></Tag>
+				</Fit>
+			</Show>
+			<Show t={t} a={test} b={w2}>
+				<Fit from={220} to={1340} center>
+					<PromptCard t={t} a={a('Той')} b={a('Перший', 30)} y={260} size={36} label="Без skills" text={prompt('skills-compare', 'without')} />
+					<CafeMock t={t} a0={a('працює')} />
+					<Tag t={t} a0={a('шаблон')}>виглядає як <span style={{color: useTheme().red}}>шаблон</span></Tag>
+				</Fit>
+			</Show>
+			<Show t={t} a={w2} b={cmp}>
+				<Fit from={220} to={1340} center>
+					<PromptCard t={t} a={a('пишеш')} b={a('ui-ux', w2) + 0.8} y={260} size={36} label="З ui-ux-pro-max" text={prompt('skills-compare', 'with')} />
+					<CafeMock t={t} a0={a('бачиш')} styled />
+					<Tag t={t} a0={a('палітра')}>стиль · <L>шрифти</L></Tag>
+				</Fit>
+			</Show>
+			<Show t={t} a={cmp} b={mine}>
+				<LHead size={84}>Назви <L>3 відмінності</L></LHead>
+				<Fit from={480} to={1300}>
+					<Steps t={t} y={520} items={[['1', 'стиль під бізнес', a('три')], ['2', 'продумана палітра', a('три') + 0.4], ['3', 'шрифти', a('відмінності') + 0.5]]} />
+					<Box y={1080} o={pop(t, a('скіл', 52))}><Big size={60}>так видно, що дає <L>скіл</L></Big></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={mine} b={last}>
+				<LHead size={84}>Свої скіли — <L>у Claude</L></LHead>
+				<Fit from={480} to={980}>
+					<Chips t={t} y={520} size={46} items={[['скіли', mine + 0.2], ['конектори', a('конектори')], ['плагіни', a('плагіни')]]} />
+					<Box y={760} o={pop(t, a('профіль'))}><Pill style={{fontSize: 50, padding: '20px 40px'}}>профіль → налаштування</Pill></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={last} b={Infinity}>
+				<LHead size={92}>Кажи <L>прямо</L></LHead>
+				<Fit from={640} to={900}>
+					<Box y={680} o={pop(t, a('кажи'))}><Pill style={{fontSize: 46, fontFamily: F.mono}}>використай ui-ux-pro-max</Pill></Box>
+				</Fit>
+			</Show>
+		</>
+	);
+};
+
+export const Sites06Wide: React.FC<{theme?: string; seed?: number; kicker?: React.ReactNode}> = ({theme, seed, kicker}) => (
+	<StepVideo wide kicker={kicker} theme={theme} seed={seed} dir="ideas/sites-06" words={WORDS} next="Сайт за $10 000" nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={ScenesWide}
 		inserts={[ugc('point-up', a('Є'), 1.3, {label: <>Один <L>скіл</L> першим</>, labelY: 1000})]} />
 );

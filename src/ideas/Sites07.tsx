@@ -1,7 +1,7 @@
 import React from 'react';
 import {interpolate} from 'remotion';
 import {F, clamp, ramp} from '../system/kit';
-import {Big, Box, Browser, Chips, Cue, L, LiveShot, Pill, Show, StepVideo, Strike, Ticks, Title, X, W, at, pop, stepFrames, useTheme} from '../system/step';
+import {at, Big, Box, Browser, Chips, Cue, Fit, L, LHead, LiveShot, Pill, pop, Show, stepFrames, StepVideo, Strike, Ticks, Title, useTheme, W, X} from '../system/step';
 import {ugc} from '../system/ugc';
 import WORDS from '../../public/ideas/sites-07/words.json';
 
@@ -231,6 +231,107 @@ const SFX: Cue[] = [
 
 export const Sites07: React.FC<{theme?: string; seed?: number}> = ({theme, seed}) => (
 	<StepVideo theme={theme} seed={seed} dir="ideas/sites-07" words={WORDS} next="Який сайт насправді потрібен" nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={Scenes}
+		inserts={[
+			ugc('Man_sipping_coffee_at_cafe_ending_wow', a('Хороша'), a('нейромережа') - a('Хороша') - 0.1, {from: 5.5, label: <>Хороша <L>новина</L></>, labelY: 1000}),
+			ugc('wow', a('А', 25), a('Не', 27) - a('А', 25) - 0.1, {label: <>Головне — <L>скріни</L></>, labelY: 1000}),
+		]} />
+);
+
+// ---------- 16:9 (велике відео шляху): заголовок зліва, візуал справа ----------
+const ScenesWide = (t: number) => {
+	const T = useTheme();
+	const d3 = a('3D'), tech = a('Це'), fit = a('Для'), gen = a('нейромережа'), hid = a('Навіть'), shot = a('Не', 27), tags = a('Нейромережа', 34), mix = a('І', 41), btn = a('Не', 50), old = a('Раніше');
+	return (
+		<>
+			<Show t={t} a={0} b={d3}>
+				<Fit from={420} to={1100} center>
+					<Title t={t} section="Організація" size={120}>Сайт за <L>$10 000</L></Title>
+				</Fit>
+			</Show>
+			<Show t={t} a={d3} b={tech}>
+				<Fit from={220} to={1340} center>
+					<Chips t={t} y={260} size={42} items={[['3D-сцена', d3], ['плавний скрол', a('плавні')], ['велика типографіка', a('велика')]]} />
+					<CineHero t={t} a0={d3} scroll={a('плавні')} />
+				</Fit>
+			</Show>
+			<Show t={t} a={tech} b={fit}>
+				<Fit from={220} to={1340} center>
+					<Box y={260} style={{display: 'flex', justifyContent: 'center', gap: 24}}>
+						<span style={{opacity: pop(t, a('GSAP'))}}><Pill style={{fontSize: 56}}>GSAP</Pill></span>
+						<span style={{opacity: pop(t, a('Three'))}}><Pill style={{fontSize: 56}}>Three.js</Pill></span>
+					</Box>
+					{/* справжня сторінка (shots/threejs-home.png, 1280×900): сітка проєктів на Three.js */}
+					<Browser t={t} y={460} url="threejs.org" h={700}>
+						<LiveShot t={t} src="ideas/sites-07/shots/threejs-home.png" w={1280} a={a('GSAP')} focus={{x: 300, y: 0, w: 960, h: 600, at: a('Three'), zoom: 1.25}} />
+					</Browser>
+				</Fit>
+			</Show>
+			<Show t={t} a={fit} b={a('Хороша')}>
+				<LHead size={84}>Не <L>кожному</L> бізнесу</LHead>
+				<Fit from={480} to={934}>
+					<Ticks t={t} y={520} items={[[true, 'портфоліо', a('портфоліо')], [true, 'бренд', a('бренду')], [false, 'не кожному бізнесу', a('кожному')]]} />
+				</Fit>
+			</Show>
+			<Show t={t} a={gen} b={hid}>
+				<LHead size={84}>{t >= a('двадцять') ? '20' : '10'} <L>варіантів</L></LHead>
+				<Fit from={420} to={1530}>
+					<Variants t={t} a0={a('нагенерувати')} pick={Infinity} />
+					<Chips t={t} y={1310} size={46} items={[['цілі сторінки', a('Цілих')], ['окремі елементи', a('окремих')]]} />
+				</Fit>
+			</Show>
+			<Show t={t} a={hid} b={a('А', 25)}>
+				<LHead size={80}>Навіть <L>приховане</L></LHead>
+				<Fit from={420} to={1340}>
+					<Hidden t={t} at={[a('модалка'), a('бокова'), a('випадаюче')]} />
+				</Fit>
+			</Show>
+			<Show t={t} a={shot} b={tags}>
+				<LHead size={76}>Скрін — <L>весь екран</L></LHead>
+				<Fit from={410} to={1410}>
+					<Box y={450} o={pop(t, a('вирізати'))}><Big size={56}><Strike p={ramp(t, a('шматочок'), a('шматочок') + 0.5)}>маленький шматочок</Strike></Big></Box>
+					<FullShot t={t} a0={a('Роби')} date={a('датою')} apps={a('програмами')} />
+					<Box y={1190} o={pop(t, a('як', 33))}><Big size={60}>як <L>є</L></Big></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={tags} b={mix}>
+				<LHead size={80}>AI лишає <L>мітки</L></LHead>
+				<Fit from={420} to={1530}>
+					<Variants t={t} a0={tags - 0.5} pick={Infinity} tag={a('номер')} name={a('компонента')} />
+					<Box y={1310} o={pop(t, a('помилиться'))}><Big size={56}>і <L>не помилиться</L></Big></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={mix} b={btn}>
+				<LHead size={76}>{t >= a('Береш') ? <>Збираєш <L>основну</L></> : <>Тут мені <L>подобається</L></>}</LHead>
+				<Fit from={420} to={1340}>
+					<Assemble t={t} marks={[a('картка'), a('кнопка'), a('блок')]} fly={a('збираєш')} />
+				</Fit>
+			</Show>
+			<Show t={t} a={btn} b={old}>
+				<LHead size={80}>Не <span style={{color: T.red}}>сподобалось</span>?</LHead>
+				<Fit from={420} to={820}>
+					<Box y={460} o={pop(t, a('зроби'))}><Pill style={{fontSize: 44}}>«зроби 20 варіантів кнопок»</Pill></Box>
+					<Browser t={t} y={600} url="localhost:3000/buttons" h={560} o={pop(t, a('тестову') - 0.3)}><Buttons t={t} a0={a('тестову')} pick={a('обираєш')} /></Browser>
+				</Fit>
+			</Show>
+			<Show t={t} a={old} b={Infinity}>
+				<LHead size={76}>Робота <Strike p={ramp(t, a('без'), a('без') + 0.5)}>дизайнера</Strike></LHead>
+				<Fit from={420} to={1390}>
+					<Chips t={t} y={530} size={42} items={[['варіанти', a('придумати')], ['показати клієнту', a('показати')], ['клієнт обрав', a('обрав')]]} />
+					<Box y={760} o={pop(t, a('Тепер'))}><Big size={84}>Тепер — <L>без дизайнера</L></Big></Box>
+					<Box y={1000} style={{display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 22}}>
+						<span style={{opacity: pop(t, a('голосом'))}}><Pill style={{fontSize: 52}}>голос</Pill></span>
+						<span style={{opacity: pop(t, a('скріни', 67)), fontFamily: F.display, fontWeight: 900, fontSize: 70}}>+</span>
+						<span style={{opacity: pop(t, a('скріни', 67))}}><Pill style={{fontSize: 52}}>скріни</Pill></span>
+					</Box>
+					<Box y={1170} o={pop(t, a('гарний'))}><Big size={68}>= гарний <L>результат</L></Big></Box>
+				</Fit>
+			</Show>
+		</>
+	);
+};
+
+export const Sites07Wide: React.FC<{theme?: string; seed?: number; kicker?: React.ReactNode}> = ({theme, seed, kicker}) => (
+	<StepVideo wide kicker={kicker} theme={theme} seed={seed} dir="ideas/sites-07" words={WORDS} next="Який сайт насправді потрібен" nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={ScenesWide}
 		inserts={[
 			ugc('Man_sipping_coffee_at_cafe_ending_wow', a('Хороша'), a('нейромережа') - a('Хороша') - 0.1, {from: 5.5, label: <>Хороша <L>новина</L></>, labelY: 1000}),
 			ugc('wow', a('А', 25), a('Не', 27) - a('А', 25) - 0.1, {label: <>Головне — <L>скріни</L></>, labelY: 1000}),

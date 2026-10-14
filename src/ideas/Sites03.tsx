@@ -1,6 +1,6 @@
 import React from 'react';
 import {F, ramp} from '../system/kit';
-import {Big, Box, Browser, Cue, L, LiveShot, Pill, Show, StepVideo, Strike, Term, Ticks, Title, Win, at, pop, stepFrames, useTheme} from '../system/step';
+import {at, Big, Box, Browser, Cue, Fit, L, LHead, LiveShot, Pill, pop, Show, stepFrames, StepVideo, Strike, Term, Ticks, Title, useTheme, Win} from '../system/step';
 import {ugc} from '../system/ugc';
 import WORDS from '../../public/ideas/sites-03/words.json';
 
@@ -103,5 +103,90 @@ const SFX: Cue[] = [
 
 export const Sites03: React.FC<{theme?: string; seed?: number}> = ({theme, seed}) => (
 	<StepVideo theme={theme} seed={seed} dir="ideas/sites-03" words={WORDS} next="Домен, хостинг і де житиме сайт" nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={Scenes}
+		inserts={[ugc('facepalm', a('Навіщо'), a('Перше') + 0.5 - a('Навіщо'), {label: <><L>Навіщо</L>?</>, labelY: 1000})]} />
+);
+
+// ---------- 16:9 (велике відео шляху): заголовок зліва, візуал справа ----------
+const ScenesWide = (t: number) => {
+	const git = a('Git', 2), hub = a('GitHub', 6), why = a('Навіщо'), second = a('Друге'), third = a('Третє'), now = a('Налаштовуємо'), reg = a('Реєструєшся'), rest = a('все', reg), fin = a('Відкриваєш');
+	return (
+		<>
+			<Show t={t} a={0} b={git}>
+				<Fit from={420} to={1100} center>
+					<Title t={t} section="Організація"><L>Git</L> і GitHub</Title>
+				</Fit>
+			</Show>
+			<Show t={t} a={git} b={why}>
+				<Fit from={400} to={920} center>
+					<Box y={440}><Big size={104}>Git = <L>версії</L></Big></Box>
+					<Box y={700} o={pop(t, hub)}><Big size={104}>GitHub = <L>де вони лежать</L></Big></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={why} b={second}>
+				<LHead size={92}>AI <L>зламав</L>?</LHead>
+				<Fit from={420} to={1340}>
+					<Versions t={t} broke={a('ламає')} back={a('повертаєшся')} />
+				</Fit>
+			</Show>
+			<Show t={t} a={second} b={third}>
+				<LHead size={92}>Звідти сайт <L>їде в інтернет</L></LHead>
+				<Fit from={420} to={1430}>
+					<Box y={640} style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18}}>
+						<span style={{opacity: pop(t, a('GitHub', second))}}><Pill style={{fontSize: 48}}>GitHub</Pill></span>
+						<span style={{fontSize: 56, opacity: pop(t, a('Vercel') - 0.2)}}>↓</span>
+						<span style={{opacity: pop(t, a('Vercel'))}}><Pill style={{fontSize: 48}}>Vercel</Pill></span>
+						<span style={{fontSize: 56, opacity: pop(t, a('інтернет') - 0.2)}}>↓</span>
+						<span style={{opacity: pop(t, a('інтернет'))}}><Pill style={{fontSize: 48}}>сайт в інтернеті</Pill></span>
+					</Box>
+					<Box y={1210} o={pop(t, a('оновився'))}><Big size={56}>зміна → <L>сайт оновився сам</L></Big></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={third} b={now}>
+				<LHead size={88}>Проєкт <L>не загубиться</L></LHead>
+				<Fit from={560} to={980}>
+					<Ticks t={t} y={600} gap={160} items={[[true, "щось з комп'ютером — проєкт цілий", a('комп')], [true, 'працюєш з будь-якого ПК', a('будь')]]} />
+				</Fit>
+			</Show>
+			<Show t={t} a={now} b={reg}>
+				<Fit from={520} to={780} center>
+					<Box y={560}><Big size={104}>Одразу, <L>до першого клієнта</L></Big></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={reg} b={rest}>
+				<LHead size={80}>Реєструєшся на <L>GitHub</L></LHead>
+				<Fit from={420} to={1470}>
+					<Box y={1250} o={pop(t, a('безкоштовно'))}><Pill style={{fontSize: 46}}>безкоштовно</Pill></Box>
+					{/* справжня сторінка (shots/github-home.png, 1280×900), рамка на «Sign up for GitHub» */}
+					<Browser t={t} y={560} url="github.com" typeAt={reg} h={560}>
+						<LiveShot t={t} src="ideas/sites-03/shots/github-home.png" w={1280} a={reg + 0.6} focus={{x: 529, y: 484, w: 186, h: 48, at: reg + 1, zoom: 1.5}} />
+					</Browser>
+				</Fit>
+			</Show>
+			<Show t={t} a={rest} b={fin}>
+				<LHead size={88}>Решту робить <L>Claude Code</L></LHead>
+				<Fit from={500} to={760}>
+					<Term t={t} y={540} minH={420} label="Claude Code" lines={[
+						{at: a('перевірить'), text: '✓ Git встановлено', kind: 'ok'},
+						{at: a('створить'), text: '✓ репозиторій створено', kind: 'ok'},
+						{at: a('коміт'), text: '✓ перший коміт', kind: 'ok'},
+						{at: a('опублікує'), text: '✓ опубліковано на GitHub', kind: 'ok'},
+						{at: a('Якщо', 50), text: '→ увійди в GitHub: натисни «Authorize»', kind: 'out'},
+					]} />
+				</Fit>
+			</Show>
+			<Show t={t} a={fin} b={Infinity}>
+				<LHead size={88}>Твій проєкт <L>на GitHub</L></LHead>
+				<Fit from={420} to={1340}>
+					<Win y={560} label="github.com/you/my-first-site" mono o={pop(t, a('бачиш'))}>
+						{['index.html', 'style.css', 'script.js'].map((f, i) => <div key={f} style={{fontSize: 40, textAlign: 'left', opacity: pop(t, a('бачиш') + 0.2 + i * 0.2)}}>▸ {f}</div>)}
+					</Win>
+				</Fit>
+			</Show>
+		</>
+	);
+};
+
+export const Sites03Wide: React.FC<{theme?: string; seed?: number; kicker?: React.ReactNode}> = ({theme, seed, kicker}) => (
+	<StepVideo wide kicker={kicker} theme={theme} seed={seed} dir="ideas/sites-03" words={WORDS} next="Домен, хостинг і де житиме сайт" nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={ScenesWide}
 		inserts={[ugc('facepalm', a('Навіщо'), a('Перше') + 0.5 - a('Навіщо'), {label: <><L>Навіщо</L>?</>, labelY: 1000})]} />
 );

@@ -1,6 +1,6 @@
 import React from 'react';
 import {ramp} from '../system/kit';
-import {Big, Box, Browser, Chips, Cue, L, LiveShot, Mono, Pill, PromptCard, Reply, Show, StepVideo, Strike, Term, Ticks, Title, UserMsg, Win, at, pop, prompt, stepFrames, useTheme} from '../system/step';
+import {at, Big, Box, Browser, Chips, Cue, Fit, L, LHead, LiveShot, Mono, Pill, pop, prompt, PromptCard, Reply, Show, stepFrames, StepVideo, Strike, Term, Ticks, Title, UserMsg, useTheme, Win} from '../system/step';
 import {ugc} from '../system/ugc';
 import WORDS from '../../public/ideas/sites-20/words.json';
 
@@ -85,5 +85,90 @@ const SFX: Cue[] = [
 
 export const Sites20: React.FC<{theme?: string; seed?: number}> = ({theme, seed}) => (
 	<StepVideo theme={theme} seed={seed} dir="ideas/sites-20" words={WORDS} next="Швидкість і доступність" nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={Scenes}
+		inserts={[ugc('point-up', a('сиди'), a('кнопку') - a('сиди') - 0.1, {label: <>Сиди <L>поруч</L></>, labelY: 1000})]} />
+);
+
+// ---------- 16:9 (велике відео шляху): заголовок зліва, візуал справа ----------
+const ScenesWide = (t: number) => {
+	const T = useTheme();
+	const has = a('GitHub'), ask = a('Просто'), sec = a('Важливий'), near = a('Якщо'), link = a('В', 33), auto = a('А', 37), chat = a('І', 45);
+	return (
+		<>
+			<Show t={t} a={0} b={has}>
+				<Fit from={420} to={1100} center>
+					<Title t={t} section="Запуск">Викладаємо <L>на Vercel</L></Title>
+				</Fit>
+			</Show>
+			<Show t={t} a={has} b={ask}>
+				<LHead size={88}>Уже <L>є</L></LHead>
+				<Fit from={520} to={856}>
+					<Ticks t={t} y={560} items={[[true, 'GitHub', has], [true, 'Vercel MCP', a('Vercel')]]} />
+				</Fit>
+			</Show>
+			<Show t={t} a={ask} b={sec}>
+				<Fit from={200} to={1050} center>
+					<PromptCard t={t} a={a('пишеш')} b={a('Нейромережа')} y={240} size={34} text={prompt('deploy-vercel', 'vercel')} />
+					<Term t={t} y={830} label="Claude Code" lines={[
+						{at: a('перевірить'), text: '✓ build пройшов', kind: 'ok'},
+						{at: a('доставить'), text: '✓ бракувало пакета — додано', kind: 'ok'},
+						{at: a('викладе'), text: '✓ deploy: Ready', kind: 'ok'},
+					]} />
+				</Fit>
+			</Show>
+			<Show t={t} a={sec} b={near}>
+				<LHead size={92}><L>Секрети</L></LHead>
+				<Fit from={390} to={980}>
+					<Chips t={t} y={430} size={46} items={[['ключі', a('Ключі')], ['паролі', a('паролі')], ['токени', a('токени')]]} />
+					<Box y={560} o={pop(t, a('репозиторій'))}><Big size={60}>✗ <span style={{color: T.red}}>не в репозиторій</span></Big></Box>
+					<Term t={t} y={760} label="Claude Code" lines={[
+						{at: a('перевір', 20), text: 'перевір env-змінні', kind: 'cmd'},
+						{at: a('секрети', 22), text: '✓ .env у .gitignore', kind: 'ok'},
+						{at: a('GitHub', 23), text: '✓ ключі — у Vercel, не в коді', kind: 'ok'},
+					]} />
+				</Fit>
+			</Show>
+			<Show t={t} a={near} b={link}>
+				<LHead size={84}>Сиди <L>поруч</L></LHead>
+				<Fit from={380} to={1340}>
+					{/* справжня сторінка (shots/vercel-home.png з Sites-04, 1280×900), рамка на «Log In» */}
+					<Browser t={t} y={420} url="vercel.com/login" h={560}>
+						<LiveShot t={t} src="ideas/sites-04/shots/vercel-home.png" w={1280} a={near + 0.3} focus={{x: 1090, y: 16, w: 64, h: 32, at: a('кнопку'), zoom: 1.5}} />
+					</Browser>
+					<Box y={1080} o={pop(t, a('натиснути'))}><Big size={64}>інколи натиснеш <L>ти</L></Big></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={link} b={auto}>
+				<LHead size={84}>Отримуєш <L>посилання</L></LHead>
+				<Fit from={580} to={1040}>
+					<Box y={620} o={pop(t, a('посилання'))}><Pill style={{fontSize: 54, padding: '22px 44px'}}>zerno.vercel.app ↗</Pill></Box>
+					<Box y={820} o={pop(t, a('інтернеті'))}><Big size={64}>сайт уже <L>в інтернеті</L></Big></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={auto} b={chat}>
+				<LHead size={80}>Далі — <L>само</L></LHead>
+				<Fit from={420} to={1220}>
+					<Term t={t} y={460} label="Термінал" lines={[
+						{at: a('відправив'), text: 'git push', kind: 'cmd'},
+						{at: a('оновлює'), text: 'Vercel: building…', kind: 'out'},
+						{at: a('сама', 42), text: '✓ сайт оновлено', kind: 'ok'},
+					]} />
+					<Box y={1000} o={pop(t, a('вручну'))}><Big size={60}><Strike p={ramp(t, a('вручну'), a('вручну') + 0.5)}>викладати вручну</Strike></Big></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={chat} b={Infinity}>
+				<LHead size={84}>Просто <L>спитай</L></LHead>
+				<Fit from={420} to={1340}>
+					<Win y={540} label="Claude Code" minH={300}>
+						<UserMsg size={40} o={pop(t, a('яке'))}>яке посилання на сайт?</UserMsg>
+						<Reply o={pop(t, a('сайт', 48))} size={40}><Mono>zerno.vercel.app</Mono></Reply>
+					</Win>
+				</Fit>
+			</Show>
+		</>
+	);
+};
+
+export const Sites20Wide: React.FC<{theme?: string; seed?: number; kicker?: React.ReactNode}> = ({theme, seed, kicker}) => (
+	<StepVideo wide kicker={kicker} theme={theme} seed={seed} dir="ideas/sites-20" words={WORDS} next="Швидкість і доступність" nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={ScenesWide}
 		inserts={[ugc('point-up', a('сиди'), a('кнопку') - a('сиди') - 0.1, {label: <>Сиди <L>поруч</L></>, labelY: 1000})]} />
 );

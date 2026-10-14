@@ -1,7 +1,7 @@
 import React from 'react';
 import {Img, staticFile} from 'remotion';
 import {F} from '../system/kit';
-import {Big, Box, Browser, Cue, L, LiveShot, Pill, PromptCard, Show, StepVideo, Steps, Ticks, Title, X, W, at, pop, prompt, stepFrames, useTheme} from '../system/step';
+import {at, Big, Box, Browser, Cue, Fit, L, LHead, LiveShot, Pill, pop, prompt, PromptCard, Show, stepFrames, Steps, StepVideo, Ticks, Title, useTheme, W, X} from '../system/step';
 import {ugc} from '../system/ugc';
 import WORDS from '../../public/ideas/sites-14/words.json';
 
@@ -102,5 +102,79 @@ const SFX: Cue[] = [
 
 export const Sites14: React.FC<{theme?: string; seed?: number}> = ({theme, seed}) => (
 	<StepVideo theme={theme} seed={seed} dir="ideas/sites-14" words={WORDS} next="5 варіантів: секрет швидкого дизайну" nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={Scenes}
+		inserts={[ugc('smile', a('Головне'), a('свої') - a('Головне') - 0.05)]} />
+);
+
+// ---------- 16:9 (велике відео шляху): заголовок зліва, візуал справа ----------
+const ScenesWide = (t: number) => {
+	const T = useTheme();
+	const sad = a('Без'), pw = a('Playwright'), mcp = a('Chrome'), sk = a('Скіли'), inst = a('Ставити'), chk = a('Перевірка'), main = a('Головне');
+	return (
+		<>
+			<Show t={t} a={0} b={sad}>
+				<Fit from={420} to={1100} center>
+					<Title t={t} section="Розробка">Решта <L>MCP і skills</L></Title>
+				</Fit>
+			</Show>
+			<Show t={t} a={sad} b={pw}>
+				<Fit from={520} to={780} center>
+					<Box y={560}><Big size={100}>Без них — <span style={{color: T.red}}>сумно</span></Big></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={pw} b={mcp}>
+				<LHead size={70}>Playwright = <L>очі AI</L></LHead>
+				<Fit from={380} to={1340}>
+					{/* справжня сторінка (shots/playwright-home.png, 1280×900) */}
+					<Browser t={t} y={420} url="playwright.dev" h={420}>
+						<LiveShot t={t} src="ideas/sites-14/shots/playwright-home.png" w={1280} a={pw + 0.2} />
+					</Browser>
+					<Devices t={t} a0={a('скріни')} y={980} />
+				</Fit>
+			</Show>
+			<Show t={t} a={mcp} b={sk}>
+				<LHead size={84}>Ще <L>MCP</L></LHead>
+				<Fit from={350} to={900}>
+					<Steps t={t} y={390} gap={150} size={40} nsize={48} items={[
+						['01', <>Chrome DevTools <span style={{color: T.dim, fontSize: 32}}>· помилки, швидкість</span></>, mcp],
+						['02', <>CodeGraph <span style={{color: T.dim, fontSize: 32}}>· пошук коду</span></>, a('CodeGraph')],
+						['03', <>GitHub <span style={{color: T.dim, fontSize: 32}}>· версії, публікація</span></>, a('GitHub')],
+						['04', <>context7 <span style={{color: T.dim, fontSize: 32}}>· свіжа документація</span></>, a('context7')],
+						['05', <>Vercel <span style={{color: T.dim, fontSize: 32}}>· викладати</span></>, a('Vercel')],
+						['06', <>Postgres <span style={{color: T.dim, fontSize: 32}}>· якщо є база</span></>, a('Postgres')],
+					]} />
+				</Fit>
+			</Show>
+			<Show t={t} a={sk} b={inst}>
+				<LHead size={84}>Skills <L>під задачу</L></LHead>
+				<Fit from={420} to={1340}>
+					<Map t={t} rows={[['Велика сторінка, варіанти', 'ui-ux-pro-max', a('ui-ux')], ['Дрібна правка кнопки', 'frontend-design', a('frontend')], ['Тексти', 'humanizer', a('humanizer')]]} />
+				</Fit>
+			</Show>
+			<Show t={t} a={inst} b={chk}>
+				<LHead size={80}>Руками <L>не треба</L></LHead>
+				<Fit from={380} to={1194}>
+					<PromptCard t={t} a={a('даєш')} b={a('команди')} y={420} size={34} text={prompt('mcp-skills', 'install').split('\n')[0]} />
+					<Ticks t={t} y={780} items={[[true, 'показує команди', a('показує')], [true, 'ти кажеш «ок»', a('кажеш')], [true, 'все встановлено', a('встановлено')]]} />
+				</Fit>
+			</Show>
+			<Show t={t} a={chk} b={main}>
+				<LHead size={80}>Перевірка</LHead>
+				<Fit from={360} to={1120}>
+					<PromptCard t={t} a={a('попроси')} b={a('сайту')} y={400} size={36} text={prompt('mcp-skills', 'check')} />
+					<Devices t={t} a0={a('скріни', 54)} y={900} />
+				</Fit>
+			</Show>
+			<Show t={t} a={a('свої')} b={Infinity}>
+				<Fit from={400} to={980} center>
+					<Box y={440}><Big size={100}>Знай свої <L>інструменти</L></Big></Box>
+					<Box y={760} o={pop(t, a('кликати'))}><Big size={72}>і клич <L>потрібний</L></Big></Box>
+				</Fit>
+			</Show>
+		</>
+	);
+};
+
+export const Sites14Wide: React.FC<{theme?: string; seed?: number; kicker?: React.ReactNode}> = ({theme, seed, kicker}) => (
+	<StepVideo wide kicker={kicker} theme={theme} seed={seed} dir="ideas/sites-14" words={WORDS} next="5 варіантів: секрет швидкого дизайну" nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={ScenesWide}
 		inserts={[ugc('smile', a('Головне'), a('свої') - a('Головне') - 0.05)]} />
 );

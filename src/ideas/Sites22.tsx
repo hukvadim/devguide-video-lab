@@ -1,6 +1,6 @@
 import React from 'react';
 import {F} from '../system/kit';
-import {Big, Box, Browser, Chips, Cue, L, Mono, Pill, PromptCard, Reply, Show, StepVideo, Ticks, Title, UserMsg, Win, X, at, pop, prompt, stepFrames, useTheme} from '../system/step';
+import {at, Big, Box, Browser, Chips, Cue, Fit, L, LHead, Mono, Pill, pop, prompt, PromptCard, Reply, Show, stepFrames, StepVideo, Ticks, Title, UserMsg, useTheme, Win, X} from '../system/step';
 import {ugc} from '../system/ugc';
 import WORDS from '../../public/ideas/sites-22/words.json';
 
@@ -101,5 +101,92 @@ const SFX: Cue[] = [
 
 export const Sites22: React.FC<{theme?: string; seed?: number}> = ({theme, seed}) => (
 	<StepVideo theme={theme} seed={seed} dir="ideas/sites-22" words={WORDS} next="Домен клієнта" nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={Scenes}
+		inserts={[ugc('Man_laughs_on_sofa_with', a('ніяких'), WORDS[WORDS.length - 1].e - a('ніяких') + 0.2, {from: 2, label: <>Без дзвінків <L>о 23:00</L></>, labelY: 1000})]} />
+);
+
+// ---------- 16:9 (велике відео шляху): заголовок зліва, візуал справа ----------
+const ScenesWide = (t: number) => {
+	const T = useTheme();
+	const how = a('А'), two = a('Можна'), both = a('Найкраще'), forgot = a('Забув'), plan = a('Як', 27), docs = a('І', 39), fin = a('Клієнт', 51);
+	return (
+		<>
+			<Show t={t} a={0} b={how}>
+				<Fit from={420} to={1100} center>
+					<Title t={t} section="Запуск">Керування <L>після запуску</L></Title>
+				</Fit>
+			</Show>
+			<Show t={t} a={how} b={two}>
+				<LHead size={88}>Як клієнт <L>змінить</L>…</LHead>
+				<Fit from={560} to={820}>
+					<Chips t={t} y={600} size={50} items={[['товари', a('товари')], ['статті', a('статті')], ['ціни', a('ціни')], ['замовлення', a('замовлення')]]} />
+				</Fit>
+			</Show>
+			<Show t={t} a={two} b={both}>
+				<LHead size={84}>Дві <L>дороги</L></LHead>
+				<Fit from={420} to={1340}>
+					<Road t={t} a0={a('адмінку')} x={X} title="Адмінка"><span style={{fontSize: 40, color: T.dim, textAlign: 'center'}}>невелика, під цей сайт</span></Road>
+					<Road t={t} a0={a('MCP')} x={526} title="MCP">
+						<span style={{opacity: pop(t, a('ChatGPT'))}}><Pill style={{fontSize: 34}}>ChatGPT</Pill></span>
+						<span style={{opacity: pop(t, a('Claude'))}}><Pill style={{fontSize: 34}}>Claude</Pill></span>
+						<span style={{opacity: pop(t, a('додай')), fontSize: 36, fontWeight: 700}}>«додай товар»</span>
+						<span style={{opacity: pop(t, a('покажи')), fontSize: 36, fontWeight: 700}}>«покажи замовлення»</span>
+					</Road>
+				</Fit>
+			</Show>
+			<Show t={t} a={both} b={forgot}>
+				<Fit from={220} to={1390} center>
+					<Win y={260} label="Claude · клієнт">
+						<UserMsg size={44} o={pop(t, a('Клієнт', 17))}>Покажи замовлення</UserMsg>
+						<Reply o={pop(t, a('посилання'))} size={40}>Ось адмінка: <Mono size={30}>zerno.com.ua/admin?token=•••</Mono></Reply>
+					</Win>
+					<Browser t={t} y={720} url="zerno.com.ua/admin" h={380} o={pop(t, a('вхід'))}>
+						<div style={{padding: '20px 26px', display: 'flex', flexDirection: 'column', gap: 16}}>
+							{ORDERS.map(([n, what, st], i) => (
+								<div key={n} style={{display: 'flex', gap: 20, alignItems: 'center', fontSize: 34, fontWeight: 700, padding: '14px 18px', borderRadius: 14, background: T.panel2, opacity: pop(t, a('вхід') + 0.2 + i * 0.2)}}>
+									<span style={{fontFamily: F.mono, color: T.dim}}>{n}</span><span style={{flex: 1, textAlign: 'left'}}>{what}</span><span style={{color: st === 'нове' ? T.accent : T.dim}}>{st}</span>
+								</div>
+							))}
+						</div>
+					</Browser>
+					<Box y={1170} o={pop(t, a('без'))}><Big size={56}>без логіну й <L>пароля</L></Big></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={forgot} b={plan}>
+				<Fit from={380} to={1340} center>
+					<Win y={420} label="Claude · клієнт" minH={360}>
+						<UserMsg size={44} o={pop(t, forgot)}>Я забув посилання в адмінку</UserMsg>
+						<Reply o={pop(t, a('нагадає'))} size={42}>Ось воно ще раз: <Mono size={32}>zerno.com.ua/admin?token=•••</Mono></Reply>
+					</Win>
+				</Fit>
+			</Show>
+			<Show t={t} a={plan} b={docs}>
+				<LHead size={80}>Як це <L>зробити</L>?</LHead>
+				<Fit from={360} to={1314}>
+					<PromptCard t={t} a={a('Описуєш')} b={a('діями')} y={400} size={34} text={prompt('admin-docs', 'admin').split('\n')[0]} />
+					<Ticks t={t} y={900} items={[[true, 'спершу план', a('Спершу')], [true, 'скільки це часу', a('скільки')], [true, 'потім «ок»', a('потім')]]} />
+				</Fit>
+			</Show>
+			<Show t={t} a={docs} b={fin}>
+				<LHead size={80}>Дві <L>інструкції</L></LHead>
+				<Fit from={420} to={1340}>
+					<Road t={t} a0={a('README')} x={X} title="README"><span style={{fontSize: 34, color: T.dim}}>для розробника</span>
+						{[['запустити', a('запустити')], ['викласти', a('викласти')], ['бекап', a('бекап')]].map(([w, at0]) => <span key={w as string} style={{opacity: pop(t, at0 as number), fontSize: 40, fontWeight: 700}}>✓ {w}</span>)}
+					</Road>
+					<Road t={t} a0={a('коротка')} x={526} title="Клієнту"><span style={{fontSize: 34, color: T.dim}}>простими словами</span>
+						{[['меню', a('меню')], ['ціни', a('ціни', 50)], ['фото', a('фото')]].map(([w, at0]) => <span key={w as string} style={{opacity: pop(t, at0 as number), fontSize: 40, fontWeight: 700}}>✓ {w}</span>)}
+					</Road>
+				</Fit>
+			</Show>
+			<Show t={t} a={fin} b={Infinity}>
+				<Fit from={480} to={740} center>
+					<Box y={520}><Big size={100}>Клієнт <L>сам</L> усе змінює</Big></Box>
+				</Fit>
+			</Show>
+		</>
+	);
+};
+
+export const Sites22Wide: React.FC<{theme?: string; seed?: number; kicker?: React.ReactNode}> = ({theme, seed, kicker}) => (
+	<StepVideo wide kicker={kicker} theme={theme} seed={seed} dir="ideas/sites-22" words={WORDS} next="Домен клієнта" nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={ScenesWide}
 		inserts={[ugc('Man_laughs_on_sofa_with', a('ніяких'), WORDS[WORDS.length - 1].e - a('ніяких') + 0.2, {from: 2, label: <>Без дзвінків <L>о 23:00</L></>, labelY: 1000})]} />
 );

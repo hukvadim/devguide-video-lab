@@ -1,5 +1,5 @@
 import React from 'react';
-import {Big, Box, Chips, Cue, L, Mono, Pill, PromptCard, Reply, Show, StepVideo, Title, UserMsg, Win, at, pop, prompt, stepFrames, useTheme} from '../system/step';
+import {at, Big, Box, Chips, Cue, Fit, L, LHead, Mono, Pill, pop, prompt, PromptCard, Reply, Show, stepFrames, StepVideo, Title, UserMsg, useTheme, Win} from '../system/step';
 import {ugc} from '../system/ugc';
 import WORDS from '../../public/ideas/sites-10/words.json';
 
@@ -84,5 +84,69 @@ const SFX: Cue[] = [
 
 export const Sites10: React.FC<{theme?: string; seed?: number}> = ({theme, seed}) => (
 	<StepVideo theme={theme} seed={seed} dir="ideas/sites-10" words={WORDS} next="Скільки часу і яка ціна" nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={Scenes}
+		inserts={[ugc('Stop', a('без'), a('результат') - a('без') - 0.05, {label: <>Без <L>ТЗ</L>?</>, labelY: 1000})]} />
+);
+
+// ---------- 16:9 (велике відео шляху): заголовок зліва, візуал справа ----------
+const ScenesWide = (t: number) => {
+	const T = useTheme();
+	const bad = a('результат'), take = a('Береш'), sec = a('Мета'), tip = a('Порада'), show = a('Показуєш');
+	const st = [sec, a('Для'), a('Які'), a('Контакти'), a('Функції'), a('Контент'), a('Дизайн'), a('Технічне'), a('відкриті')];
+	const detail: [string, number][] = t >= st[7] ? [['стек', a('стек')], ['хостинг', a('хостинг')], ['домен', a('домен')]]
+		: t >= st[6] ? [['3–5 конкурентів з Google', a('конкурентів')]]
+		: t >= st[4] ? [['форми', a('форми')], ['бронювання', a('бронювання')], ['оплата', a('оплата')], ['✗ що не входить', a('входить')]]
+		: t >= st[3] ? [['телефон', a('телефон')], ['Telegram', a('Telegram')], ['Viber', a('Viber')], ['адреса', a('адреса')]]
+		: [];
+	return (
+		<>
+			<Show t={t} a={0} b={a('без')}>
+				<Fit from={420} to={1100} center>
+					<Title t={t} section="ТЗ" size={96}>★ <Mono>tz.md</Mono>: без ТЗ <L>не починаємо</L></Title>
+				</Fit>
+			</Show>
+			<Show t={t} a={bad} b={take}>
+				<Fit from={340} to={1180} center>
+					<Box y={380}><Big size={100}>Без ТЗ — <span style={{color: T.red}}>жах</span></Big></Box>
+					<Box y={680} o={pop(t, a('Ніхто'))}><Big size={76}>Спершу <L>зрозумій</L>, що робиш</Big></Box>
+					<Box y={960} o={pop(t, a('Ні', 10))}><Big size={60}>ні ти, ні <L>AI</L></Big></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={take} b={sec}>
+				<Fit from={210} to={1120} center>
+					<Chips t={t} y={250} size={42} items={[['листування', a('листування')], ['→ AI', a('нейромережу')]]} />
+					<PromptCard t={t} a={a('просиш')} b={a('tz.md') + 0.8} y={420} size={36} text={prompt('tz', 'tz').split('\n')[0]} />
+					<Box y={900} o={pop(t, a('дев'))}><Pill style={{fontSize: 56, padding: '20px 44px'}}>9 розділів</Pill></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={sec} b={tip}>
+				<Fit from={220} to={1240} center>
+					<Doc t={t} at={st} />
+					<Chips t={t} y={1110} size={40} items={detail} />
+				</Fit>
+			</Show>
+			<Show t={t} a={tip} b={show}>
+				<LHead size={84}>Порада</LHead>
+				<Fit from={400} to={1340}>
+					<Win y={440} label="Claude" minH={500}>
+						<UserMsg size={36} o={pop(t, a('попроси'))}>{prompt('tz', 'client-review')}</UserMsg>
+						<Reply o={pop(t, a('вистачає'))} size={40}>Як власниця: не бачу годин роботи і меню з цінами.</Reply>
+					</Win>
+				</Fit>
+			</Show>
+			<Show t={t} a={show} b={Infinity}>
+				<Fit from={320} to={1340} center>
+					<Win y={360} label="Клієнт" minH={260}>
+						<UserMsg size={40} o={pop(t, show)}>Ось ТЗ на ваш сайт: tz.md</UserMsg>
+						<div style={{alignSelf: 'flex-start', opacity: pop(t, a('так')), fontSize: 58, fontWeight: 800}}>Так, це <L>воно</L> ✓</div>
+					</Win>
+					<Box y={860} o={pop(t, a('Тільки'))}><Big size={96}>Тільки тоді <L>починаєш</L></Big></Box>
+				</Fit>
+			</Show>
+		</>
+	);
+};
+
+export const Sites10Wide: React.FC<{theme?: string; seed?: number; kicker?: React.ReactNode}> = ({theme, seed, kicker}) => (
+	<StepVideo wide kicker={kicker} theme={theme} seed={seed} dir="ideas/sites-10" words={WORDS} next="Скільки часу і яка ціна" nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={ScenesWide}
 		inserts={[ugc('Stop', a('без'), a('результат') - a('без') - 0.05, {label: <>Без <L>ТЗ</L>?</>, labelY: 1000})]} />
 );

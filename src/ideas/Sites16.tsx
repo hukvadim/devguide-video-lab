@@ -1,6 +1,6 @@
 import React from 'react';
 import {F} from '../system/kit';
-import {Big, Box, Chips, Cue, L, Pill, PromptCard, Reply, Show, StepVideo, Steps, Title, Win, at, pop, prompt, stepFrames, useTheme} from '../system/step';
+import {at, Big, Box, Chips, Cue, Fit, L, LHead, Pill, pop, prompt, PromptCard, Reply, Show, stepFrames, Steps, StepVideo, Title, useTheme, Win} from '../system/step';
 import {ugc} from '../system/ugc';
 import WORDS from '../../public/ideas/sites-16/words.json';
 
@@ -114,5 +114,84 @@ const SFX: Cue[] = [
 
 export const Sites16: React.FC<{theme?: string; seed?: number}> = ({theme, seed}) => (
 	<StepVideo theme={theme} seed={seed} dir="ideas/sites-16" words={WORDS} next="Сайт працює" nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={Scenes}
+		inserts={[ugc('facepalm', a('Я'), a('безкоштовно') - a('Я') - 0.1, {label: <>6 місяців <L>на правки</L></>, labelY: 1000})]} />
+);
+
+// ---------- 16:9 (велике відео шляху): заголовок зліва, візуал справа ----------
+const ScenesWide = (t: number) => {
+	const T = useTheme();
+	const story = a('безкоштовно'), deal = a('Тому'), wait = a('І', 17), loop = a('Цикл'), msg = a('Правки', 32), ai = a('Кидаєш'), talk = a('Спірне'), fin = a('Так', 54);
+	return (
+		<>
+			<Show t={t} a={0} b={a('Я')}>
+				<Fit from={420} to={1100} center>
+					<Title t={t} section="Правки">Правки: <L>3 раунди</L> і Trello</Title>
+				</Fit>
+			</Show>
+			<Show t={t} a={story} b={deal}>
+				<LHead size={76}>Безкоштовно… <span style={{color: T.red}}>і ще, і ще</span></LHead>
+				<Fit from={430} to={1280}>
+					<Steps t={t} y={470} gap={180} items={[['1', 'поправив кнопку', a('поправив')], ['2', '«а давайте в базу»', a('давайте')], ['3', 'форма', a('форма')], ['4', 'пошта…', a('пошта')]]} />
+				</Fit>
+			</Show>
+			<Show t={t} a={deal} b={wait}>
+				<LHead size={88}>Домовляйся <L>одразу</L></LHead>
+				<Fit from={420} to={1340}>
+					<Box y={540} style={{display: 'flex', justifyContent: 'center', gap: 22}}>
+						{['1', '2', '3'].map((n, i) => <span key={n} style={{opacity: pop(t, a('три') + i * 0.2)}}><Pill style={{fontSize: 64, padding: '18px 40px'}}>{n}</Pill></span>)}
+					</Box>
+					<Box y={700} o={pop(t, a('безкоштовно', 14))}><Big size={62}>раунди <L>безкоштовно</L></Big></Box>
+					<Box y={900} o={pop(t, a('далі'))}><Big size={62}>далі — <L>за твою ставку</L></Big></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={wait} b={loop}>
+				<Fit from={380} to={900} center>
+					<Box y={420}><Big size={92}>Не <span style={{color: T.red}}>того ж дня</span></Big></Box>
+					<Box y={680} o={pop(t, a('Чекаєш'))}><Big size={76}>Чекаєш, поки клієнт <L>збере все</L></Big></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={loop} b={msg}>
+				<LHead size={84}>Цикл <L>простий</L></LHead>
+				<Fit from={420} to={1340}>
+					<Cycle t={t} items={[['показав', a('показав')], ['правки', a('написав')], ['Trello', a('Trello')], ['зробив', a('зробив')], ['показав знову', a('показав', 27)]]} />
+				</Fit>
+			</Show>
+			<Show t={t} a={msg} b={ai}>
+				<Fit from={210} to={1340} center>
+					<Chips t={t} y={250} size={42} items={[['Telegram', a('Telegram')], ['Viber', a('Viber')]]} />
+					<Win y={400} label="Месенджер · клієнт" minH={420}>
+						<div style={{alignSelf: 'flex-start', width: 420, height: 200, borderRadius: 18, background: T.panel2, border: `2px dashed ${T.line}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F.mono, fontSize: 30, color: T.dim, opacity: pop(t, a('скріни'))}}>скрін сайту</div>
+						<Reply o={pop(t, a('копіюєш'))} size={42}>Кнопку зробіть зеленою, і телефон у контактах інший. І ще онлайн-оплату</Reply>
+					</Win>
+				</Fit>
+			</Show>
+			<Show t={t} a={ai} b={talk}>
+				<Fit from={180} to={1340} center>
+					<PromptCard t={t} a={ai + 0.2} b={a('трьох')} y={220} size={34} text={prompt('client-edits', 'apply').split('\n')[0]} />
+					<Win y={640} label="Trello · від клієнта" minH={560} o={pop(t, a('кладе'))}>
+						<Card t={t} at0={a('розбиває')} text="Кнопка — зелена" />
+						<Card t={t} at0={a('розбиває') + 0.3} text="Новий телефон у контактах" />
+						<Card t={t} at0={a('розбиває') + 0.6} text="Онлайн-оплата" flag={a('суперечить')} hours={a('оцінкою')} />
+					</Win>
+				</Fit>
+			</Show>
+			<Show t={t} a={talk} b={fin}>
+				<Fit from={340} to={860} center>
+					<Box y={380}><Big size={84}>Спірне — <L>обговорюєш</L></Big></Box>
+					<Box y={640} o={pop(t, a('решту'))}><Big size={84}>решту — <L>робиш</L></Big></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={fin} b={Infinity}>
+				<Fit from={380} to={980} center>
+					<Box y={420}><Big size={96}>Не пів року <span style={{color: T.red}}>безкоштовно</span></Big></Box>
+					<Box y={760} o={pop(t, a('пів', 55))}><Big size={84}>3 раунди — <L>і крапка</L></Big></Box>
+				</Fit>
+			</Show>
+		</>
+	);
+};
+
+export const Sites16Wide: React.FC<{theme?: string; seed?: number; kicker?: React.ReactNode}> = ({theme, seed, kicker}) => (
+	<StepVideo wide kicker={kicker} theme={theme} seed={seed} dir="ideas/sites-16" words={WORDS} next="Сайт працює" nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={ScenesWide}
 		inserts={[ugc('facepalm', a('Я'), a('безкоштовно') - a('Я') - 0.1, {label: <>6 місяців <L>на правки</L></>, labelY: 1000})]} />
 );

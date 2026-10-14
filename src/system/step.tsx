@@ -44,7 +44,8 @@ const ENTERS: ((p: number, rise: number) => React.CSSProperties)[] = [
 	(p) => ({transform: `perspective(1400px) rotateX(${(1 - p) * 18}deg) translateY(${(1 - p) * 40}px)`, transformOrigin: '50% 100%'}),
 ];
 export const Show: React.FC<{t: number; a: number; b: number; children: React.ReactNode; rise?: number}> = ({t, a, b, children, rise = 24}) => {
-	const {seed} = useTheme();
+	const TT = useTheme();
+	const {seed} = TT;
 	if (t < a || t > b) return null;
 	const v = seed == null ? 0 : Math.floor(random(`show-${seed}-${a.toFixed(2)}`) * ENTERS.length);
 	return <AbsoluteFill style={{opacity: io(t, a, b), ...ENTERS[v](ramp(t, a, a + 0.5), rise)}}>{children}</AbsoluteFill>;
@@ -96,6 +97,35 @@ export const Title: React.FC<{t: number; a?: number; section: string; y?: number
 			<Big size={size}>{children}</Big>
 		</Box>
 	</>
+);
+
+// ---------- 16:9 (wide, 1920×1080): ліва колонка — заголовок і субтитри, права — візуал у звичних координатах (X=84…940), висота 1080 ----------
+export const WX = 110;
+export const WW = 690;
+/** Права половина: усередині ті самі X/W, що й у вертикалі, лише y у межах 0…1080. */
+export const Right: React.FC<{children: React.ReactNode}> = ({children}) => <div style={{position: 'absolute', left: 820, top: 0, width: 1080, height: 1080}}>{children}</div>;
+/** Центр кадру 1080×1080 — для постерів і фраз на весь екран. */
+export const Center: React.FC<{children: React.ReactNode}> = ({children}) => <div style={{position: 'absolute', left: 420, top: 0, width: 1080, height: 1080}}>{children}</div>;
+/** Смуга вертикальної сцени (y від from до to у координатах 1080×1920) вписана в праву половину (або в центр) 16:9: зменшується лише якщо не влазить у 1000 px. */
+export const Fit: React.FC<{from: number; to: number; center?: boolean; children: React.ReactNode}> = ({from, to, center, children}) => {
+	const s = Math.min(1, 1000 / (to - from));
+	const dy = (1080 - (to - from) * s) / 2 - from * s;
+	return (
+		<div style={{position: 'absolute', left: center ? 420 + (1080 - 1080 * s) / 2 : 820, top: 0, width: 1080, height: 1080}}>
+			<div style={{position: 'absolute', left: 0, top: 0, width: 1080, height: 1920, transform: `translate(0px, ${dy}px) scale(${s})`, transformOrigin: '0 0'}}>{children}</div>
+		</div>
+	);
+};
+/** Заголовок сцени зліва, по вертикалі в центрі верхніх 820 px (нижче — субтитри); sub — рядки під ним. */
+export const LHead: React.FC<{size?: number; children: React.ReactNode; sub?: React.ReactNode}> = ({size = 84, children, sub}) => (
+	<div style={{position: 'absolute', left: WX, width: WW, top: 0, height: 820, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 34, textAlign: 'left'}}>
+		<Big size={size}>{children}</Big>
+		{sub}
+	</div>
+);
+/** Рядок під LHead: з'являється в o. */
+export const LSub: React.FC<{o?: number; size?: number; children: React.ReactNode}> = ({o = 1, size = 46, children}) => (
+	<div style={{opacity: o, transform: `translateY(${(1 - o) * 20}px)`, fontSize: size, fontWeight: 700, lineHeight: 1.25}}>{children}</div>
 );
 
 // ---------- вікна (нейтральні, без чужих логотипів) ----------
@@ -283,21 +313,22 @@ export const Check: React.FC<{t: number; a: number; y?: number; children: React.
 };
 
 /** Фінал: DevGuide → «Наступний крок» → назва → адреса шляху. */
-export const NextCard: React.FC<{t: number; a: number; next: string; label?: string; url?: string}> = ({t, a, next, label = 'Наступний крок', url = brand.learningUrl.replace('https://', '')}) => {
+export const NextCard: React.FC<{t: number; a: number; next: string; label?: string; url?: string; wide?: boolean}> = ({t, a, next, label = 'Наступний крок', url = brand.learningUrl.replace('https://', ''), wide}) => {
 	const T = useTheme();
 	const slam = pop(t, a, 0.5);
+	const y = wide ? [200, 450, 520, 800] : [420, 740, 810, 1180];
 	return (
 		<Show t={t} a={a} b={Infinity}>
-			<Box y={420}>
+			<Box y={y[0]}>
 				<div style={{transform: `scale(${interpolate(slam, [0, 1], [1.5, 1])})`, filter: `blur(${(1 - slam) * 12}px)`}}><Wordmark size={118} /></div>
 			</Box>
-			<Box y={740} o={pop(t, a + 0.5)}>
+			<Box y={y[1]} o={pop(t, a + 0.5)}>
 				<span style={{fontFamily: F.mono, fontSize: 32, letterSpacing: 5, color: T.dim, textTransform: 'uppercase'}}>{label}</span>
 			</Box>
-			<Box y={810} o={pop(t, a + 0.7)}>
+			<Box y={y[2]} o={pop(t, a + 0.7)}>
 				<Big size={next.length > 22 ? 64 : 80} style={{color: T.accent}}>{next}</Big>
 			</Box>
-			<Box y={1180} o={pop(t, a + 1.3)}>
+			<Box y={y[3]} o={pop(t, a + 1.3)}>
 				<span style={{display: 'inline-block', padding: '24px 44px', borderRadius: 999, background: T.accent, color: T.onAccent, fontFamily: F.body, fontWeight: 800, fontSize: url.length > 26 ? 36 : 44, boxShadow: `0 30px 80px ${T.accent}40`}}>{url} →</span>
 			</Box>
 		</Show>
@@ -305,15 +336,16 @@ export const NextCard: React.FC<{t: number; a: number; next: string; label?: str
 };
 
 /** Субтитри сторінками з підсвіченим поточним словом; place: низ (над safe-зоною) або центр кадру. */
-export const Captions: React.FC<{t: number; chunks: Word[][]; place?: 'bottom' | 'center'; size?: number}> = ({t, chunks, place = 'bottom', size = 52}) => {
+export const Captions: React.FC<{t: number; chunks: Word[][]; place?: 'bottom' | 'center' | 'left'; size?: number}> = ({t, chunks, place = 'bottom', size = 52}) => {
 	const T = useTheme();
 	const i = chunks.findIndex((c, k) => t >= c[0].s - 0.05 && t < chunkEnd(chunks, k));
 	if (i < 0) return null;
 	const c = chunks[i];
-	const pos: React.CSSProperties = place === 'center' ? {top: 1060} : {bottom: 300};
+	const left = place === 'left';
+	const pos: React.CSSProperties = left ? {left: WX - 26, width: WW + 52, bottom: 70} : {left: X, width: W, ...(place === 'center' ? {top: 1060} : {bottom: 300})};
 	return (
-		<div style={{position: 'absolute', left: X, width: W, ...pos, display: 'flex', justifyContent: 'center', opacity: io(t, c[0].s - 0.05, chunkEnd(chunks, i), 0.12)}}>
-			<div style={{padding: '12px 26px', borderRadius: 18, background: `${T.bg}CC`, fontFamily: F.body, fontWeight: 800, fontSize: size, lineHeight: 1.25, textAlign: 'center'}}>
+		<div style={{position: 'absolute', ...pos, display: 'flex', justifyContent: left ? 'flex-start' : 'center', opacity: io(t, c[0].s - 0.05, chunkEnd(chunks, i), 0.12)}}>
+			<div style={{padding: '12px 26px', borderRadius: 18, background: `${T.bg}CC`, fontFamily: F.body, fontWeight: 800, fontSize: size, lineHeight: 1.25, textAlign: left ? 'left' : 'center'}}>
 				{c.map((w, k) => (
 					<span key={k} style={{color: t >= w.s && t < (c[k + 1]?.s ?? w.e + 0.3) ? T.accent : t >= w.s ? T.text : `${T.text}99`}}>{w.w}{k < c.length - 1 ? ' ' : ''}</span>
 				))}
@@ -380,10 +412,12 @@ const MUSIC = 'ideas/idea-001/music/hazy-after-hours.mp3';
 type StepProps = {
 	dir: string; words: Word[]; next?: string; nextLabel?: string; nextUrl?: string; sfx: Cue[]; scenes?: (t: number) => React.ReactNode;
 	theme?: string | Theme; seed?: number; music?: string; musicVol?: number; look?: 'scenes' | 'word' | 'karaoke'; captions?: 'bottom' | 'center' | false; inserts?: Insert[]; endCard?: (t: number, a: number) => React.ReactNode;
+	/** 16:9: сцени самі ставлять LHead/Right/Center; UGC — у правій половині, субтитри — зліва внизу, kicker — зліва вгорі весь ролик */
+	wide?: boolean; kicker?: React.ReactNode;
 };
 /** Шорт кроку: голос, музика, SFX, субтитри, сцени (render-функція від t) і фінальна картка «Наступний крок». */
 export const StepVideo: React.FC<StepProps> = ({theme, seed, ...p}) => <ThemeProvider theme={theme} seed={seed}><StepInner {...p} /></ThemeProvider>;
-const StepInner: React.FC<Omit<StepProps, 'theme' | 'seed'>> = ({dir, words, next, nextLabel, nextUrl, sfx, scenes, music = MUSIC, musicVol = 0.085, look = 'scenes', captions = 'bottom', inserts = [], endCard}) => {
+const StepInner: React.FC<Omit<StepProps, 'theme' | 'seed'>> = ({dir, words, next, nextLabel, nextUrl, sfx, scenes, music = MUSIC, musicVol = 0.085, look = 'scenes', captions = 'bottom', inserts = [], endCard, wide, kicker}) => {
 	const frame = useCurrentFrame();
 	// кадр 0 = обкладинка: Instagram бере його за cover, тож показуємо вже проявлену заставку (t = 0.9 с, до першої склейки), а не порожній фон
 	const t = frame === 0 ? 0.9 : frame / 30;
@@ -394,7 +428,8 @@ const StepInner: React.FC<Omit<StepProps, 'theme' | 'seed'>> = ({dir, words, nex
 	const vol = (f: number) => interpolate(f, [0, 30, S(end), S(end) + 15, S(total - 1.5), S(total)], [0, musicVol, musicVol, 0.2, 0.2, 0], clamp);
 	const body = look === 'scenes' ? scenes?.(t) : <Kinetic t={t} words={words} mode={look} />;
 	// фон: без seed — як було; з seed — світло в іншому місці, сітка не завжди
-	const {seed} = useTheme();
+	const TT = useTheme();
+	const {seed} = TT;
 	const glow: [number, number] = seed == null ? [760, 420] : [180 + random(`gx${seed}`) * 720, 280 + random(`gy${seed}`) * 1200];
 	const grid = seed == null || random(`grid${seed}`) > 0.4;
 	return (
@@ -405,10 +440,11 @@ const StepInner: React.FC<Omit<StepProps, 'theme' | 'seed'>> = ({dir, words, nex
 			{sfx.map(([a, src, vol], i) => <Sfx key={i} at={S(a)} src={src} vol={vol} />)}
 			<Sfx at={S(card)} src="impact/impact-movie-epic.mp3" vol={0.4} dur={150} />
 			{t < card + 0.4 ? <AbsoluteFill style={{opacity: 1 - ramp(t, card, card + 0.4)}}>{body}</AbsoluteFill> : null}
-			{inserts.map((ins, i) => <UgcInsert key={i} t={t} ins={ins} />)}
+			{wide ? <Right><div style={{position: 'absolute', inset: 0, overflow: 'hidden', borderRadius: 36}}>{inserts.map((ins, i) => <UgcInsert key={i} t={t} ins={{...ins, labelY: 760}} />)}</div></Right> : inserts.map((ins, i) => <UgcInsert key={i} t={t} ins={ins} />)}
 			{inserts.map((ins, i) => <Sfx key={`u${i}`} at={S(ins.at)} src="whoosh/whoosh-fast.mp3" vol={0.3} dur={30} />)}
-			{endCard ? endCard(t, card) : <NextCard t={t} a={card} next={next ?? ""} label={nextLabel} url={nextUrl} />}
-			{frame > 0 && captions && look === 'scenes' && t < end + 0.5 ? <Captions t={t} chunks={chunks} place={captions} /> : null}
+			{endCard ? endCard(t, card) : wide ? <Center><NextCard t={t} a={card} next={next ?? ""} label={nextLabel} url={nextUrl} wide /></Center> : <NextCard t={t} a={card} next={next ?? ""} label={nextLabel} url={nextUrl} />}
+			{frame > 0 && captions && look === 'scenes' && t < end + 0.5 ? <Captions t={t} chunks={chunks} place={wide ? 'left' : captions} size={wide ? 40 : 52} /> : null}
+			{wide && kicker && t < card ? <div style={{position: 'absolute', left: WX, top: 70, fontFamily: F.mono, fontSize: 28, letterSpacing: 4, color: TT.accent, textTransform: 'uppercase', opacity: 0.9}}>{kicker}</div> : null}
 		</Stage>
 	);
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 import {F} from '../system/kit';
-import {Big, Box, Browser, Chips, Cue, L, Pill, Reply, Show, StepVideo, Term, Ticks, Title, UserMsg, Win, at, pop, stepFrames, useTheme} from '../system/step';
+import {at, Big, Box, Browser, Chips, Cue, Fit, L, LHead, Pill, pop, Reply, Show, stepFrames, StepVideo, Term, Ticks, Title, UserMsg, useTheme, Win} from '../system/step';
 import {ugc} from '../system/ugc';
 import WORDS from '../../public/ideas/sites-12/words.json';
 
@@ -100,5 +100,79 @@ const SFX: Cue[] = [
 
 export const Sites12: React.FC<{theme?: string; seed?: number}> = ({theme, seed}) => (
 	<StepVideo theme={theme} seed={seed} dir="ideas/sites-12" words={WORDS} next="День 2: де мої задачі? Trello" nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={Scenes}
+		inserts={[ugc('typing', a('І', 21), a('перший') - a('І', 21) - 0.1, {label: <>Блок за <L>блоком</L></>, labelY: 1000})]} />
+);
+
+// ---------- 16:9 (велике відео шляху): заголовок зліва, візуал справа ----------
+const ScenesWide = (t: number) => {
+	const put = a('Кладемо'), stack = a('Стек'), q = a('Він'), build = a('перший'), ctl = a('Не', 39), mob = a('Контент'), end = a('Наприкінці'), done = a('Усі');
+	return (
+		<>
+			<Show t={t} a={0} b={put}>
+				<Fit from={420} to={1100} center>
+					<Title t={t} section="Розробка">Перша версія <L>сайту з ТЗ</L></Title>
+				</Fit>
+			</Show>
+			<Show t={t} a={put} b={stack}>
+				<Fit from={420} to={1340} center>
+					<Tree t={t} hi={a('tz.md')} />
+					<Term t={t} y={800} label="Claude Code" lines={[{at: a('зроби'), text: 'зроби по ТЗ'}]} />
+				</Fit>
+			</Show>
+			<Show t={t} a={stack} b={q}>
+				<LHead size={92}>Стек уже <L>в ТЗ</L></LHead>
+				<Fit from={660} to={1120}>
+					<Chips t={t} y={700} size={44} items={[['той, що ти обрав раніше', a('той')]]} />
+					<Box y={900} o={pop(t, a('Додаткові'))}><Big size={60}>MCP поки <L>не потрібні</L></Big></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={q} b={a('І', 21)}>
+				<Fit from={260} to={1340} center>
+					<Win y={300} label="Claude Code" minH={900}>
+						<Reply o={pop(t, a('питання'))} size={36}>Є кілька питань: чи є фото закладу? Потрібне онлайн-бронювання?</Reply>
+						<UserMsg size={34} o={pop(t, a('відповідаєш'))}>Фото є, бронювання — так</UserMsg>
+						<Reply o={pop(t, a('план'))} size={36}>План: Головна → Меню → Відгуки → Контакти</Reply>
+						<UserMsg size={40} o={pop(t, a('Кажеш'))}>ок</UserMsg>
+					</Win>
+				</Fit>
+			</Show>
+			<Show t={t} a={build} b={ctl}>
+				<LHead size={84}>Блок за <L>блоком</L></LHead>
+				<Fit from={440} to={1430}>
+					<Browser t={t} y={480} url="localhost:3000" h={600}><Blocks t={t} at={[build, a('меню'), a('відгуки')]} /></Browser>
+					<Box y={1210} o={pop(t, a("сказав"))}><Big size={72}>подивився → <L>«ок»</L></Big></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={ctl} b={mob}>
+				<LHead size={88}>Не все <L>одним махом</L></LHead>
+				<Fit from={600} to={960}>
+					<Ticks t={t} y={640} gap={130} items={[[true, 'легше контролювати', a('контролювати')], [true, 'простіше виправляти', a('виправляти')]]} />
+				</Fit>
+			</Show>
+			<Show t={t} a={mob} b={end}>
+				<LHead size={88}>Одразу — <L>по-справжньому</L></LHead>
+				<Fit from={600} to={860}>
+					<Chips t={t} y={640} size={50} items={[['реалістичний контент', a('реалістичний')], ['мобільна версія', a('мобільна')]]} />
+				</Fit>
+			</Show>
+			<Show t={t} a={end} b={done}>
+				<LHead size={84}>AI сам каже, <L>що лишилось</L></LHead>
+				<Fit from={560} to={1120}>
+					<Ticks t={t} y={600} items={[[false, 'форма бронювання', a('каже') + 0.3], [false, 'сторінка 404', a('не', a('каже'))]]} />
+					<Box y={900} o={pop(t, a('список'))}><Pill style={{fontSize: 50}}>твій список на завтра</Pill></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={done} b={Infinity}>
+				<Fit from={380} to={980} center>
+					<Box y={420}><Big size={92}>Усі сторінки з ТЗ <L>відкриваються</L></Big></Box>
+					<Box y={760} o={pop(t, a('перша'))}><Big size={84}>перша версія <L>готова ✓</L></Big></Box>
+				</Fit>
+			</Show>
+		</>
+	);
+};
+
+export const Sites12Wide: React.FC<{theme?: string; seed?: number; kicker?: React.ReactNode}> = ({theme, seed, kicker}) => (
+	<StepVideo wide kicker={kicker} theme={theme} seed={seed} dir="ideas/sites-12" words={WORDS} next="День 2: де мої задачі? Trello" nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={ScenesWide}
 		inserts={[ugc('typing', a('І', 21), a('перший') - a('І', 21) - 0.1, {label: <>Блок за <L>блоком</L></>, labelY: 1000})]} />
 );

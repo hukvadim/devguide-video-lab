@@ -1,6 +1,6 @@
 import React from 'react';
 import {F} from '../system/kit';
-import {Big, Box, Browser, Cue, L, LiveShot, Mono, Pill, PromptCard, Reply, Show, StepVideo, Term, Ticks, Title, UserMsg, Win, at, pop, prompt, stepFrames, useTheme} from '../system/step';
+import {Big, Box, Browser, Center, Cue, L, LHead, LSub, LiveShot, Mono, Pill, PromptCard, Reply, Right, Show, StepVideo, Term, Ticks, Title, UserMsg, Win, at, pop, prompt, stepFrames, useTheme} from '../system/step';
 import {ugc} from '../system/ugc';
 import WORDS from '../../public/ideas/sites-01/words.json';
 
@@ -105,4 +105,78 @@ const SFX: Cue[] = [
 export const Sites01: React.FC<{theme?: string; seed?: number}> = ({theme, seed}) => (
 	<StepVideo theme={theme} seed={seed} dir="ideas/sites-01" words={WORDS} next={'Claude Code: VS Code, Desktop, Browser'} nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={Scenes}
 		inserts={[ugc('Man_typing_at_desk', a('потрібен'), a('Перше') - a('потрібен') - 0.15, {label: <>Дуже простий <L>набір</L></>, labelY: 960})]} />
+);
+
+// ---------- 16:9 (велике відео шляху): заголовок зліва, візуал справа ----------
+const ScenesWide = (t: number) => {
+	const first = a('Перше'), second = a('Друге'), mix = a('ось'), chat = a('Claude', a('плутати')), agent = a('Claude Code', 26), so = a('Тобто'), ask = a('Не', 42.5), fin = a('VS Code', a('зробить'));
+	return (
+		<>
+			<Show t={t} a={0} b={first}>
+				<Center><Title t={t} section="Організація" y={330} size={110}>Що потрібно для <L>сайтів</L></Title></Center>
+			</Show>
+			<Show t={t} a={first} b={second}>
+				<LHead size={100} sub={<><LSub o={pop(t, a('редактор'))}>редактор коду</LSub><div style={{opacity: pop(t, a('версію'))}}><Pill>остання версія</Pill></div></>}>1 · <L>VS Code</L></LHead>
+				<Right>
+					<Browser t={t} y={150} url="code.visualstudio.com" typeAt={a('Ставимо')} o={pop(t, a('Ставимо') - 0.3)} h={640}>
+						<LiveShot t={t} src="ideas/sites-01/shots/vscode-home.png" w={1280} a={a('Ставимо') + 0.7} focus={{x: 465, y: 335, w: 335, h: 52, at: a('офіційного'), zoom: 1.5}} />
+					</Browser>
+				</Right>
+			</Show>
+			<Show t={t} a={second} b={mix}>
+				<LHead size={100}>2 · <L>Claude Code</L></LHead>
+				<Right>
+					<Box y={360} o={pop(t, a('підписці'))}><Pill style={{fontSize: 64, padding: '24px 52px'}}>підписка Pro</Pill></Box>
+					<Box y={540} o={pop(t, a('старті'))}><span style={{fontSize: 54, fontWeight: 700}}>на старті <L>вистачає</L></span></Box>
+				</Right>
+			</Show>
+			<Show t={t} a={mix} b={chat}>
+				<Center><Box y={380}><Big size={170}>Не <L>плутай</L></Big></Box></Center>
+			</Show>
+			<Show t={t} a={chat} b={agent}>
+				<LHead>Claude = <L>чат</L></LHead>
+				<Right>
+					<Win y={90} label="Claude · чат" minH={380}>
+						<UserMsg o={pop(t, a('питаєш'))}>Зроби сайт кав'ярні</UserMsg>
+						<Reply o={pop(t, a('шматок'))}><Mono size={34}>{'<section class="hero">…'}</Mono></Reply>
+					</Win>
+					<Ticks t={t} y={600} gap={115} items={[[false, 'сам копіюєш', a('копіюєш')], [false, 'сам створюєш файли', a('створюєш')], [false, 'шукаєш, куди вставити', a('шукаєш')]]} />
+				</Right>
+			</Show>
+			<Show t={t} a={agent} b={so}>
+				<LHead>Claude Code = <L>агент</L></LHead>
+				<Right>
+					<Win y={70} label="Claude Code · твоя папка" mono minH={380}>
+						<Tree t={t} />
+					</Win>
+					<Term t={t} y={620} label="Claude Code" lines={[{at: a('запустити'), text: '✓ сайт запущено', kind: 'ok'}, {at: a('показує'), text: '✓ ось результат', kind: 'ok'}]} />
+				</Right>
+			</Show>
+			<Show t={t} a={so} b={ask}>
+				<Center>
+					<Box y={260}><Big size={110}>Чат <L>порадить</L></Big></Box>
+					<Box y={500} o={pop(t, a('зробить') - 0.9)}><Big size={110}>Claude Code <L>зробить</L></Big></Box>
+				</Center>
+			</Show>
+			<Show t={t} a={ask} b={fin}>
+				<LHead>Не впевнений? <L>Спитай</L></LHead>
+				<Right><PromptCard t={t} a={a('Спитай')} b={a('промпт')} y={120} text={prompt('setup-tools', 'chat-vs-code')} /></Right>
+			</Show>
+			<Show t={t} a={fin} b={Infinity}>
+				<Center>
+					<Box y={300} style={{display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 24}}>
+						<span style={{opacity: pop(t, fin)}}><Pill style={{fontSize: 60}}>VS Code</Pill></span>
+						<span style={{opacity: pop(t, a('плюс')), fontFamily: F.display, fontWeight: 900, fontSize: 84}}>+</span>
+						<span style={{opacity: pop(t, a('плюс') + 0.3)}}><Pill style={{fontSize: 60}}>Claude Code</Pill></span>
+					</Box>
+					<Box y={520} o={pop(t, a('перший') - 0.3)}><Big size={120}>= перший <L>сайт</L></Big></Box>
+				</Center>
+			</Show>
+		</>
+	);
+};
+
+export const Sites01Wide: React.FC<{theme?: string; seed?: number; kicker?: React.ReactNode}> = ({theme, seed, kicker}) => (
+	<StepVideo wide kicker={kicker} theme={theme} seed={seed} dir="ideas/sites-01" words={WORDS} next={'Claude Code: VS Code, Desktop, Browser'} nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={ScenesWide}
+		inserts={[ugc('Man_typing_at_desk', a('потрібен'), a('Перше') - a('потрібен') - 0.15, {label: <>Дуже простий <L>набір</L></>})]} />
 );

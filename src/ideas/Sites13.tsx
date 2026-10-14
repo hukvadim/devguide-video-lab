@@ -1,7 +1,7 @@
 import React from 'react';
 import {interpolate} from 'remotion';
 import {F, clamp} from '../system/kit';
-import {Big, Box, Browser, Chips, Cue, L, LiveShot, Pill, Show, StepVideo, Term, Ticks, Title, Win, X, W, at, pop, stepFrames, useTheme} from '../system/step';
+import {at, Big, Box, Browser, Chips, Cue, Fit, L, LHead, LiveShot, Pill, pop, Show, stepFrames, StepVideo, Term, Ticks, Title, useTheme, W, Win, X} from '../system/step';
 import {ugc} from '../system/ugc';
 import WORDS from '../../public/ideas/sites-13/words.json';
 
@@ -147,5 +147,98 @@ const SFX: Cue[] = [
 
 export const Sites13: React.FC<{theme?: string; seed?: number}> = ({theme, seed}) => (
 	<StepVideo theme={theme} seed={seed} dir="ideas/sites-13" words={WORDS} next="Решта MCP і skills" nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={Scenes}
+		inserts={[ugc('Man_rubbing_eyes_at_desk', a('думаєш'), a('За', 4.5) - a('думаєш') - 0.1, {label: <>Що я <L>вчора</L> зробив?</>, labelY: 1000})]} />
+);
+
+// ---------- 16:9 (велике відео шляху): заголовок зліва, візуал справа ----------
+const ScenesWide = (t: number) => {
+	const T = useTheme();
+	const think = a('думаєш'), what = a('За', 4.5), trello = a('Тут'), alt = a('Є', 14), board = a('Робиш'), conn = a('Далі'), why = a('Навіщо'), ex = a('Приклад'), next = a('Тому'), fin = a('Скільки');
+	return (
+		<>
+			<Show t={t} a={0} b={think}>
+				<Fit from={420} to={1100} center>
+					<Title t={t} section="Розробка">День 2: де мої <L>задачі</L>?</Title>
+				</Fit>
+			</Show>
+			<Show t={t} a={what} b={trello}>
+				<Fit from={520} to={780} center>
+					<Box y={560}><Big size={110}>За що <span style={{color: T.red}}>братися</span>?</Big></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={trello} b={alt}>
+				<LHead size={88}>Рятує <L>Trello</L></LHead>
+				<Fit from={360} to={1340}>
+					{/* справжня сторінка (shots/trello-home.png, 1280×900) */}
+					<Browser t={t} y={400} url="trello.com" h={560}>
+						<LiveShot t={t} src="ideas/sites-13/shots/trello-home.png" w={1280} a={trello + 0.3} focus={{x: 395, y: 587, w: 164, h: 50, at: a('реєструєшся'), zoom: 1.5}} />
+					</Browser>
+					<Chips t={t} y={1080} size={42} items={[['безкоштовний', a('безкоштовний')], ['є мобільний додаток', a('мобільний')], ['запис з телефона', a('телефона')]]} />
+				</Fit>
+			</Show>
+			<Show t={t} a={alt} b={board}>
+				<Fit from={380} to={1340} center>
+					<Box y={420} style={{display: 'flex', justifyContent: 'center', gap: 24}}>
+						<span><Pill style={{fontSize: 56}}>Trello</Pill></span>
+						<span style={{opacity: pop(t, a('Asana'))}}><Pill style={{fontSize: 56}}>Asana</Pill></span>
+					</Box>
+					<Box y={640} o={pop(t, a('Головне'))}><Big size={88}>Одне місце для <L>всіх задач</L></Big></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={board} b={conn}>
+				<LHead size={76}>Дошка з <L>колонками</L></LHead>
+				<Fit from={470} to={730}>
+					<Board t={t} y={510} cols={[a('роботі'), a('зробити', 21), a('від', 22), a('баги'), a('готово')]} move={1e6} />
+				</Fit>
+			</Show>
+			<Show t={t} a={conn} b={why}>
+				<LHead size={80}>Підключи <L>Trello</L></LHead>
+				<Fit from={330} to={1340}>
+					<Box y={370} o={pop(t, a('Сама'))}><span style={{fontSize: 44, fontWeight: 700, color: T.red}}>сама не підключиться</span></Box>
+					<Connectors t={t} a0={a('заходиш')} on={a('додаєш')} />
+					<Box y={1120} o={pop(t, a('Тепер'))}><Big size={60}>бачить дошку, <L>як ти</L></Big></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={why} b={ex}>
+				<LHead size={84}>Навіщо?</LHead>
+				<Fit from={400} to={1230}>
+					<Ticks t={t} y={440} items={[[false, 'закінчились ліміти', a('ліміти')], [false, 'щось зависло', a('зависло')], [false, 'вимкнув комп\'ютер', a('вимкнув')]]} />
+					<Box y={960} o={pop(t, a('А', 43))}><Big size={64}>а в <L>Trello</L> видно</Big></Box>
+					<Chips t={t} y={1010} size={42} items={[['взяли в роботу', a('взяли')], ['зроблено', a('зроблено')], ['не зроблено', a('ні', 47)]]} />
+				</Fit>
+			</Show>
+			<Show t={t} a={ex} b={next}>
+				<LHead size={80}>Приклад: <L>курс валют</L></LHead>
+				<Fit from={420} to={1520}>
+					<Rates t={t} a0={a('курс')} hand={a('руками')} />
+					<Win y={960} label="Trello · в роботі" o={pop(t, a('картки'))} minH={200}>
+						<div style={{padding: '18px 22px', borderRadius: 14, background: T.panel2, border: `3px solid ${T.accent}`, fontSize: 38, fontWeight: 700}}>
+							Курс валют → <L>API ПриватБанку</L>
+							<div style={{marginTop: 10, fontSize: 30, color: T.red, fontWeight: 800}}>не доробили: цифри руками</div>
+						</div>
+					</Win>
+					<Box y={960} o={pop(t, a('API')) * (1 - pop(t, a('картки')))}><Pill style={{fontSize: 44}}>потрібне API банку</Pill></Box>
+					<Box y={1300} o={pop(t, a('вилізе'))}><Big size={56}>без картки — <span style={{color: T.red}}>вилізе після запуску</span></Big></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={next} b={fin}>
+				<LHead size={76}>Наступного <L>дня</L></LHead>
+				<Fit from={380} to={1210}>
+					<Board t={t} y={420} cols={[next, next, next, next, next]} move={1e6} />
+					<Term t={t} y={990} label="Claude Code" lines={[{at: a('зайди'), text: 'зайди в Trello, продовжуємо'}, {at: a('бере'), text: '✓ взяв задачу «Курс валют»', kind: 'ok'}, {at: a('план'), text: '→ план готовий, чекаю «ок»', kind: 'out'}]} />
+				</Fit>
+			</Show>
+			<Show t={t} a={fin} b={Infinity}>
+				<Fit from={380} to={920} center>
+					<Box y={420}><Big size={96}>Нічого <L>не губиться</L></Big></Box>
+					<Box y={700} o={pop(t, a('платять'))}><Big size={64}>клієнти платять за задачі, <L>доведені до кінця</L></Big></Box>
+				</Fit>
+			</Show>
+		</>
+	);
+};
+
+export const Sites13Wide: React.FC<{theme?: string; seed?: number; kicker?: React.ReactNode}> = ({theme, seed, kicker}) => (
+	<StepVideo wide kicker={kicker} theme={theme} seed={seed} dir="ideas/sites-13" words={WORDS} next="Решта MCP і skills" nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={ScenesWide}
 		inserts={[ugc('Man_rubbing_eyes_at_desk', a('думаєш'), a('За', 4.5) - a('думаєш') - 0.1, {label: <>Що я <L>вчора</L> зробив?</>, labelY: 1000})]} />
 );

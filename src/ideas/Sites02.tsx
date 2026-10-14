@@ -1,6 +1,6 @@
 import React from 'react';
 import {ramp} from '../system/kit';
-import {Big, Box, Browser, Chips, Cue, L, LiveShot, PromptCard, Show, StepVideo, Steps, Title, Win, at, pop, prompt, stepFrames, useTheme} from '../system/step';
+import {at, Big, Box, Browser, Chips, Cue, Fit, L, LHead, LiveShot, pop, prompt, PromptCard, Show, stepFrames, Steps, StepVideo, Title, useTheme, Win} from '../system/step';
 import {ugc} from '../system/ugc';
 import WORDS from '../../public/ideas/sites-02/words.json';
 
@@ -106,5 +106,86 @@ const SFX: Cue[] = [
 
 export const Sites02: React.FC<{theme?: string; seed?: number}> = ({theme, seed}) => (
 	<StepVideo theme={theme} seed={seed} dir="ideas/sites-02" words={WORDS} next="Git і GitHub" nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={Scenes}
+		inserts={[ugc('typing', a('А', 44), a('калькулятор') - a('А', 44) - 0.1, {label: <>Ще <L>цікавіше</L></>, labelY: 1000})]} />
+);
+
+// ---------- 16:9 (велике відео шляху): заголовок зліва, візуал справа ----------
+const ScenesWide = (t: number) => {
+	const go = a('Заходиш'), ext = a('Розширення'), desk = a('Десктопна'), chrome = a('Chrome'), main = a('Головне'), check = a('Встановили'), write = a('пишеш'), file = a('Файл', a('фону')), more = a('калькулятор') - 0.1, fin = a('Ось', 56);
+	return (
+		<>
+			<Show t={t} a={0} b={go}>
+				<Fit from={420} to={1100} center>
+					<Title t={t} section="Організація">Де взяти <L>Claude Code</L>?</Title>
+				</Fit>
+			</Show>
+			<Show t={t} a={go} b={desk}>
+				<LHead size={80}>{t >= ext ? <>1 · <L>VS Code</L></> : <>Усе на <L>одній сторінці</L></>}</LHead>
+				<Fit from={420} to={1390}>
+					<Browser t={t} y={460} url="claude.ai/download" typeAt={go + 0.2} h={560}>
+						{/* справжня сторінка (shots/claude-download.png, 1265×2200): скрол до «Claude Code environments», рамка на VS Code */}
+						<LiveShot t={t} src="ideas/sites-02/shots/claude-download.png" w={1265} a={go + 1} b={ext} scroll={1440} focus={{x: 878, y: 1877, w: 295, h: 69, at: a('VS Code'), zoom: 1.4}} />
+					</Browser>
+					<Chips t={t} y={1170} items={[['файли', a('файли')], ['код', a('код')], ['чат поруч', a('чат')]]} />
+				</Fit>
+			</Show>
+			<Show t={t} a={desk} b={chrome}>
+				<LHead size={92}>2 · <L>Десктоп</L></LHead>
+				<Fit from={640} to={900}>
+					<Chips t={t} y={680} size={46} items={[['швидко спитати', a('спитати')], ['запустити задачу', a('задачу')], ['без редактора', a('редактора')]]} />
+				</Fit>
+			</Show>
+			<Show t={t} a={chrome} b={main}>
+				<LHead size={92}>3 · <L>Chrome</L></LHead>
+				<Fit from={600} to={860}>
+					<Box y={640} o={pop(t, a('браузері'))}><span style={{fontSize: 54, fontWeight: 700}}>нейромережа прямо <L>в браузері</L></span></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={main} b={check}>
+				<Fit from={480} to={740} center>
+					<Box y={520}><Big size={110}>Головне — <L>VS Code</L></Big></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={check} b={write}>
+				<LHead size={88}>Одразу <L>перевіряємо</L></LHead>
+				<Fit from={460} to={900}>
+					<Steps t={t} y={500} items={[['1', 'порожня папка', a('Створюєш')], ['2', 'відкрити у VS Code', a('відкриваєш')]]} />
+				</Fit>
+			</Show>
+			<Show t={t} a={write} b={file}>
+				<Fit from={380} to={640} center>
+					<PromptCard t={t} a={a('створи')} b={a('фону') + 0.3} text={prompt('claude-code-setup', 'first-file')} y={420} label="Claude Code" />
+				</Fit>
+			</Show>
+			<Show t={t} a={file} b={more}>
+				<LHead size={88}>Файл <L>з'явився</L></LHead>
+				<Fit from={420} to={1370}>
+					<Browser t={t} y={470} url="index.html" o={pop(t, file)} h={560}>
+						<Hello t={t} flip={a('змінюється') - 0.2} />
+					</Browser>
+					<Box y={1150} o={pop(t, a('працює', 43))}><Big size={72}>Все <L>працює ✓</L></Big></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={more} b={fin}>
+				<LHead size={84}>Хочеш <L>цікавіше</L>?</LHead>
+				<Fit from={400} to={1460}>
+					<Win y={440} label="калькулятор" o={pop(t, a('калькулятор'))}>
+						<Calc t={t} a0={a('калькулятор') + 0.2} />
+					</Win>
+					<Chips t={t} y={1240} size={38} items={[['index.html', a('три')], ['style.css', a('три') + 0.2], ['script.js', a('три') + 0.4]]} />
+				</Fit>
+			</Show>
+			<Show t={t} a={fin} b={Infinity}>
+				<Fit from={380} to={900} center>
+					<Box y={420}><Big size={92}>Описуєш <L>словами</L></Big></Box>
+					<Box y={680} o={pop(t, a('файли', 59))}><Big size={84}>файли з'являються <L>самі</L></Big></Box>
+				</Fit>
+			</Show>
+		</>
+	);
+};
+
+export const Sites02Wide: React.FC<{theme?: string; seed?: number; kicker?: React.ReactNode}> = ({theme, seed, kicker}) => (
+	<StepVideo wide kicker={kicker} theme={theme} seed={seed} dir="ideas/sites-02" words={WORDS} next="Git і GitHub" nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={ScenesWide}
 		inserts={[ugc('typing', a('А', 44), a('калькулятор') - a('А', 44) - 0.1, {label: <>Ще <L>цікавіше</L></>, labelY: 1000})]} />
 );

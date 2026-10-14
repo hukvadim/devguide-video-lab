@@ -1,6 +1,6 @@
 import React from 'react';
 import {F, ramp} from '../system/kit';
-import {Big, Box, Browser, Chips, Cue, L, Pill, PromptCard, Show, StepVideo, Strike, Title, at, io, pop, prompt, stepFrames, useTheme} from '../system/step';
+import {at, Big, Box, Browser, Chips, Cue, Fit, io, L, LHead, Pill, pop, prompt, PromptCard, Show, stepFrames, StepVideo, Strike, Title, useTheme} from '../system/step';
 import {ugc} from '../system/ugc';
 import WORDS from '../../public/ideas/sites-15/words.json';
 
@@ -124,5 +124,82 @@ const SFX: Cue[] = [
 
 export const Sites15: React.FC<{theme?: string; seed?: number}> = ({theme, seed}) => (
 	<StepVideo theme={theme} seed={seed} dir="ideas/sites-15" words={WORDS} next="Правки: 3 раунди і Trello" nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={Scenes}
+		inserts={[ugc('wow', a('Один', 25), a('Не', 28) - a('Один', 25) - 0.1, {label: <>Один майже <L>завжди класний</L></>, labelY: 1000})]} />
+);
+
+// ---------- 16:9 (велике відео шляху): заголовок зліва, візуал справа ----------
+const ScenesWide = (t: number) => {
+	const T = useTheme();
+	const say = a('Я'), what = a('Головної'), test = a('Нейромережа'), more = a('Не', 28), loop = a('кожне'), take = a('Потім'), cmp = a('Тут'), fin = a('Так', 56);
+	// до «Перемикаєш» перемикач крутиться сам, далі вкладка = назване число
+	const nums = ['один', 'два', 'три', 'чотири', "п'ять"].map((w) => a(w, 22));
+	const cur = t < nums[0] ? Math.floor(Math.max(0, t - test) / 0.7) % 5 : nums.filter((x) => t >= x).length - 1;
+	return (
+		<>
+			<Show t={t} a={0} b={say}>
+				<Fit from={420} to={1100} center>
+					<Title t={t} section="Розробка" size={96}>5 варіантів: секрет <L>швидкого дизайну</L></Title>
+				</Fit>
+			</Show>
+			<Show t={t} a={say} b={what}>
+				<Fit from={400} to={920} center>
+					<Box y={440}><Big size={88}><Strike p={ramp(t, a('Я', 4.5), a('Я', 4.5) + 0.5)}>«зроби красивіше»</Strike></Big></Box>
+					<Box y={700} o={pop(t, a('зроби', 5))}><Big size={100}>«зроби <L>5 варіантів</L>»</Big></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={what} b={test}>
+				<LHead size={84}>Чого <L>завгодно</L></LHead>
+				<Fit from={440} to={700}>
+					<Chips t={t} y={480} size={46} items={[['головна', what], ['навігація', a('навігації')], ['перший екран', a('першого')], ['«замовити дзвінок»', a('спливашки')], ['каталог товарів', a('каталогу')]]} />
+				</Fit>
+			</Show>
+			<Show t={t} a={test} b={a('Один', 25)}>
+				<LHead size={68}>Тестова сторінка <L>з перемикачем</L></LHead>
+				<Fit from={380} to={1420}>
+					<Browser t={t} y={420} url="localhost:3000/variants" h={640}><Switcher t={t} cur={cur} /></Browser>
+					<Box y={1110} o={pop(t, a('кольорами'))}><span style={{fontSize: 42, fontWeight: 700}}>кольори · розкладки</span></Box>
+					<Box y={1200} o={io(t, a('Основний'), nums[0])}><Pill style={{fontSize: 44}}>основний сайт не чіпає</Pill></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={more} b={loop}>
+				<LHead size={80}>Не <span style={{color: T.red}}>подобається</span>?</LHead>
+				<Fit from={380} to={1370}>
+					<PromptCard t={t} a={a('пишеш')} b={a('сподобалось')} y={420} size={36} text={prompt('variants', 'more')} />
+					<Box y={1150} o={pop(t, a('скрін'))}><Pill style={{fontSize: 44}}>+ скрін</Pill></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={loop} b={take}>
+				<LHead size={84}>Кожне коло — <L>ближче</L></LHead>
+				<Fit from={480} to={740}>
+					<Rounds t={t} y={520} items={[['коло 1', 45, loop], ['коло 2', 75, a('коло') + 0.4], ['коло 3', 96, a('ближче')]]} />
+				</Fit>
+			</Show>
+			<Show t={t} a={take} b={cmp}>
+				<LHead size={72}>Беремо <L>варіант 2</L></LHead>
+				<Fit from={400} to={1440}>
+					<Browser t={t} y={440} url="localhost:3000/variants" h={560} o={1 - 0.6 * pop(t, a('видаляємо'))}><Switcher t={t} cur={1} /></Browser>
+					<Box y={1120} o={pop(t, a('переноситься'))}><Big size={60}>→ в <L>основний сайт</L></Big></Box>
+					<Box y={1220} o={pop(t, a('видаляємо'))}><Big size={52}><Strike p={ramp(t, a('видаляємо'), a('видаляємо') + 0.5)}>тестова сторінка</Strike></Big></Box>
+				</Fit>
+			</Show>
+			<Show t={t} a={cmp} b={fin}>
+				<LHead size={76}>Класика <L>чи кіно</L>?</LHead>
+				<Fit from={420} to={1340}>
+					<Look t={t} at0={a('класичний')} x={84} title="Класичний" sub="shadcn/ui, легкий" />
+					<Look t={t} at0={a('кінематографічний')} x={530} title="Кіно" sub="GSAP, анімації" cine />
+					<Chips t={t} y={1080} size={42} items={[['що швидше?', a('швидше')], ['як на телефоні?', a('телефоні')], ['скільки часу на правки?', a('скільки')]]} />
+				</Fit>
+			</Show>
+			<Show t={t} a={fin} b={Infinity}>
+				<Fit from={500} to={760} center>
+					<Box y={540}><Big size={104}>Так виходять <L>шикарні сайти</L></Big></Box>
+				</Fit>
+			</Show>
+		</>
+	);
+};
+
+export const Sites15Wide: React.FC<{theme?: string; seed?: number; kicker?: React.ReactNode}> = ({theme, seed, kicker}) => (
+	<StepVideo wide kicker={kicker} theme={theme} seed={seed} dir="ideas/sites-15" words={WORDS} next="Правки: 3 раунди і Trello" nextUrl="devguide.com.ua/learning/websites" sfx={SFX} scenes={ScenesWide}
 		inserts={[ugc('wow', a('Один', 25), a('Не', 28) - a('Один', 25) - 0.1, {label: <>Один майже <L>завжди класний</L></>, labelY: 1000})]} />
 );
