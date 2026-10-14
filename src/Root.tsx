@@ -36,6 +36,7 @@ import {Sites21, Sites21Wide, SITES_21} from './ideas/Sites21';
 import {Sites22, Sites22Wide, SITES_22} from './ideas/Sites22';
 import {AdsA, AdsAVoice, AdsAVoice45, AdsB, AdsBVoice, AdsBVoice45, AdsBanner, ADS_A, ADS_A_VOICE, ADS_B, ADS_B_VOICE} from './ideas/Ads';
 import {Insta50Cover} from './ideas/Insta50Cover';
+import {Insta04, Insta09, Insta17, Insta23, Insta49, INSTA_04, INSTA_09, INSTA_17, INSTA_23, INSTA_49} from './ideas/Insta';
 import {StepPreview} from './system/step';
 import {LAB, LAB_FRAMES} from './lab/Lab';
 import {TIPS_LIST} from './tips/Tips';
@@ -102,6 +103,14 @@ export const Root: React.FC = () => <>
 {/* Meta-реклама менторства: ADS/, src/ideas/Ads.tsx */}
 {/* Банк «50 ідей рілсів без зйомки»: обкладинки docs/insta-50/NN-slug/cover.png (node scripts/insta50.mjs) */}
 <Composition id="Insta50-Cover" component={Insta50Cover} width={1080} height={1920} fps={30} durationInFrames={1} defaultProps={{n: 1, layout: 'number', theme: 'light', title: '5 промптів на щодень', sub: 'економлять годину', num: '5', cta: 'ПРОМПТ', account: 'особистий'} as const}/>
+{/* Рілси з банку docs/insta-50 (пілот: 04, 09, 17, 23, 49) */}
+<Folder name="Insta">
+	<Composition id="Insta-04" component={Insta04} {...V} durationInFrames={INSTA_04} defaultProps={{seed: 0}}/>
+	<Composition id="Insta-09" component={Insta09} {...V} durationInFrames={INSTA_09}/>
+	<Composition id="Insta-17" component={Insta17} {...V} durationInFrames={INSTA_17}/>
+	<Composition id="Insta-23" component={Insta23} {...V} durationInFrames={INSTA_23} defaultProps={{seed: 0}}/>
+	<Composition id="Insta-49" component={Insta49} {...V} durationInFrames={INSTA_49} defaultProps={{seed: 0}}/>
+</Folder>
 <Folder name="ADS">
  <Composition id="Ads-A-Abroad" component={AdsA} {...V} durationInFrames={ADS_A}/>
  <Composition id="Ads-A-Voice" component={AdsAVoice} {...V} durationInFrames={ADS_A_VOICE}/>
