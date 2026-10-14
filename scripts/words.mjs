@@ -26,7 +26,7 @@ const DISPLAY = [
 	["промпт-ін'єкція", 'prompt injection'], ['Фрі', 'Free'], ['Про', 'Pro'], ['Макс', 'Max'],
 	['ві-пі-ес', 'VPS'], ['джі-сап', 'GSAP'], ['срі-джей-ес', 'Three.js'], ['те-зе точка ем-ді', 'tz.md'], ['ю-ай ю-ікс про макс', 'ui-ux-pro-max'],
 	['вайбер', 'Viber'], ['трелло', 'Trello'], ['трелло-дошку', 'Trello-дошку'], ['плейрайт', 'Playwright'], ['хром девтулз', 'Chrome DevTools'], ['код-граф', 'CodeGraph'],
-	['контекст сім', 'context7'], ['фронтенд-дизайн', 'frontend-design'], ["х'юманайзер", 'humanizer'], ['гугл пейдж-спід', 'Google PageSpeed'], ['чат джі-пі-ті', 'ChatGPT'], ['гугл', 'Google'], ['апворк', 'Upwork'], ['файвер', 'Fiverr'], ['пі-ді-еф', 'PDF'], ['рідмі', 'README'], ['постгрес', 'Postgres'], ['ейч-ті-ем-ел', 'HTML'], ['сі-ес-ес', 'CSS'], ['джаваскрипт', 'JavaScript'], ['три-д', '3D'], ['клод коду', 'Claude Code'],
+	['контекст сім', 'context7'], ['фронтенд-дизайн', 'frontend-design'], ["х'юманайзер", 'humanizer'], ['гугл пейдж-спід', 'Google PageSpeed'], ['чат джі-пі-ті', 'ChatGPT'], ['гугл', 'Google'], ['апворк', 'Upwork'], ['асана', 'Asana'], ['ей-пі-ай', 'API'], ['файвер', 'Fiverr'], ['пі-ді-еф', 'PDF'], ['рідмі', 'README'], ['постгрес', 'Postgres'], ['ейч-ті-ем-ел', 'HTML'], ['сі-ес-ес', 'CSS'], ['джаваскрипт', 'JavaScript'], ['три-д', '3D'], ['клод коду', 'Claude Code'],
 ].map(([k, v]) => [k.split(' '), v, /\p{Lu}/u.test(k)]).sort((a, b) => b[0].length - a[0].length);
 
 const norm = (s) => s.replace(/[’ʼ`]/g, "'").replace(/[^\p{L}\p{N}'-]/gu, '').replace(/^[-']+|[-']+$/g, '');
