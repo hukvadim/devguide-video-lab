@@ -1,0 +1,3 @@
+- `public/assets/rive-smoke.riv`: https://cdn.rive.app/animations/vehicles.riv, публічний зразок Rive, завантажено 2026-10-15, ліцензію перевірити перед публікацією
+- Onda: https://github.com/degueba/onda, код MIT, назва й логотип не використовувати; встановлено 2026-10-15 через `npx ondajs add`
+- Музика/SFX: каталоги `public/assets/music/CATALOG.md`, `public/assets/audio/README.md` (Mixkit)

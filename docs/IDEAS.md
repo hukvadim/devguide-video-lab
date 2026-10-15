@@ -64,6 +64,15 @@
 **Збірка:** `node scripts/words.mjs public/ideas/idea-0xx` (таймінги: whisper + voice.txt + словник показу) → `src/ideas/Idea0xx.tsx` на блоках `src/system/step.tsx` (сцени прив'язані до слів через `at()`) → `node scripts/render-timed.mjs final Idea-0xx` → `node scripts/master-audio.mjs out/idea-0xx/idea-0xx-1080x1920.mp4` → `node scripts/collect-path.mjs [claude|websites]` (усі кроки по порядку в `out/_шлях-claude-ai/` або `out/sites/`, `NN Назва.mp4`).
 **Перевірити:** команду відкату `git restore .` (ID-011/013); порт `localhost:5173` підписано «може відрізнятися» (ID-009); ElevenLabs вимова «Клод», «Ві-Ес Код», «Ем-Сі-Пі», «точка енв».
 
+### ID-018 · Відео зібране кодом: Remotion + Rive + Onda
+- **Статус:** готово (`out/idea-018/idea-018-1080x1920-14lufs.mp4`; рендер: `node scripts/render-timed.mjs final Idea-018` → `node scripts/master-audio.mjs out/idea-018/idea-018-1080x1920.mp4`) · **Акаунт:** IG DevGuide · **Формат:** F3 «Вау-ефект за 30 с» · **Зйомка:** не потрібна (без голосу)
+- **Рубрика:** Дизайн → код
+- **Хук (0–3 с):** постер-титул «Це відео — код» (кадр 0 = обкладинка)
+- **Сценарій:** `public/ideas/idea-018/scenario.md`
+- **CTA:** «Напиши REMOTION» → що надсилає бот: **не визначено** (слово латиницею, 8 літер, поза правилом 3–6 кирилицею: вибір Вадима 2026-10-15)
+- **Матеріали:** Rive-зразок `public/assets/rive-smoke.riv` (публічний зразок Rive, 57 КБ, не бренд DevGuide, підписати «зразок Rive»); Onda: 70 компонентів, 18 переходів (README github.com/degueba/onda, MIT)
+- **Перевірити:** що саме бот шле на REMOTION; ліцензію Rive-зразка перед публікацією; шрифти Clash Display (Onda) не підключені, береться Unbounded/Inter
+
 <!-- шаблон, копіювати під кожну ідею
 ### ID-001 · Назва
 - **Статус:** нова · **Акаунт:** особистий / DevGuide / шлях · **Формат:** F3 · **Зйомка:** не потрібна / потрібна
