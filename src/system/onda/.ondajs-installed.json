@@ -1,0 +1,10 @@
+{
+  "components": [
+    {
+      "slug": "fade-in",
+      "componentName": "FadeIn",
+      "schemaName": "fadeInSchema",
+      "importPath": "./fade-in/FadeIn"
+    }
+  ]
+}

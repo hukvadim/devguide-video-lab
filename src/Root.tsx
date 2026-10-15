@@ -1,6 +1,7 @@
 import React from 'react';
 import {Composition, Folder} from 'remotion';
 import {EndCard, END_CARD} from './system/EndCard';
+import {SmokeRive, SmokeOnda, SMOKE_FRAMES} from './system/SmokeTech';
 import {Idea001, Idea001Short, Idea001Thumb, IDEA_001, shortFrames} from './ideas/Idea001';
 import {Idea002, Idea002Short, Idea002Thumb, IDEA_002, SHORT_FRAMES} from './ideas/Idea002';
 import {Idea004, IDEA_004} from './ideas/Idea004';
@@ -140,6 +141,10 @@ export const Root: React.FC = () => <>
 {/* «Секретні коди»: корисності без голосу для Instagram, src/tips/Tips.tsx + data/tips.json */}
 <Folder name="Tips">
  {TIPS_LIST.map(({id, C, frames}) => <Composition key={id} id={`Tips-${id}`} component={C} {...V} durationInFrames={frames}/>)}
+</Folder>
+<Folder name="Smoke">
+ <Composition id="Smoke-Rive" component={SmokeRive} {...V} durationInFrames={SMOKE_FRAMES}/>
+ <Composition id="Smoke-Onda" component={SmokeOnda} {...V} durationInFrames={SMOKE_FRAMES}/>
 </Folder>
 <Folder name="System">
  <Composition id="System-Step" component={StepPreview} {...V} durationInFrames={420}/>

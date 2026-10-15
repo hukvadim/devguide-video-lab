@@ -82,3 +82,6 @@ node scripts/qa-sheet.mjs out/final/devguide-final-preview-540x960.mp4 out/final
 - Склейка без перерендеру: `node scripts/join-sites-wide.mjs` → `out/sites-full/sites-full-1920x1080.mp4` (19:18, -14.1 LUFS) + `chapters.txt` для опису YouTube. Змінив крок → final `Sites-NN-Wide --wh=1920x1080` → `master-audio.mjs` → join.
 - Рендер: прев'ю 960×540 ~40–60 с/крок, фінал 1920×1080 ~2–3 хв/крок; склейка — секунди.
 - Обмеження: макет справа — та сама вертикальна сцена, вписана в смугу (не новий дизайн кожної сцени); кожен крок у своїй палітрі; музика стартує заново з кожним кроком.
+
+| Rive | OK: @remotion/rive 4.0.534, Smoke-Rive still (rive-smoke.riv = публічний зразок Rive, не для продакшну) | — | — | — | — |
+| Onda | OK: ondajs fade-in + lib-canvas у src/system/onda, Smoke-Onda still | — | — | — | — |

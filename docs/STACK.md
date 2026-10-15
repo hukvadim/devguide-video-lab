@@ -28,7 +28,8 @@
 - Snapcn skill + окремі копійовані компоненти: https://snapcn.dev/
 - video-shotcraft: https://github.com/Vincentwei1021/video-shotcraft
 - Remotion Bits: https://remotion-bits.dev/
-- Rive: @remotion/rive + локальний .riv
+- Rive: @remotion/rive 4.0.534 встановлено (2026-10-15); потрібен локальний .riv (`public/assets/mascot.riv`), у проєкті його ще немає
+- Onda (github.com/degueba/onda): source-копія через `npx ondajs add <slug> --components-out src/system/onda --lib-out src/system/onda/lib`; встановлено fade-in + lib-canvas. Шрифти Clash Display / Space Grotesk підключати локально. Код MIT, назва/логотип Onda не використовувати
 - Skia: @remotion/skia + @shopify/react-native-skia + WASM setup
 - remotion-qa: https://github.com/GroMarketing/remotion-qa — додатковий інструмент, підключати після прочитання актуального README.
 - Інші альтернативи для окремого тесту: RemotionUI, Remocn, Onda — https://www.remotion.dev/docs/resources
