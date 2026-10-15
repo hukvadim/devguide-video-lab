@@ -13,6 +13,7 @@ out/
 .agents/
 .claude/skills/*
 !.claude/skills/devguide-*/
+!.claude/skills/meta-ads-report/
 /ElevenLabs_*.mp3
 
 # музика Mixkit (188 МБ): не в git, на новому ПК node scripts/fetch-music.mjs
