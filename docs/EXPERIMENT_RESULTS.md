@@ -86,3 +86,4 @@ node scripts/qa-sheet.mjs out/final/devguide-final-preview-540x960.mp4 out/final
 | Rive | OK: @remotion/rive 4.0.534, Smoke-Rive still (rive-smoke.riv = публічний зразок Rive, не для продакшну) | — | — | — | — |
 | Onda | OK: ondajs fade-in + lib-canvas у src/system/onda, Smoke-Onda still | — | — | — | — |
 | Idea-018 (Remotion+Rive+Onda) | OK: 30 с, 1080x1920 | код ≈ 20 хв | draft 33.9 с, final 42.3 с | — | — |
+| Team-1…5 (ADS-Team, голос-клон, 9:16 + 4:5) | OK: 62–67 с, 10 MP4, -14 LUFS | код ≈ 40 хв | draft ≈ 50 с/ролик; final 9:16 82–139 с, 4:5 67–84 с | — | Процедурні макети замість скрінів магазину/Ads Manager |

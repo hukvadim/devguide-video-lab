@@ -43,6 +43,7 @@ import {VoiceAi, VOICE_AI} from './ideas/VoiceAi';
 import {AdsA, AdsAVoice, AdsAVoice45, AdsB, AdsBVoice, AdsBVoice45, AdsBanner, ADS_A, ADS_A_VOICE, ADS_B, ADS_B_VOICE} from './ideas/Ads';
 import {Insta50Cover} from './ideas/Insta50Cover';
 import {InstaAuto, REEL_LIST, instaMeta} from './ideas/InstaAuto';
+import {Team1, Team2, Team3, Team4, Team5, TEAM_45, TEAM_FRAMES} from './ideas/Team';
 import {Insta04, Insta09, Insta17, Insta23, Insta49, INSTA_04, INSTA_09, INSTA_17, INSTA_23, INSTA_49} from './ideas/Insta';
 import {StepPreview} from './system/step';
 import {LAB, LAB_FRAMES} from './lab/Lab';
@@ -126,6 +127,11 @@ export const Root: React.FC = () => <>
 	<Composition id="Insta-49" component={Insta49} {...V} durationInFrames={INSTA_49} defaultProps={{seed: 0}}/>
 	{/* решта 45 — з даних docs/insta-50/reels.json */}
 	{REEL_LIST.map((r) => <Composition key={r.n} id={`Insta-${String(r.n).padStart(2, '0')}`} component={InstaAuto} {...V} durationInFrames={300} calculateMetadata={instaMeta} defaultProps={{n: r.n, seed: 0}}/>)}
+</Folder>
+<Folder name="ADS-Team">
+ {/* Реклама під лендінг «Digital-команда в одній особі»: src/ideas/Team.tsx, голос public/ideas/team-N/ */}
+ {[Team1, Team2, Team3, Team4, Team5].map((C, i) => <Composition key={i} id={`Team-${i + 1}`} component={C} {...V} durationInFrames={TEAM_FRAMES[i]}/>)}
+ {TEAM_45.map((C, i) => <Composition key={i} id={`Team-${i + 1}-45`} component={C} width={1080} height={1350} fps={30} durationInFrames={TEAM_FRAMES[i]}/>)}
 </Folder>
 <Folder name="ADS">
  <Composition id="Ads-A-Abroad" component={AdsA} {...V} durationInFrames={ADS_A}/>
