@@ -1,6 +1,7 @@
 import React from 'react';
-import {AbsoluteFill, Easing, OffthreadVideo, Sequence, interpolate, staticFile, useCurrentFrame} from 'remotion';
-import {Bgm, F, Sfx, clamp, ramp} from '../system/kit';
+import {AbsoluteFill, Audio, Easing, OffthreadVideo, Sequence, interpolate, staticFile, useCurrentFrame} from 'remotion';
+import {F, Sfx, clamp, ramp} from '../system/kit';
+import WORDS from '../../public/ideas/screen-rec/words.json';
 
 // Screen Studio-подібний запис: claude.ai → вхід через Google → чат. Сирий запис: public/ideas/screen-rec/raw.mp4
 // (ffmpeg gdigrab 1920x1080 без системного курсора; час кліків — log.txt). Курсор і зум малюємо тут.
@@ -101,8 +102,7 @@ const Rec: React.FC = () => {
 			<div style={{position: 'absolute', left: sx - 4, top: sy - 3, transform: `scale(${press})`, transformOrigin: '4px 3px'}}>
 				<Arrow size={46} />
 			</div>
-			{CLICKS.map((c) => <Sfx key={c} at={c - 1} src="click/mouse-click-290204.mp3" vol={0.7} dur={20} />)}
-			<Sfx at={out(111.0)} src="typing/typewriter-digital.mp3" vol={0.25} dur={70} />
+			{CLICKS.map((c) => <Sfx key={c} at={c - 1} src="click/mouse-click-352734.mp3" vol={0.18} dur={15} />)}
 		</AbsoluteFill>
 	);
 };
@@ -145,13 +145,57 @@ const Outro: React.FC = () => {
 	);
 };
 
+// голос (public/ideas/screen-rec/voice.txt → voice.mp3) нарізаний фразами під події запису:
+// [від, до] у секундах голосу, кадр ролика, субтитр? (на постері й фіналі текст уже на екрані)
+const VOICE: [number, number, number, boolean][] = [
+	// межі — середини реальних пауз (ffmpeg silencedetect), не таймінги ElevenLabs: ті ріжуть звук посеред слова
+	[0, 2.54, 8, false], // Як почати з Клодом за двадцять секунд
+	[2.54, 6.56, 84, true], // Відкрий claude.ai і натисни «Продовжити з Google» (клік ≈142)
+	[6.56, 9.31, 206, true], // Обери свій Google-акаунт і підтверди вхід (кліки ≈230, ≈317) — паузи між ними немає
+	[9.31, 10.99, 380, true], // Усе, ти всередині (домашня ≈380)
+	[10.99, 16.42, 436, true], // Пиши питання… Наприклад: що мені сьогодні приготувати? (надіслати ≈601)
+	[16.42, 19.87, 625, true], // І за кілька секунд маєш готові варіанти…
+	[19.87, 21.36, 856, false], // Тепер спробуй сам
+];
+const len = (a: number, b: number) => Math.round((b - a) * FPS);
+
+// караоке-рядок: сказані слова чорні, наступні — бліді
+const Caption: React.FC = () => {
+	const f = useCurrentFrame();
+	const v = VOICE.find(([a, b, at, cap]) => cap && f >= at - 4 && f < at + len(a, b) + 10);
+	if (!v) return null;
+	const [a, b, at] = v;
+	// у субтитрі лише поточне речення фрази
+	const all = WORDS.filter((w) => w.s >= a - 0.01 && w.e <= b + 0.05);
+	const said = (w: {s: number}) => f >= at + (w.s - a) * FPS;
+	const ends = all.map((w, i) => (/[.?!»]$/.test(w.w) && !/^«/.test(w.w) ? i : -1)).filter((i) => i >= 0);
+	const cur = Math.max(0, all.filter(said).length - 1);
+	const from = (ends.filter((i) => i < cur).pop() ?? -1) + 1;
+	const words = all.slice(from, (ends.find((i) => i >= cur) ?? all.length - 1) + 1);
+	const k = ramp(f, at - 4, at + 4) * (1 - ramp(f, at + len(a, b) + 2, at + len(a, b) + 10));
+	return (
+		<div style={{position: 'absolute', left: 84, right: 84, top: 1500, display: 'flex', justifyContent: 'center', opacity: k, transform: `translateY(${(1 - k) * 16}px)`}}>
+			<div style={{padding: '18px 32px', borderRadius: 28, background: '#FFFFFFF2', boxShadow: '0 12px 40px #0000001f', textAlign: 'center', fontFamily: F.body, fontWeight: 800, fontSize: 52, lineHeight: 1.2, color: '#1B1B18'}}>
+				{words.map((w, i) => (
+					<span key={i} style={{opacity: said(w) ? 1 : 0.35}}>{w.w} </span>
+				))}
+			</div>
+		</div>
+	);
+};
+
 export const ScreenRec: React.FC = () => (
 	<AbsoluteFill style={{background: '#ECEAE2'}}>
 		<Sequence from={POSTER - 10} durationInFrames={BODY}><Rec /></Sequence>
 		<Sequence durationInFrames={POSTER}><Poster /></Sequence>
 		<Sequence from={POSTER - 10 + BODY - 8}><Outro /></Sequence>
-		<Sfx at={POSTER - 10} src="whoosh/simple-whoosh-382724.mp3" vol={0.3} dur={30} />
-		<Sfx at={POSTER + BODY + 4} src="pop/soft-pop.wav" vol={0.3} dur={30} />
-		<Bgm offsetSec={0} total={SCREEN_REC} vol={0.12} />
+		<Caption />
+		{VOICE.map(([a, b, at]) => (
+			<Sequence key={at} from={at} durationInFrames={len(a, b)} layout="none">
+				<Audio src={staticFile('ideas/screen-rec/voice.mp3')} trimBefore={Math.round(a * FPS)}
+					volume={(f) => interpolate(f, [0, 2, len(a, b) - 2, len(a, b)], [0, 1, 1, 0], clamp)} />
+			</Sequence>
+		))}
+		<Audio src={staticFile('assets/music/23-chill-digital-clouds.mp3')} volume={(f) => interpolate(f, [0, 20, SCREEN_REC - 40, SCREEN_REC], [0, 0.07, 0.07, 0], clamp)} />
 	</AbsoluteFill>
 );
