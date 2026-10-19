@@ -2,6 +2,7 @@ import React from 'react';
 import {Composition, Folder} from 'remotion';
 import {EndCard, END_CARD} from './system/EndCard';
 import {Idea018, IDEA_018} from './ideas/Idea018';
+import {ScreenRec, SCREEN_REC} from './ideas/ScreenRec';
 import {SmokeRive, SmokeOnda, SMOKE_FRAMES} from './system/SmokeTech';
 import {Idea001, Idea001Short, Idea001Thumb, IDEA_001, shortFrames} from './ideas/Idea001';
 import {Idea002, Idea002Short, Idea002Thumb, IDEA_002, SHORT_FRAMES} from './ideas/Idea002';
@@ -113,6 +114,7 @@ export const Root: React.FC = () => <>
 <Composition id="Ematbox" component={Ematbox} {...V} durationInFrames={EMATBOX}/>
 <Composition id="Voice-AI-Ugc" component={VoiceAi} {...V} durationInFrames={VOICE_AI} defaultProps={{seed: 0, withUgc: true}}/>
 <Composition id="Voice-AI" component={VoiceAi} {...V} durationInFrames={VOICE_AI} defaultProps={{seed: 0}}/>
+<Composition id="Screen-Rec" component={ScreenRec} {...V} durationInFrames={SCREEN_REC}/>
 <Folder name="ID-018"><Composition id="Idea-018" component={Idea018} {...V} durationInFrames={IDEA_018}/></Folder>
 {STEPS.map(([n, C, d]) => <Folder key={n} name={`ID-${n}`}><Composition id={`Idea-${n}`} component={C} {...V} durationInFrames={d}/></Folder>)}
 {/* Meta-реклама менторства: ADS/, src/ideas/Ads.tsx */}
