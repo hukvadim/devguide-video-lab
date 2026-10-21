@@ -1,0 +1,7 @@
+{
+	"name": "devguide-video-lab render",
+	"image": "mcr.microsoft.com/devcontainers/javascript-node:22-bookworm",
+	"hostRequirements": {"cpus": 4},
+	"features": {"ghcr.io/devcontainers/features/github-cli:1": {}},
+	"postCreateCommand": "sudo apt-get update && sudo apt-get install -y ffmpeg fonts-liberation libnss3 libdbus-1-3 libatk1.0-0 libasound2 libxrandr2 libxkbcommon-dev libxfixes3 libxcomposite1 libxdamage1 libgbm-dev libcups2 && npm ci && npx remotion browser ensure"
+}
