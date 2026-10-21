@@ -16,6 +16,7 @@ export type TextProps = {
   capStyle?: 'stroke' | 'soft'; // soft: white + soft layered shadow, no outline; only the active word is accent
   title?: TextItem | null; callouts: TextItem[]; hits: number[];
   progress?: number;         // y смужки прогресу зверху (px у 1080×1920); без поля — без смужки
+  capLow?: [number, number][]; // відрізки (с), де голова на весь кадр: субтитри внизу, як у HEAD_STYLE
 };
 
 const MAX_W = 912; // 1080 − 2×84 safe-поля
@@ -37,10 +38,12 @@ const softShadow = (size: number, glow?: string) => ({
     glow ? `0 0 ${Math.round(size * 0.35)}px ${glow}66` : ''].filter(Boolean).join(', '),
 });
 
-const Captions: React.FC<{ pages: Page[]; y: number; anchor: 'bottom' | 'center'; accent: string; soft?: boolean }> = ({ pages, y, anchor, accent, soft }) => {
+const Captions: React.FC<{ pages: Page[]; y: number; anchor: 'bottom' | 'center'; accent: string; soft?: boolean; low?: [number, number][] }> = ({ pages, y: y0, anchor: a0, accent, soft, low = [] }) => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = f / fps;
+  const isLow = low.some(([s, e]) => t >= s && t < e);
+  const y = isLow ? 1490 : y0, anchor = isLow ? 'bottom' : a0;
   const page = pages.find((p) => t >= p.start && t < p.end);
   if (!page) return null;
   const lh = page.size * 1.12;
@@ -61,6 +64,8 @@ const Captions: React.FC<{ pages: Page[]; y: number; anchor: 'bottom' | 'center'
           opacity: shown ? 1 : 0,
           // поп від базової лінії (не від центру) — без «тремтіння» гліфів
           transform: `translateY(${shown ? (1 - p) * 14 : 0}px) scale(${shown ? (w.em ? 1.08 : 1) * (0.84 + 0.16 * p) : 1})`,
+          // +8% акцентного слова не має з'їдати пробіл: ≈ 0.04 × ширина слова (0.6em на літеру) з кожного боку
+          margin: w.em ? `0 ${w.w.length * page.size * 0.024}px` : 0,
           transformOrigin: '50% 90%', display: 'inline-block', ...(soft ? softShadow(page.size, active ? accent : undefined) : strokeShadow(page.size)),
         }}>{w.w}</span>;
       })}
@@ -135,13 +140,13 @@ const useFontsLoaded = () => {
   return ready;
 };
 
-export const Text: React.FC<TextProps> = ({ w, words, capY, capAnchor, capStyle, title, callouts, hits, progress, accent = C.lime }) => {
+export const Text: React.FC<TextProps> = ({ w, words, capY, capAnchor, capStyle, title, callouts, hits, progress, capLow, accent = C.lime }) => {
   const ready = useFontsLoaded();
   const pages = useMemo(() => ready ? paginate(words, { maxW: MAX_W, maxLines: 2, sizes: CAP_SIZES }, measureWith(F.body, '800')) : [], [words, ready]);
   if (!ready) return null;
   return <AbsoluteFill>
     <div style={{ position: 'absolute', width: 1080, height: 1920, transform: `scale(${w / 1080})`, transformOrigin: '0 0' }}>
-      <Captions pages={pages} y={capY} anchor={capAnchor} accent={accent} soft={capStyle === 'soft'} />
+      <Captions pages={pages} y={capY} anchor={capAnchor} accent={accent} soft={capStyle === 'soft'} low={capLow} />
       {title && <Callout item={title} title accent={accent} />}
       {callouts.map((c, i) => <Callout key={i} item={c} title={false} accent={accent} />)}
       {hits.map((t, i) => <Hit key={i} t={t} accent={accent} />)}

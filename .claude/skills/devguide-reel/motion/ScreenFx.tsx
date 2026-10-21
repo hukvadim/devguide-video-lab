@@ -13,6 +13,7 @@ export type ScreenFxProps = {
   pts: CursorPt[]; clicks: { t: number; x: number; y: number }[];
   zooms?: { t: number; dur: number; x: number; y: number; w?: number }[];
   zoomW?: number;                     // ширина кадру при наближенні (пікселі запису)
+  highlights?: { t: number; dur: number; x: number; y: number; w: number; h: number }[]; // рамка навколо кнопки
   accent?: string;
 };
 
@@ -115,6 +116,16 @@ export const ScreenFx: React.FC<ScreenFxProps> = (p) => {
               <circle cx={c.x} cy={c.y} r={r} fill={accent} fillOpacity={0.18} stroke={accent} strokeWidth={5} />
               <circle cx={c.x} cy={c.y} r={r * 0.55} fill="none" stroke={accent} strokeWidth={3} strokeOpacity={0.7} />
             </g>;
+          })}
+          {(p.highlights ?? []).map((m, i) => {
+            const d = t - m.t;
+            if (d < 0 || d > m.dur) return null;
+            const inn = spring({ frame: d * fps, fps, config: { damping: 14, stiffness: 160 } });
+            const o = inn * interpolate(d, [m.dur - 8 / fps, m.dur], [1, 0], clamp);
+            const pad = 10 + 14 * (1 - inn), glow = 0.35 + 0.25 * Math.sin(d * Math.PI * 2 / 1.2);
+            return <rect key={'h' + i} x={m.x - pad} y={m.y - pad} width={m.w + pad * 2} height={m.h + pad * 2} rx={18}
+              fill={accent} fillOpacity={0.1 * o} stroke={accent} strokeWidth={5} opacity={o}
+              style={{ filter: `drop-shadow(0 0 ${18 * glow}px ${accent})` }} />;
           })}
           {cur && (
             <g transform={`translate(${cur.x} ${cur.y}) scale(${CS * press})`}>

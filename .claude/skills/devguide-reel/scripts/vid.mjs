@@ -15,6 +15,8 @@ try { os.setPriority(0, os.constants.priority.PRIORITY_BELOW_NORMAL); } catch {}
 const FPS = 30;
 // позиції тексту в просторі 1080×1920: capY — низ субтитрів (голова) або центр (спліт, стик половин)
 const HEAD_STYLE = { capY: 1490, titleY: 380, calloutY: 340 };
+// голова на весь кадр (headFirst, fullcam) завжди з повільним наїздом 100% → 115% — так хоче автор
+const FULL_ZOOM = 1.15;
 const SPLIT_STYLE = { capY: 960, titleY: 760, calloutY: 250 };
 const MEDIA = path.join(TOOL, 'media'); // звуки й музика обгортки (setup качає з Mixkit, генерує riser)
 const SLAM = 1.0; // секунда удару в Intro (motion/Wrap.tsx: SLAM = 30 кадрів)
@@ -345,11 +347,11 @@ function buildGraph({ edit, segs, src, total, W, H, audioOnly, voiceGainDb = 0, 
     // жовта лінія на стику — лише за бажанням (seamLine: true): без неї субтитри на стику виглядають чистіше
     f.push(`[vtop][${head}]vstack${edit.seamLine ? `,drawbox=x=0:y=${sh - line / 2}:w=${W}:h=${line}:color=0xFFD200:t=fill` : ''}${hf ? '[vsp]' : '[vc]'}`);
     if (hf) {
-      // headFirst: перші секунди — голова на весь кадр, далі розчиняється в спліт (0.45 с, легкий наїзд)
-      const c = headBox(src, segs[0].face ?? edit.face, edit.headZoom ?? 1.25, W / H);
-      const d = hf.toFixed(3), fo = Math.max(0, hf - 0.45).toFixed(3);
+      // headFirst: перші секунди — голова на весь кадр з наїздом 100→115% (як fullcam), далі розчиняється в спліт (0.45 с)
+      const c = headBox(src, segs[0].face ?? edit.face, edit.fullcamZoom ?? 1.0, W / H);
+      const d = hf.toFixed(3), fo = Math.max(0, hf - 0.45).toFixed(3), z = ((edit.headFirstZoom ?? FULL_ZOOM) - 1).toFixed(3);
       f.push(`[vhf]trim=start=${(segs[0].start + (sync.head ?? 0)).toFixed(3)}:duration=${d},setpts=PTS-STARTPTS,crop=${c.w}:${c.h}:${c.x}:${c.y},` +
-        `scale=${W}:${H}:flags=lanczos,setsar=1,fps=${FPS}${headGrade(edit)},format=yuva420p,fade=t=out:st=${fo}:d=0.45:alpha=1[hfv]`);
+        `scale=w='${W}*(1+${z}*t/${d})':h='${H}*(1+${z}*t/${d})':eval=frame:flags=bilinear,crop=${W}:${H},setsar=1,fps=${FPS}${headGrade(edit)},format=yuva420p,fade=t=out:st=${fo}:d=0.45:alpha=1[hfv]`);
       f.push(`[vsp][hfv]overlay=eof_action=pass:format=auto[vc]`);
     }
   }
@@ -389,10 +391,11 @@ function buildGraph({ edit, segs, src, total, W, H, audioOnly, voiceGainDb = 0, 
   let vcur = 'vc';
   fcs.forEach((c, i) => {
     const hb = headBox(src, c.face ?? edit.face, c.headZoom ?? edit.fullcamZoom ?? 1.0, W / H);
-    const d = c.dur.toFixed(3), z = (c.zoom ?? 1.08) - 1;
+    const d = c.dur.toFixed(3), z = (c.zoom ?? FULL_ZOOM) - 1;
     f.push(`[vfc${i}]trim=start=${(c.at + (sync.head ?? 0)).toFixed(3)}:duration=${d},setpts=PTS-STARTPTS,crop=${hb.w}:${hb.h}:${hb.x}:${hb.y},` +
       `scale=w='${W}*(1+${z.toFixed(3)}*t/${d})':h='${H}*(1+${z.toFixed(3)}*t/${d})':eval=frame:flags=bilinear,crop=${W}:${H},setsar=1,fps=${FPS}${headGrade(edit)},` +
-      `format=yuva420p,fade=t=in:d=0.3:alpha=1,fade=t=out:st=${Math.max(0, c.dur - 0.3).toFixed(3)}:d=0.3:alpha=1,setpts=PTS-STARTPTS+${c.t.toFixed(3)}/TB[fc${i}]`);
+      // на самому початку/кінці ролика кросфейду немає: кадр 0 одразу готовий постер, кінець не блимає сплітом
+      `format=yuva420p${c.t < 0.05 ? '' : ',fade=t=in:d=0.3:alpha=1'}${c.t + c.dur > total - 0.05 ? '' : `,fade=t=out:st=${Math.max(0, c.dur - 0.3).toFixed(3)}:d=0.3:alpha=1`},setpts=PTS-STARTPTS+${c.t.toFixed(3)}/TB[fc${i}]`);
     f.push(`[${vcur}][fc${i}]overlay=eof_action=pass:format=auto[vfo${i}]`);
     vcur = `vfo${i}`;
   });
@@ -442,7 +445,8 @@ function buildGraph({ edit, segs, src, total, W, H, audioOnly, voiceGainDb = 0, 
     last = 'vt';
   }
   if (!wrap) {
-    f.push(`[${last}]fade=t=in:d=0.3,fade=t=out:st=${(total - 0.4).toFixed(3)}:d=0.4,format=yuv420p[vout]`);
+    // без fade-in з чорного: кадр 0 — обкладинка (Instagram/Telegram беруть його як прев'ю)
+    f.push(`[${last}]fade=t=out:st=${(total - 0.4).toFixed(3)}:d=0.4,format=yuv420p[vout]`);
     return f.join(';\n');
   }
   // обгортка: інтро → ролик → end card; музика з дропом на слам інтро, приглушена під голосом; удари й переходи
@@ -518,6 +522,7 @@ function renderScreenFx(dir, project, edit, segs, sync, file, scr, W, H) {
   const out = renderMotion(dir, project, 'ScreenFx', {
     w: W, h: even(H / 2), dur: r2(to - from), from, src: asset, sw: scr.width, sh: scr.height, bounds: edit.screenBounds,
     pts: cur.pts.filter((q) => q[0] >= from - 1 && q[0] <= to + 1), clicks, zooms, zoomW: edit.zoomW,
+    highlights: (edit.highlights ?? []).map((m) => ({ ...m, t: r2(m.at + off) })),
     accent: edit.theme?.accent ?? edit.captions?.accent,
   }, true);
   return { file: out, scr: probe(out), offset: r2(off - from) };
@@ -664,6 +669,8 @@ async function render(editPath, preview) {
     words: edit.captions === false ? [] : outWords.filter((x) => !(split && edit.headFirst) || edit.captions?.head || x.s >= edit.headFirst - 0.1),
     progress: edit.progress ? edit.progress.y ?? 172 : undefined,
     capY: st.capY, capAnchor: st.capAnchor ?? (split ? 'center' : 'bottom'), capStyle: edit.captions?.style,
+    // голова на весь кадр → субтитри внизу (y 1490), а не на обличчі
+    capLow: split ? [...(edit.headFirst ? [[0, r2(Math.min(edit.headFirst, segs[0].end - segs[0].start))]] : []), ...fullcams.map((c) => [c.t, r2(c.t + c.dur)])] : undefined,
     title: edit.title?.text ? { t: 0.05, dur: r2(edit.title.dur ?? 2.6), text: edit.title.text, y: split && edit.headFirst ? (edit.style?.titleY ?? HEAD_STYLE.titleY) : st.titleY } : null,
     callouts, hits,
   };
@@ -782,7 +789,7 @@ function selftest() {
   const gc = buildGraph({ edit: { music: {} }, segs, src: { width: 1080, height: 1920 }, total: 3, W: 540, H: 960, musicIdx: 3,
     cutaways: [{ t: 1, dur: 1.5, width: 1280, height: 720, idx: 1, sfxIdx: 2, cropX: 0.6 }] });
   assert.match(gc, /\[1:v\]fps=30,scale=-2:1036,crop=540:960:x='\(iw-ow\)\*0\.6'/);
-  assert.match(gc, /\[ve\]\[cw0\]overlay=eof_action=pass:format=auto\[cut0\];\n\[cut0\]fade=t=in/);
+  assert.match(gc, /\[ve\]\[cw0\]overlay=eof_action=pass:format=auto\[cut0\];\n\[cut0\]fade=t=out/);
   assert.match(gc, /\[2:a\]adelay=delays=800:all=1/);
   assert.match(gc, /\[vo\]\[duck\]\[sfx0\]amix=inputs=3/);
   // синхронізація: b — шматок a, що починається з 123-го відліку

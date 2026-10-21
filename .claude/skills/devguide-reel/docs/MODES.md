@@ -25,5 +25,6 @@
 
 ## Як застосовувати в `edit.json`
 - IG: `intro` короткий або `headFirst`, `outro.keyword`, `hits` на ключових фразах, `progress` не потрібен.
-- BOT: `headFirst` 20–40 с, потім `layout: "split"` з `cursor: true`, `callouts` «Крок N · *…*», `fullcam` на роздумах, `progress: true`, `outro` без keyword, `music.volume` 0.15.
+- BOT: `headFirst` 20–40 с, потім `layout: "split"` з `cursor: true`, `callouts` «Крок N · *…*», `fullcam` на роздумах, `outro` без keyword, `music.volume` 0.15. Еталон: `public/ideas/claude-login/take-01-b.edit.json` (автору сподобався): без вирізок, лише обрізані початок і кінець, `progress` не ставимо, на старті тільки титул (без додаткових смужок).
+- **Голова на весь кадр (`headFirst`, `fullcam`) — завжди повільний наїзд 100% → 115%** (типово в `vid.mjs`, `FULL_ZOOM`; `fullcamZoom` лишай 1.0). Субтитри на цей час самі опускаються вниз (y 1490), щоб не лягати на обличчя.
 - Звуки (для всіх): SFX лише на реальні події, тихо; заборонений `switch-click-quick.mp3`.
