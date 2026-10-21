@@ -1,0 +1,9 @@
+﻿# Крок 3 «Секретні суперсили»: один рядок = одна кнопка «Далі» на пульті. Формат: Назва | команда do.ps1 | ...
+@start | front Google Chrome
+# Старт: Chrome спереду на claude.ai/new, налаштування закриті.
+Налаштування | click 80 1008 account 1000 | wait 1.2 | click 95 756 settings 800
+Skills (ваші) | click 518 720 skills 900 | wait 1.5 | move 784 742 900
+Skills (огляд) | click 836 232 skills-browse 800 | wait 1.5 | scroll 8 1060 700 | wait 1.2 | scroll -8
+Конектори | click 534 754 connectors 900 | wait 1 | click 832 232 connectors-yours 700 | wait 1.8 | click 892 232 connectors-browse 700
+Gmail | click 1240 360 gmail 900 | wait 2 | move 732 740 900 | wait 0.8 | move 1234 812 900
+Підключити | click 1346 362 connect 900

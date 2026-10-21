@@ -1,0 +1,10 @@
+{
+  "mic": "Microphone (JX USB Mic)",
+  "phone": "192.168.0.108:5555",
+  "cameraFacing": "back",
+  "cameraSize": "1920x1080",
+  "cameraFps": 30,
+  "cameraBitrate": "16M",
+  "fallbackCamera": "Redmi Note 14 Pro (Windows Virtual Camera)",
+  "previewWidth": 640
+}

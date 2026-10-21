@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "windows-mcp": {
+      "type": "stdio",
+      "command": "C:\\Users\\hukva\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\uvx.exe",
+      "args": ["--python", "3.14", "windows-mcp", "serve"],
+      "env": { "ANONYMIZED_TELEMETRY": "false" }
+    }
+  }
+}

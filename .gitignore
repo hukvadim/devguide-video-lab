@@ -25,3 +25,14 @@ public/assets/music/*.mp3
 
 # записи для клону голосу (130 МБ, приватне)
 /voice_clone_mp3/
+/.claude/skills/screen-take/.state
+/.claude/skills/screen-take/.ffpid
+/.claude/skills/screen-take/.panel.json
+__pycache__/
+!.claude/skills/screen-take/
+# сирі дублі screen-take (камера/мік/екран, до 300 МБ): переносимо окремо
+public/ideas/**/take-*.mp4
+public/ideas/**/take-*.wav
+public/ideas/**/assets/screen_*.mp4
+ElevenLabs_*.mp3
+ADS/*.mp4

@@ -13,7 +13,9 @@ export type TextProps = {
   words: CapWord[];
   capY: number;              // низ блоку субтитрів (голова) або центр (спліт), px у 1080×1920
   capAnchor: 'bottom' | 'center';
+  capStyle?: 'stroke' | 'soft'; // soft: white + soft layered shadow, no outline; only the active word is accent
   title?: TextItem | null; callouts: TextItem[]; hits: number[];
+  progress?: number;         // y смужки прогресу зверху (px у 1080×1920); без поля — без смужки
 };
 
 const MAX_W = 912; // 1080 − 2×84 safe-поля
@@ -29,7 +31,13 @@ const strokeShadow = (size: number) => ({
 });
 
 // ---------- субтитри ----------
-const Captions: React.FC<{ pages: Page[]; y: number; anchor: 'bottom' | 'center'; accent: string }> = ({ pages, y, anchor, accent }) => {
+// CapCut-style clean captions: no stroke, depth from stacked shadows; the active word glows in the accent
+const softShadow = (size: number, glow?: string) => ({
+  textShadow: [`0 2px 3px rgba(0,0,0,.55)`, `0 6px 18px rgba(0,0,0,.45)`, `0 0 ${Math.round(size * 0.5)}px rgba(0,0,0,.35)`,
+    glow ? `0 0 ${Math.round(size * 0.35)}px ${glow}66` : ''].filter(Boolean).join(', '),
+});
+
+const Captions: React.FC<{ pages: Page[]; y: number; anchor: 'bottom' | 'center'; accent: string; soft?: boolean }> = ({ pages, y, anchor, accent, soft }) => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = f / fps;
@@ -46,13 +54,14 @@ const Captions: React.FC<{ pages: Page[]; y: number; anchor: 'bottom' | 'center'
         const sf = w.s * fps;
         const p = spring({ frame: f - sf, fps, config: { damping: 15, stiffness: 260, mass: 0.6 } });
         const shown = f >= sf;
-        const color = wi === activeIdx || w.em ? accent : C.text;
+        const active = wi === activeIdx;
+        const color = active || (!soft && w.em) ? accent : C.text;
         return <span key={wi} style={{
           fontFamily: F.body, fontWeight: 800, fontSize: page.size, lineHeight: 1, letterSpacing: '-0.01em', color,
           opacity: shown ? 1 : 0,
           // поп від базової лінії (не від центру) — без «тремтіння» гліфів
           transform: `translateY(${shown ? (1 - p) * 14 : 0}px) scale(${shown ? (w.em ? 1.08 : 1) * (0.84 + 0.16 * p) : 1})`,
-          transformOrigin: '50% 90%', display: 'inline-block', ...strokeShadow(page.size),
+          transformOrigin: '50% 90%', display: 'inline-block', ...(soft ? softShadow(page.size, active ? accent : undefined) : strokeShadow(page.size)),
         }}>{w.w}</span>;
       })}
     </div>)}
@@ -86,14 +95,11 @@ const Callout: React.FC<{ item: TextItem; title: boolean; accent: string }> = ({
       })}
     </div>);
   return <div style={{ position: 'absolute', left: 0, right: 0, top: item.y - blockH / 2, opacity: 1 - out, transform: `translateY(${-out * 24}px)` }}>
-    {/* м'яке темне світіння під текстом (не рамка) */}
-    <div style={{ position: 'absolute', left: 40, right: 40, top: -60, height: blockH + 120, opacity: Math.min(1, lf / 6),
-      background: 'radial-gradient(ellipse 60% 55% at 50% 50%, rgba(8,11,14,.78) 0%, rgba(8,11,14,.45) 55%, rgba(8,11,14,0) 100%)' }} />
+    {/* без темної підкладки (Вадим: «віньєтка» виглядає погано) — читабельність дає обводка тексту */}
     <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       {fitTop && renderLines(fitTop, topWords, { fontFamily: F.body, fontWeight: 800, color: C.text, ...strokeShadow(fitTop.size) }, 1.15)}
       {fitTop && <div style={{ height: 14 }} />}
-      {renderLines(fitBig, bigWords, { fontFamily: F.display, fontWeight: 900, letterSpacing: '-0.02em', color: bigColor,
-        textShadow: `0 10px 30px rgba(0,0,0,.6)${title ? '' : `, 0 0 40px ${accent}55`}` }, 1.05)}
+      {renderLines(fitBig, bigWords, { fontFamily: F.display, fontWeight: 900, letterSpacing: '-0.02em', color: bigColor, ...strokeShadow(fitBig.size) }, 1.05)}
       {title && <div style={{ marginTop: 20, height: 12, borderRadius: 6, background: accent, width: 280 * ramp(lf, 8, 22), boxShadow: `0 0 24px ${accent}88` }} />}
     </div>
   </div>;
@@ -109,6 +115,17 @@ const Hit: React.FC<{ t: number; accent: string }> = ({ t, accent }) => {
   return <AbsoluteFill style={{ boxShadow: `inset 0 0 0 ${p * 16}px ${accent}, inset 0 0 ${p * 160}px ${accent}88` }} />;
 };
 
+// ---------- прогрес ----------
+// тонка смужка в ширину safe-поля: глядач бачить, скільки лишилось
+const Progress: React.FC<{ y: number; accent: string }> = ({ y, accent }) => {
+  const f = useCurrentFrame();
+  const { durationInFrames } = useVideoConfig();
+  const p = f / Math.max(1, durationInFrames - 1);
+  return <div style={{ position: 'absolute', left: 84, width: MAX_W, top: y, height: 8, borderRadius: 4, background: 'rgba(255,255,255,.22)', boxShadow: '0 2px 10px rgba(0,0,0,.35)' }}>
+    <div style={{ width: `${p * 100}%`, height: '100%', borderRadius: 4, background: accent, boxShadow: `0 0 12px ${accent}88` }} />
+  </div>;
+};
+
 // виміри робимо лише після завантаження шрифтів, інакше ширини будуть від запасного шрифту
 const useFontsLoaded = () => {
   const [state] = useState(() => ({ handle: delayRender('measure after fonts') }));
@@ -118,16 +135,17 @@ const useFontsLoaded = () => {
   return ready;
 };
 
-export const Text: React.FC<TextProps> = ({ w, words, capY, capAnchor, title, callouts, hits, accent = C.lime }) => {
+export const Text: React.FC<TextProps> = ({ w, words, capY, capAnchor, capStyle, title, callouts, hits, progress, accent = C.lime }) => {
   const ready = useFontsLoaded();
   const pages = useMemo(() => ready ? paginate(words, { maxW: MAX_W, maxLines: 2, sizes: CAP_SIZES }, measureWith(F.body, '800')) : [], [words, ready]);
   if (!ready) return null;
   return <AbsoluteFill>
     <div style={{ position: 'absolute', width: 1080, height: 1920, transform: `scale(${w / 1080})`, transformOrigin: '0 0' }}>
-      <Captions pages={pages} y={capY} anchor={capAnchor} accent={accent} />
+      <Captions pages={pages} y={capY} anchor={capAnchor} accent={accent} soft={capStyle === 'soft'} />
       {title && <Callout item={title} title accent={accent} />}
       {callouts.map((c, i) => <Callout key={i} item={c} title={false} accent={accent} />)}
       {hits.map((t, i) => <Hit key={i} t={t} accent={accent} />)}
+      {progress != null && <Progress y={progress} accent={accent} />}
     </div>
   </AbsoluteFill>;
 };

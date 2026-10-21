@@ -2,6 +2,7 @@ import React from 'react';
 import {Composition, Folder} from 'remotion';
 import {EndCard, END_CARD} from './system/EndCard';
 import {Idea018, IDEA_018} from './ideas/Idea018';
+import {IdeaChat, IDEA_CHAT} from './ideas/IdeaChat';
 import {ScreenRec, SCREEN_REC} from './ideas/ScreenRec';
 import {SmokeRive, SmokeOnda, SMOKE_FRAMES} from './system/SmokeTech';
 import {Idea001, Idea001Short, Idea001Thumb, IDEA_001, shortFrames} from './ideas/Idea001';
@@ -49,6 +50,9 @@ import {Insta04, Insta09, Insta17, Insta23, Insta49, INSTA_04, INSTA_09, INSTA_1
 import {StepPreview} from './system/step';
 import {LAB, LAB_FRAMES} from './lab/Lab';
 import {TIPS_LIST} from './tips/Tips';
+import {SKILL_TESTS} from './ideas/SkillTest';
+import {LearnBannerPulse, LearnBannerOrbit, LearnBannerCode, LEARN_BANNER} from './ideas/LearnBanner';
+import {AiBannerBlue, AiBannerLime, AiBannerSteps, AI_BANNER, WelcomeBanner, WELCOME, DeskBanner, DESK_BANNER} from './ideas/AiBanner';
 import './style.css';
 const V = {width: 1080, height: 1920, fps: 30} as const;
 // шлях «Claude / AI»: один шорт на крок (ID-004…), спільне — src/system/step.tsx
@@ -115,6 +119,7 @@ export const Root: React.FC = () => <>
 <Composition id="Voice-AI-Ugc" component={VoiceAi} {...V} durationInFrames={VOICE_AI} defaultProps={{seed: 0, withUgc: true}}/>
 <Composition id="Voice-AI" component={VoiceAi} {...V} durationInFrames={VOICE_AI} defaultProps={{seed: 0}}/>
 <Composition id="Screen-Rec" component={ScreenRec} {...V} durationInFrames={SCREEN_REC}/>
+<Composition id="Idea-Chat" component={IdeaChat} {...V} durationInFrames={IDEA_CHAT}/>
 <Folder name="ID-018"><Composition id="Idea-018" component={Idea018} {...V} durationInFrames={IDEA_018}/></Folder>
 {STEPS.map(([n, C, d]) => <Folder key={n} name={`ID-${n}`}><Composition id={`Idea-${n}`} component={C} {...V} durationInFrames={d}/></Folder>)}
 {/* Meta-реклама менторства: ADS/, src/ideas/Ads.tsx */}
@@ -151,6 +156,28 @@ export const Root: React.FC = () => <>
 {/* «Секретні коди»: корисності без голосу для Instagram, src/tips/Tips.tsx + data/tips.json */}
 <Folder name="Tips">
  {TIPS_LIST.map(({id, C, frames}) => <Composition key={id} id={`Tips-${id}`} component={C} {...V} durationInFrames={frames}/>)}
+</Folder>
+{/* банер сторінки «Навчання», 1920x640, луп 6 с */}
+<Folder name="Learn-Banner">
+ <Composition id="Learn-Banner-1" component={LearnBannerPulse} width={1920} height={640} fps={30} durationInFrames={LEARN_BANNER}/>
+ <Composition id="Learn-Banner-2" component={LearnBannerOrbit} width={1920} height={640} fps={30} durationInFrames={LEARN_BANNER}/>
+ <Composition id="Learn-Banner-3" component={LearnBannerCode} width={1920} height={640} fps={30} durationInFrames={LEARN_BANNER}/>
+</Folder>
+{/* банер «Опануй AI» з Вадимом, 1920x640, луп 6 с */}
+<Folder name="Ai-Banner">
+ <Composition id="Ai-Banner-1" component={AiBannerBlue} width={1920} height={640} fps={30} durationInFrames={AI_BANNER}/>
+ <Composition id="Ai-Banner-2" component={AiBannerLime} width={1920} height={640} fps={30} durationInFrames={AI_BANNER}/>
+ <Composition id="Ai-Banner-3" component={AiBannerSteps} width={1920} height={640} fps={30} durationInFrames={AI_BANNER}/>
+ <Composition id="Ai-Banner-3-2x1" component={AiBannerSteps} width={1280} height={640} fps={30} durationInFrames={AI_BANNER}/>
+ <Composition id="Ai-Banner-Desk" component={DeskBanner} width={1280} height={640} fps={30} durationInFrames={DESK_BANNER}/>
+ {/* вітальний банер бота: 3 тексти */}
+ <Composition id="Welcome-1" component={WelcomeBanner} width={1280} height={640} fps={30} durationInFrames={WELCOME} defaultProps={{l1: 'Привіт, я Вадим', l2: 'Повтори за мною', sub: 'обирай напрям нижче', s1: 64, s2: 60}}/>
+ <Composition id="Welcome-2" component={WelcomeBanner} width={1280} height={640} fps={30} durationInFrames={WELCOME} defaultProps={{l1: 'Що створимо', l2: 'з AI сьогодні?', sub: 'обирай напрям нижче', s1: 72, s2: 64}}/>
+ <Composition id="Welcome-3" component={WelcomeBanner} width={1280} height={640} fps={30} durationInFrames={WELCOME} defaultProps={{l1: 'Від ідеї —', l2: 'до проєкту з AI', sub: 'з Вадимом Гуком', s1: 88, s2: 62}}/>
+</Folder>
+{/* порівняння встановлених скілів анімації: один бриф — src/ideas/SkillTest.tsx */}
+<Folder name="SKILL-TEST">
+ {SKILL_TESTS.map(({id, C, frames}) => <Composition key={id} id={`SkillTest-${id}`} component={C} {...V} durationInFrames={frames}/>)}
 </Folder>
 <Folder name="Smoke">
  <Composition id="Smoke-Rive" component={SmokeRive} {...V} durationInFrames={SMOKE_FRAMES}/>

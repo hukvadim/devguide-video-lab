@@ -1,0 +1,8 @@
+# Сцена «Claude керує комп'ютером». Старт: Chrome ЗАКРИТИЙ повністю (немає вікон на панелі задач), чужі вікна згорнуті. Профіль №3 залогінений у Pinterest.
+Chrome | click 477 1057 taskbar-chrome 1000 | wait 2.5
+Профіль | click 1048 486 profile-3 900 | wait 3
+Pinterest | click 700 62 address 800 | type Chrome pinterest.com | key {ENTER} | wait 4
+Вебдизайн | click 800 126 pinterest-search 800 | type Pinterest web design | key {ENTER} | wait 3.5
+Скрол | scroll 12 960 600 | wait 1.5 | scroll -12 960 600
+Ідеї для відео (помилка) | click 800 126 pinterest-search 800 | key {END} | type Pinterest video ideas | key {ENTER} | wait 3
+Виправляє | click 1618 126 search-clear 900 | wait 0.8 | type Pinterest video ideas | key {ENTER} | wait 3.5 | scroll 10 960 600

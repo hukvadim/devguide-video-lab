@@ -1,8 +1,10 @@
 import React from 'react';
 import { AbsoluteFill, Easing, Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
+import './theme'; // loads the DevGuide fonts (layout 'word' uses Unbounded)
 
 export type BrollProps = {
-  layout: 'fan' | 'fly' | 'wall'; images: string[]; dur: number; w: number; h: number;
+  layout: 'fan' | 'fly' | 'wall' | 'word'; images: string[]; dur: number; w: number; h: number;
+  word?: string; theme?: 'dg' | 'glow';           // layout 'word': big glossy word behind the speaker (hook)
   site?: string;                                // підпис в адресному рядку картки ('' — без нього)
   avoid?: [number, number, number, number];     // [x, y, w, h]: предмет перед спікером (мікрофон) — картки туди не заходять
 };
@@ -95,19 +97,41 @@ const Wall: React.FC<{ images: string[] }> = ({ images }) => {
   </div>;
 };
 
+// велике глянцеве слово за спиною (хук): літери влітають з розмиттям, легкий наїзд; спікер у масці — перед словом
+const Word: React.FC<{ word: string; theme: 'dg' | 'glow' }> = ({ word, theme }) => {
+  const { f, enter, exit } = useAnim();
+  const q = exit();
+  const fill = theme === 'glow'
+    ? 'linear-gradient(180deg, #FFE6FA 0%, #FF6FD8 38%, #B0127F 62%, #FFB3EC 100%)'
+    : 'linear-gradient(180deg, #F7FFE6 0%, #C3FF55 40%, #6E9E18 64%, #E9FFB8 100%)';
+  const edge = theme === 'glow' ? '#5A0742' : '#1E2A08';
+  const size = Math.min(250, 940 / (Math.max(3, word.length) * 0.95)); // Unbounded is wide: ~0.95em per letter
+  return <div style={{ position: 'absolute', left: 0, right: 0, top: 360, display: 'flex', justifyContent: 'center',
+    transform: `scale(${1.04 + f * 0.0012 + q * 0.2})`, opacity: 1 - q }}>
+    {word.split('').map((ch, i) => {
+      const p = enter(i * 3);
+      return <span key={i} style={{ fontFamily: 'DG Unbounded, Arial Black, sans-serif', fontWeight: 900, fontSize: size, lineHeight: 1,
+        backgroundImage: fill, WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent',
+        filter: `blur(${(1 - Math.min(p, 1)) * 18}px) drop-shadow(0 10px 0 ${edge}) drop-shadow(0 30px 40px rgba(0,0,0,.55))`,
+        transform: `translateY(${(1 - p) * 120}px) scale(${0.6 + 0.4 * p})`, display: 'inline-block', opacity: Math.min(1, p * 1.5) }}>{ch}</span>;
+    })}
+  </div>;
+};
+
 // весь кадр мінус прямокутник avoid (дірка через evenodd)
 const clipWithout = ([x, y, w, h]: number[]) =>
   `polygon(evenodd, 0 0, 1080px 0, 1080px 1920px, 0 1920px, 0 0, ${x}px ${y}px, ${x + w}px ${y}px, ${x + w}px ${y + h}px, ${x}px ${y + h}px, ${x}px ${y}px)`;
 
-export const Broll: React.FC<BrollProps> = ({ layout, images, w, site = '', avoid }) => (
+export const Broll: React.FC<BrollProps> = ({ layout, images, w, site = '', avoid, word = '', theme = 'dg' }) => (
   <Site.Provider value={site}>
     <AbsoluteFill>
       <div style={{ position: 'absolute', width: 1080, height: 1920, transform: `scale(${w / 1080})`, transformOrigin: '0 0', overflow: 'hidden' }}>
-        <Backdrop strength={layout === 'wall' ? 0.8 : 0.6} />
+        <Backdrop strength={layout === 'wall' ? 0.8 : layout === 'word' ? 0.45 : 0.6} />
         <AbsoluteFill style={avoid ? { clipPath: clipWithout(avoid) } : undefined}>
           {layout === 'fan' && <Fan images={images} />}
           {layout === 'fly' && <Fly images={images} />}
           {layout === 'wall' && <Wall images={images} />}
+          {layout === 'word' && <Word word={word} theme={theme} />}
         </AbsoluteFill>
       </div>
     </AbsoluteFill>

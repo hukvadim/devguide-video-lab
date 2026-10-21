@@ -1,0 +1,7 @@
+﻿# Коротка сцена про скіли: Налаштування → Skills → Огляд → Design → його 7 команд. Старт: Chrome спереду на claude.ai/new, налаштування закриті.
+@start | front Google Chrome
+Налаштування | click 80 1008 account 1000 | wait 1.2 | click 95 756 settings 800
+Skills | click 518 720 skills 900 | wait 1.5 | move 784 742 900
+Огляд | click 836 232 skills-browse 800 | wait 1.5 | move 776 544 1000
+Design | click 776 544 design 800 | wait 1.8 | move 760 440 900
+Що всередині | click 856 340 design-skills 800 | wait 1.5 | move 796 504 900 | wait 1.5 | move 774 834 1100
