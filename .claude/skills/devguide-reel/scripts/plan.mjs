@@ -47,7 +47,7 @@ const RE = {
 };
 const TOOL = [[/скіл/, 'B01'], [/промпт/, 'C01'], [/агент/, 'C03'], [/термінал|npm|команд/, 'D01'], [/сайт|сторінк/, 'B02'], [/файл/, 'B07'], [/код\b|коді|кодом/, 'D02'], [/модел|opus|sonnet/, 'C08']];
 // fillers for face stretches without a cue, in order of preference
-const FILL = ['H06', 'F06', 'B10', 'H01', 'E10', 'H08', 'H03', 'A09'];
+export const FILL = ['H06', 'F06', 'B10', 'H01', 'E10', 'H08', 'H03', 'A09'];
 const EMOJI = ['🤯', '🔥', '💡', '🚀', '😎'];
 
 export function classify(text, i, n) {
@@ -61,28 +61,38 @@ export function classify(text, i, n) {
 
 const firstNum = (t) => Number(t.match(/\d+([.,]\d+)?/)?.[0].replace(',', '.'));
 const words6 = (ws, n = 6) => ws.slice(0, n).join(' ');
+// filler words of spoken Ukrainian: cards keep only the meaning words (draft quality, the author still edits)
+const STOP = new Set('і й та а але або в у на з із зі до по за від для про при над під там тут ось от ну ж же що як це цей ця ці той та те ті він вона воно вони я ти ми ви мій моя моє мої твій свій своя свої свої якісь якийсь якась щось все всі весь вся можна може можете можу хочу хотів треба буде був була було є просто взагалі насправді також тобто ще вже дуже так ніби типу короче значить ось-ось потім знову назад поки коли бо тому щоб чи не ні'.split(' '));
+const keys = (ws, n = 4) => ws.filter((w) => !STOP.has(w.toLowerCase()) && w.length > 1).slice(0, n).join(' ');
+// ranges like 15-20: show the range, count to the top number; the word after the number is its unit
+const numInfo = (ws) => {
+  const k = ws.findIndex((w) => /\d/.test(w)); if (k < 0) return null;
+  const m = ws[k].match(/(\d+(?:[.,]\d+)?)(?:[-–](\d+(?:[.,]\d+)?))?/);
+  const a = Number(m[1].replace(',', '.')), b = m[2] ? Number(m[2].replace(',', '.')) : null;
+  return { to: b ?? a, prefix: b != null ? m[1] + '–' : '', unit: ws[k + 1] ?? '', rest: ws.slice(k + 2) };
+};
 const cap1 = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 const splitAt = (ws, re) => { const k = ws.findIndex((w) => re.test(w.toLowerCase())); return k > 0 ? [ws.slice(0, k), ws.slice(k + 1)] : [ws.slice(0, Math.ceil(ws.length / 2)), ws.slice(Math.ceil(ws.length / 2))]; };
 
 // draft fields for one code from the phrase words (Claude rewrites them into ≤6 strong words)
-function fields(code, p, o) {
+export function fields(code, p, o = { n: 0, step: 0 }) {
   const ws = p.words;
   switch (code) {
-    case 'E01': { const n = firstNum(p.text); return { to: n, label: words6(ws.filter((w) => !/\d/.test(w)), 4) }; }
-    case 'G01': { const [a, b] = splitAt(ws, /^(замість|ніж|а|проти|тепер)$/); return { bad: words6(a, 5), good: words6(b, 5) }; }
-    case 'G09': { const [a, b] = splitAt(ws, /^(тепер|стало|зараз)$/); return { before: words6(a, 6), now: words6(b, 6) }; }
+    case 'E01': { const n = numInfo(ws); return n ? { to: n.to, prefix: n.prefix, label: [n.unit, keys(n.rest, 2)].filter(Boolean).join(' ') } : { to: firstNum(p.text) }; }
+    case 'G01': { const [a, b] = splitAt(ws, /^(замість|ніж|а|проти|тепер)$/); return { bad: cap1(keys(a, 4)), good: cap1(keys(b, 4)) }; }
+    case 'G09': { const [a, b] = splitAt(ws, /^(тепер|стало|зараз)$/); return { before: cap1(keys(a, 5)), now: cap1(keys(b, 5)) }; }
     case 'B04': { const k = ws.findIndex((w) => /^(це|означає|тобто)$/.test(w.toLowerCase())); return { term: cap1(ws[Math.max(0, k - 1)] ?? ws[0]), def: words6(ws.slice(k + 1), 9) }; }
     case 'F04': return { items: (p.text.split(/,|\bпотім\b|\bдалі\b|\bі\b/).map((s) => s.trim()).filter(Boolean).slice(0, 3)).map((s) => cap1(words6(s.split(' '), 4))) };
     case 'A04': return { label: cap1(words6(ws.filter((w) => w.length > 2), 2)) };
     case 'I01': return { word: o.keyword ?? 'СЛОВО' };
-    case 'B09': case 'B10': return { text: cap1(words6(ws, 7)) };
+    case 'B09': case 'B10': return { text: cap1(keys(ws, 6)) };
     case 'H08': return { glyph: '?' };
     case 'H06': return { emoji: EMOJI[o.n++ % EMOJI.length] };
     case 'H01': return { label: 'дивись', x: 260, y: 520, to: [560, 820] };
     case 'H03': return { text: cap1(ws.reduce((a, w) => (w.length > a.length ? w : a), '')) };
-    case 'F06': return { n: String(++o.step).padStart(2, '0'), title: cap1(words6(ws, 4)) };
+    case 'F06': return { n: String(++o.step).padStart(2, '0'), title: cap1(keys(ws, 3)) };
     case 'E10': return { n: Math.min(o.step || 1, 5), of: 5, label: 'кроків' };
-    case 'A09': return { text: cap1(words6(ws, 4)) };
+    case 'A09': return { text: cap1(keys(ws, 4)) };
     case 'B01': return { name: 'skill-name', author: 'автор', meta: ['тег'], desc: words6(ws, 8) };
     case 'C01': return { prompt: words6(ws, 6), reply: '…' };
     case 'C03': return { steps: ['read', 'edit', 'run'] };
@@ -145,7 +155,7 @@ export function planToEdit(shots, unmap, { split } = {}) {
   }
   // the hook phrase becomes the title (2–5 words on the first seconds)
   const hook = shots[0];
-  const title = hook ? { text: cap1(hook.words.slice(0, 5).join(' ')), dur: 2.6 } : undefined;
+  const title = hook ? { text: cap1(keys(hook.words, 4) || hook.words.slice(0, 4).join(' ')), dur: 2.6 } : undefined;
   return { scenes, cards, ...(split ? { fullcam } : {}), title };
 }
 
@@ -161,7 +171,11 @@ export function planTable(shots) {
 export function audit(events, total, { maxStill = 6, prevCodes = new Set() } = {}) {
   const changes = [0, total, ...events.flatMap((e) => (e.dur ? [e.t, e.t + e.dur] : [e.t]))].filter((t) => t >= 0 && t <= total).sort((a, b) => a - b);
   const still = [];
-  for (let i = 1; i < changes.length; i++) if (changes[i] - changes[i - 1] > maxStill) still.push([r2(changes[i - 1]), r2(changes[i])]);
+  let gap = [0, 0];
+  for (let i = 1; i < changes.length; i++) {
+    if (changes[i] - changes[i - 1] > maxStill) still.push([r2(changes[i - 1]), r2(changes[i])]);
+    if (changes[i] - changes[i - 1] > gap[1] - gap[0]) gap = [r2(changes[i - 1]), r2(changes[i])];
+  }
   const boxes = events.filter((e) => e.kind === 'card' || e.kind === 'scene');
   const overlaps = [];
   for (let i = 0; i < boxes.length; i++) for (let j = i + 1; j < boxes.length; j++) {
@@ -177,7 +191,7 @@ export function audit(events, total, { maxStill = 6, prevCodes = new Set() } = {
   const variety = new Set(codes).size / perThirty;
   const sfx = events.filter((e) => e.sfx).length / Math.max(1 / 6, total / 60);
   const score = Math.max(0, 100 - still.length * 15 - overlaps.length * 10 - repeats.length * 5 - Math.max(0, 4 - variety) * 8 - Math.max(0, sfx - 6) * 3);
-  return { still, overlaps, repeats, fromPrev, variety: r2(variety), sfxPerMin: r2(sfx), score: Math.round(score) };
+  return { still, gap, overlaps, repeats, fromPrev, variety: r2(variety), sfxPerMin: r2(sfx), score: Math.round(score) };
 }
 
 // one char per second: S scene, C stock cutaway, F full-face, ▪ card on screen, · nothing on top

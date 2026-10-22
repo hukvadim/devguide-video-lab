@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import os from 'node:os';
 import { TOOL, IS_WIN, WHISPER_MODEL, WHOOSH, findBin, findWhisper, need } from './bins.mjs';
-import { audit, planShots, planTable, planToEdit, timeline } from './plan.mjs';
+import { FILL, audit, fields, planShots, planTable, planToEdit, timeline } from './plan.mjs';
 
 // важкий рендер не має вішати комп'ютер: нижчий пріоритет (діти ffmpeg/Chrome його успадковують)
 try { os.setPriority(0, os.constants.priority.PRIORITY_BELOW_NORMAL); } catch {}
@@ -849,6 +849,34 @@ function runAudit(editPath, quiet = false) {
   return a;
 }
 
+// audit --fix: у кожну дірку без змін ставить картку з пулу акцентів (код, якого ще нема в ролику) зі словами,
+// що звучать у цей момент; повторює, доки дір не лишиться (до 12 карток). Стара версія: edit.before-fix.json
+function fixAudit(editPath) {
+  const w = loadWork(editPath);
+  const edit = structuredClone(w.edit);
+  const used = new Set([...(edit.cards ?? []).map((c) => OLD_CODE[c.type] ?? c.type), ...(edit.scenes ?? []).flatMap((s) => (s.cards ?? []).map((c) => c.type))]);
+  const avoid = recentCodes(w.dir);
+  let added = 0;
+  for (let k = 0; k < 12; k++) {
+    const a = audit(timelineEvents({ ...w, edit }), w.total, {});
+    // спершу дірки >6 с, потім різноманітність: <4 кодів на 30 с → картка в найбільший проміжок ≥4 с
+    const hole = a.still[0] ?? (a.variety < 4 && a.gap[1] - a.gap[0] >= 4 ? a.gap : null);
+    if (!hole) break;
+    const [s, e] = hole;
+    const t0 = r2(s + Math.min(1.5, (e - s) / 3));
+    const ws = w.outWords.filter((x) => x.s >= t0 - 0.2 && x.s < t0 + 3).map((x) => x.w.replace(/[^\p{L}\d'’-]/gu, '')).filter(Boolean);
+    const code = FILL.find((c) => !used.has(c) && !avoid.has(c)) ?? FILL.find((c) => !used.has(c)) ?? 'H06';
+    used.add(code);
+    (edit.cards ??= []).push({ at: r2(w.unmap(t0)), dur: 3, type: code, ...fields(code, { words: ws, text: ws.join(' ') }) });
+    added++;
+  }
+  edit.cards?.sort((x, y) => x.at - y.at);
+  fs.copyFileSync(w.editPath, path.join(w.dir, 'edit.before-fix.json'));
+  fs.writeFileSync(w.editPath, JSON.stringify(edit, null, 2));
+  console.log(`додано карток: ${added} (стара версія: edit.before-fix.json)`);
+  return runAudit(w.editPath);
+}
+
 function runPlan(editPath, { apply, keyword } = {}) {
   const w = loadWork(editPath);
   const split = !!(w.edit.screen && w.edit.layout !== 'head');
@@ -868,19 +896,72 @@ function runPlan(editPath, { apply, keyword } = {}) {
   }
 }
 
-// розкадровка: чернетковий рендер 540×960 і по кадру на кожну подію плану з підписом → board.jpg
-async function runBoard(editPath) {
+// розкадровка → board.jpg: по кадру на кожну подію плану з підписом (час, тип, код).
+// Голова на весь кадр: швидко — кадр джерела + знімки шарів Remotion (картки, сценка, текст), без рендеру ролика.
+// Спліт, b-roll, стокові вставки або --full: з чернеткового рендеру 540×960 (повільніше, зате точно).
+async function runBoard(editPath, full = false) {
   const w = loadWork(editPath);
-  const { out, introDur } = await render(editPath, true);
+  const { edit, segs, total, dir } = w;
   const ev = timelineEvents(w).filter((e) => e.kind !== 'code');
-  const mids = [...ev.map((e) => ({ t: e.t + Math.min(1.2, (e.dur ?? 0.6) / 2), e })), ...w.segs.map((g) => ({ t: g.off + 0.4, e: { kind: 'face' } }))]
+  const mids = [...ev.map((e) => ({ t: e.t + Math.min(1.2, (e.dur ?? 0.6) / 2), e })), ...segs.map((g) => ({ t: g.off + 0.4, e: { kind: 'face' } }))]
     .sort((a, b) => a.t - b.t).filter((m, i, a) => !i || m.t - a[i - 1].t > 1).slice(0, 20);
   const NAME = { card: 'картка', scene: 'СЦЕНКА', cutaway: 'вставка', fullcam: 'обличчя', broll: 'b-roll', callout: 'плашка', title: 'титул', cut: 'склейка', face: 'кадр' };
+  const fast = !full && !edit.screen && !edit.broll?.length && !edit.cutaways?.length;
+  const frames = []; // [{t, png}] готовий кадр 540×960 на кожну подію
+  if (fast) {
+    const { bundle } = await import('@remotion/bundler');
+    const { openBrowser, renderStill, selectComposition } = await import('@remotion/renderer');
+    const serveUrl = await bundle({ entryPoint: path.join(TOOL, 'motion/index.ts') });
+    const browser = await openBrowser('chrome');
+    const still = async (id, inputProps, frame, output) => {
+      const composition = await selectComposition({ serveUrl, id, inputProps, puppeteerInstance: browser });
+      await renderStill({ composition, serveUrl, inputProps, frame: Math.max(0, Math.min(composition.durationInFrames - 1, frame)), output, imageFormat: 'png', puppeteerInstance: browser });
+    };
+    const T = (x) => mapTime(segs, x);
+    const accent = edit.theme?.accent ?? edit.captions?.accent ?? '#C3FF55';
+    const emph = (edit.captions?.emphasis ?? []).map((x) => x.toLowerCase());
+    const st = { ...HEAD_STYLE, ...edit.style };
+    const text = { w: 540, h: 960, dur: r2(total), accent, capY: st.capY, capAnchor: 'bottom', capStyle: edit.captions?.style, cap: edit.captions?.cap, capSize: edit.captions?.size,
+      words: edit.captions === false ? [] : w.outWords.map((x) => ({ s: r2(x.s), e: r2(x.e), w: x.w, em: emph.some((p) => x.w.toLowerCase().replace(/^[^\p{L}]+/u, '').startsWith(p)) || undefined })),
+      title: edit.title?.text ? { t: 0.05, dur: r2(edit.title.dur ?? 2.6), text: edit.title.text, y: st.titleY } : null,
+      callouts: (edit.callouts ?? []).map((c) => ({ t: T(c.at), dur: c.dur ?? 2.6, text: c.text, y: c.y ?? st.calloutY })).filter((c) => c.t != null), hits: [] };
+    const cards = { w: 540, h: 960, dur: r2(total), theme: edit.cardsTheme ?? 'dg', accent: edit.theme?.accent,
+      cards: (edit.cards ?? []).map(({ at: a, ...c }) => ({ ...c, t: T(a) })).filter((c) => c.t != null) };
+    const src = JSON.parse(fs.readFileSync(path.join(dir, 'probe.json'), 'utf8'));
+    const source = path.resolve(dir, '..', '..', edit.source);
+    for (const [i, { t, e }] of mids.entries()) {
+      const base = path.join(dir, `bd_${i}`), png = `${base}.png`;
+      await still('Text', text, Math.round(t * FPS), `${base}_t.png`);
+      if (e.kind === 'scene') {
+        const s = edit.scenes.find((x) => T(x.at) === e.t);
+        const sc = { w: 540, h: 960, dur: s.dur ?? 4.5, theme: edit.cardsTheme ?? 'dg', accent: edit.theme?.accent, bg: s.bg ?? 'scene', cards: s.cards.map((c) => ({ side: 'center', t: 0, dur: s.dur ?? 4.5, ...c })) };
+        await still('Cards', sc, Math.round((t - e.t) * FPS), `${base}_c.png`);
+        run(ffmpeg(), ['-y', '-v', 'error', '-i', `${base}_c.png`, '-i', `${base}_t.png`, '-filter_complex', '[0][1]overlay', png]);
+      } else {
+        const g = segs.find((x) => t >= x.off && t < x.off + x.end - x.start) ?? segs.at(-1);
+        const c = cropBox(src, edit.cropX ?? 0.5, g.zoom ?? 1);
+        await still('Cards', cards, Math.round(t * FPS), `${base}_c.png`);
+        run(ffmpeg(), ['-y', '-v', 'error', '-ss', w.unmap(t).toFixed(2), '-i', source, '-i', `${base}_c.png`, '-i', `${base}_t.png`, '-filter_complex',
+          `[0:v]crop=${c.w}:${c.h}:${c.x}:${c.y},scale=540:960,setsar=1[b];[b][1]overlay[bc];[bc][2]overlay`, '-frames:v', '1', png]);
+      }
+      [`${base}_t.png`, `${base}_c.png`].forEach((f) => fs.rmSync(f, { force: true }));
+      frames.push({ t, png });
+    }
+    await browser.close({ silent: true });
+  } else {
+    const { out, introDur } = await render(editPath, true);
+    mids.forEach(({ t }, i) => {
+      const png = path.join(dir, `bd_${i}.png`);
+      run(ffmpeg(), ['-y', '-v', 'error', '-ss', (t + introDur).toFixed(2), '-i', out, '-frames:v', '1', png]);
+      frames.push({ t, png });
+    });
+  }
   const files = mids.map(({ t, e }, i) => {
-    const f = path.join(w.dir, `board_${String(i).padStart(2, '0')}.jpg`);
+    const f = path.join(dir, `board_${String(i).padStart(2, '0')}.jpg`);
     const label = `${i + 1}  ${t.toFixed(1)}s  ${NAME[e.kind] ?? e.kind}${e.code ? '  ' + e.code : ''}`;
-    run(ffmpeg(), ['-y', '-v', 'error', '-ss', (t + introDur).toFixed(2), '-i', out, '-frames:v', '1', '-vf',
+    run(ffmpeg(), ['-y', '-v', 'error', '-i', frames[i].png, '-frames:v', '1', '-vf',
       `scale=270:480,drawbox=y=436:w=270:h=44:color=black@0.7:t=fill,drawtext=fontfile=Montserrat-ExtraBold.ttf:text='${label}':x=10:y=448:fontsize=18:fontcolor=0xC3FF55`, f], { cwd: path.join(TOOL, 'fonts') });
+    fs.rmSync(frames[i].png, { force: true });
     return f;
   });
   const list = path.join(w.dir, 'board.txt');
@@ -963,6 +1044,7 @@ function selftest() {
   // аудит: 8 с без змін — дірка; дві картки з одного боку одночасно — перекриття
   const au = audit([{ t: 1, dur: 3, kind: 'card', code: 'E01' }, { t: 2, dur: 3, kind: 'card', code: 'E01' }, { t: 14, kind: 'cut' }], 15);
   assert.deepEqual(au.still, [[5, 14]]);
+  assert.deepEqual(au.gap, [5, 14]);
   assert.equal(au.overlaps.length, 1);
   assert.deepEqual(au.repeats, ['E01']);
   return import('../motion/layout.ts').then(({ wrap, fitSize, paginate, capText }) => {
@@ -990,7 +1072,7 @@ else if (cmd === 'sync' && arg) { const audio = flag('--audio'), screen = flag('
 else if (cmd === 'preview' && arg) await render(arg, true);
 else if (cmd === 'render' && arg) await render(arg, false);
 else if (cmd === 'plan' && arg) runPlan(arg, { keyword: flag('--keyword'), apply: rest.includes('--apply') });
-else if (cmd === 'audit' && arg) runAudit(arg);
-else if (cmd === 'board' && arg) await runBoard(arg);
+else if (cmd === 'audit' && arg) rest.includes('--fix') ? fixAudit(arg) : runAudit(arg);
+else if (cmd === 'board' && arg) await runBoard(arg, rest.includes('--full'));
 else if (cmd === 'selftest') await selftest();
-else console.log('usage: node pipeline/vid.mjs prep <video> [lang] | sync <video|папка> | plan <edit.json> [--apply] [--keyword СЛОВО] | audit <edit.json> | board <edit.json> | preview <edit.json> | render <edit.json> | selftest');
+else console.log('usage: node pipeline/vid.mjs prep <video> [lang] | sync <video|папка> | plan <edit.json> [--apply] [--keyword СЛОВО] | audit <edit.json> [--fix] | board <edit.json> [--full] | preview <edit.json> | render <edit.json> | selftest');
