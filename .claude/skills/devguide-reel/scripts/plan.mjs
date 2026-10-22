@@ -130,6 +130,9 @@ export function planShots(words, opts = {}) {
       : tags.includes('cmp') ? take(['G01', 'G09', 'G02'])
       : tags.includes('def') ? take(['B04'])
       : tags.includes('steps') ? take(['F04', 'F05']) : null;
+    // author rule: at most one new element per minGap (5 s) — scenes, UGC and cards all wait for it
+    const gapOk = p.s - lastVisual >= (opts.minGap ?? 5) || lastVisual === 0;
+    if (!gapOk) return shot;
     // a scene needs room: not the hook, ≥2 s of speech, ≥sceneGap since the last one
     const clip = !tags.includes('hook') && !sceneCode && p.s - lastUgc >= (opts.ugcGap ?? 12) && p.s - lastScene >= 4 ? pickClip(tags) : null;
     if (clip) {
@@ -151,7 +154,7 @@ export function planShots(words, opts = {}) {
     else if (tags.includes('question')) add(take(['H08']));
     else { const tool = TOOL.find(([re]) => re.test(p.text.toLowerCase())); if (tool && !used.has(tool[1])) add(tool[1]); }
     // nothing changed for fillEvery seconds → an accent from the filler pool
-    if (!shot.codes.length && !tags.includes('hook') && p.s - lastVisual >= (opts.fillEvery ?? 4)) add(take(FILL));
+    if (!shot.codes.length && !tags.includes('hook') && p.s - lastVisual >= (opts.fillEvery ?? 5)) add(take(FILL));
     if (shot.codes.length) lastVisual = p.s;
     return shot;
   });
@@ -184,7 +187,10 @@ export function planTable(shots) {
 
 // ---------- audit ----------
 // events: [{t, dur?, kind: 'cut'|'card'|'scene'|'cutaway'|'fullcam'|'broll'|'callout'|'title', code?, side?, sfx?}]
-export function audit(events, total, { maxStill = 6, prevCodes = new Set() } = {}) {
+// elements = what pops up over the picture: cards (not the crumbs/progress strips), scenes, inserts, callouts
+export const elements = (events) => events.filter((e) => (e.kind === 'card' && !/^(A01|J10)$/.test(e.code ?? '')) || e.kind === 'scene' || e.kind === 'cutaway' || e.kind === 'callout');
+export const PRIORITY = (e) => (e.kind === 'scene' ? 4 : e.kind === 'cutaway' ? 3 : e.kind === 'callout' ? 1 : /^(H|J)\d/.test(e.code ?? '') || ['A09', 'F06'].includes(e.code) ? 1 : 2);
+export function audit(events, total, { maxStill = 6, prevCodes = new Set(), minGap = 5 } = {}) {
   const changes = [0, total, ...events.flatMap((e) => (e.dur ? [e.t, e.t + e.dur] : [e.t]))].filter((t) => t >= 0 && t <= total).sort((a, b) => a - b);
   const still = [];
   let gap = [0, 0];
@@ -203,6 +209,10 @@ export function audit(events, total, { maxStill = 6, prevCodes = new Set() } = {
     const clash = full(a) || full(b) || (a.side ?? 'left') === (b.side ?? 'left');
     if (hit && clash) overlaps.push([a.code ?? a.kind, b.code ?? b.kind, r2(Math.max(a.t, b.t))]);
   }
+  // author rule: one new element per minGap seconds at most (persistent strips A01/J10 don't count)
+  const starts = elements(events).sort((a, b) => a.t - b.t);
+  const crowded = [];
+  for (let i = 1; i < starts.length; i++) if (starts[i].t - starts[i - 1].t < minGap - 0.05) crowded.push([starts[i - 1].code ?? starts[i - 1].kind, starts[i].code ?? starts[i].kind, r2(starts[i].t)]);
   const codes = events.filter((e) => e.code).map((e) => e.code);
   const repeats = [...new Set(codes.filter((c, i) => c !== 'J01' && codes.indexOf(c) !== i))];
   const fromPrev = [...new Set(codes.filter((c) => prevCodes.has(c)))];
@@ -210,8 +220,8 @@ export function audit(events, total, { maxStill = 6, prevCodes = new Set() } = {
   const variety = new Set(codes).size / perThirty;
   const sfx = events.filter((e) => e.sfx).length / Math.max(1 / 6, total / 60);
   const k = Math.min(1, 60 / Math.max(1, total)); // counts per minute: a 4-minute tutorial isn't punished 4× for its length
-  const score = Math.max(0, 100 - (still.length * 15 + overlaps.length * 10 + repeats.length * 5) * k - Math.max(0, 4 - variety) * 8 - Math.max(0, sfx - 6) * 3);
-  return { still, gap, overlaps, repeats, fromPrev, variety: r2(variety), sfxPerMin: r2(sfx), score: Math.round(score) };
+  const score = Math.max(0, 100 - (still.length * 15 + overlaps.length * 10 + repeats.length * 5 + crowded.length * 6) * k - Math.max(0, 4 - variety) * 8 - Math.max(0, sfx - 6) * 3);
+  return { still, gap, overlaps, crowded, repeats, fromPrev, variety: r2(variety), sfxPerMin: r2(sfx), score: Math.round(score) };
 }
 
 // one char per second: S scene, C stock cutaway, F full-face, ▪ card on screen, · nothing on top

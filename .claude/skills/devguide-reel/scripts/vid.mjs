@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import os from 'node:os';
 import { TOOL, IS_WIN, WHISPER_MODEL, WHOOSH, findBin, findWhisper, need } from './bins.mjs';
-import { FILL, audit, fields, planShots, planTable, planToEdit, timeline } from './plan.mjs';
+import { FILL, PRIORITY, audit, elements, fields, planShots, planTable, planToEdit, timeline } from './plan.mjs';
 
 // важкий рендер не має вішати комп'ютер: нижчий пріоритет (діти ffmpeg/Chrome його успадковують)
 try { os.setPriority(0, os.constants.priority.PRIORITY_BELOW_NORMAL); } catch {}
@@ -865,6 +865,7 @@ function runAudit(editPath, quiet = false) {
     `таймлайн (1 знак = 1 с; S сценка, C стокова вставка, F обличчя, ▪ картка, · нічого зверху):`, '  ' + timeline(ev, w.total),
     ...a.still.map(([s, e]) => `  ⚠ ${s}–${e} с нічого не міняється (${r2(e - s)} с): додай картку, сценку або наїзд`),
     ...a.overlaps.map(([x, y, t]) => `  ⚠ ${t} с: ${x} і ${y} перекривають одне одного`),
+    ...a.crowded.map(([x, y, t]) => `  ⚠ ${t} с: ${y} одразу після ${x} (менше 5 с між елементами)`),
     ...(a.repeats.length ? [`  ⚠ код повторюється в ролику: ${a.repeats.join(' ')}`] : []),
     ...(a.fromPrev.length ? [`  · уже були в попередніх роликах: ${a.fromPrev.join(' ')}`] : [])];
   if (!quiet || a.score < 80) console.log(lines.join('\n'));
@@ -879,7 +880,22 @@ function fixAudit(editPath) {
   const edit = structuredClone(w.edit);
   const used = new Set([...(edit.cards ?? []).map((c) => OLD_CODE[c.type] ?? c.type), ...(edit.scenes ?? []).flatMap((s) => (s.cards ?? []).map((c) => c.type))]);
   const avoid = recentCodes(w.dir);
-  let added = 0, moved = 0;
+  let added = 0, moved = 0, thinned = 0;
+  // не частіше одного елемента на 5 с: з двох близьких лишається важливіший (сценка > вставка > картка > акцент)
+  const T = (x) => mapTime(w.segs, x);
+  const items = [...(edit.cards ?? []).filter((c) => !['crumbs', 'A01', 'J10'].includes(c.type)).map((c) => ({ t: T(c.at), o: c, p: PRIORITY({ kind: 'card', code: OLD_CODE[c.type] ?? c.type }) })),
+    ...(edit.scenes ?? []).map((c) => ({ t: T(c.at), o: c, p: 4 })), ...(edit.ugc ?? []).map((c) => ({ t: T(c.at), o: c, p: 3 })),
+    ...(edit.cutaways ?? []).map((c) => ({ t: T(c.at), o: c, p: 3 })), ...(edit.callouts ?? []).map((c) => ({ t: T(c.at), o: c, p: 1 }))]
+    .filter((x) => x.t != null).sort((a, b) => a.t - b.t);
+  const kept = [];
+  for (const x of items) {
+    const last = kept.at(-1);
+    if (!last || x.t - last.t >= 4.95) kept.push(x);
+    else if (x.p > last.p && (kept.length < 2 || x.t - kept.at(-2).t >= 4.95)) kept[kept.length - 1] = x;
+  }
+  const keep = new Set(kept.map((x) => x.o));
+  thinned = items.length - kept.length;
+  for (const k of ['cards', 'scenes', 'ugc', 'cutaways', 'callouts']) if (edit[k]) edit[k] = edit[k].filter((c) => keep.has(c) || (k === 'cards' && ['crumbs', 'A01', 'J10'].includes(c.type)));
   // картки не лежать на сценках і вставках: перед вставкою — вкоротити, усередині — перенести одразу після неї
   const fulls = timelineEvents({ ...w, edit }).filter((e) => e.kind === 'scene' || e.kind === 'cutaway');
   edit.cards = (edit.cards ?? []).flatMap((c) => {
@@ -891,13 +907,18 @@ function fixAudit(editPath) {
     const t2 = hit.t + hit.dur + 0.2;
     return t2 + 1.2 < w.total ? [{ ...c, at: r2(w.unmap(t2)) }] : [];
   });
+  const skip = new Set();
   for (let k = 0; k < 24; k++) {
     const a = audit(timelineEvents({ ...w, edit }), w.total, {});
+    a.still = a.still.filter(([s]) => !skip.has(s));
     // спершу дірки >6 с, потім різноманітність: <4 кодів на 30 с → картка в найбільший проміжок ≥4 с
-    const hole = a.still[0] ?? (a.variety < 4 && a.gap[1] - a.gap[0] >= 4 ? a.gap : null);
+    const hole = a.still[0] ?? (a.variety < 4 && a.gap[1] - a.gap[0] >= 10 && !skip.has(a.gap[0]) ? a.gap : null);
     if (!hole) break;
     const [s, e] = hole;
-    const t0 = r2(s + Math.min(1.5, (e - s) / 3));
+    // вставляємо посередині дірки й лише якщо до найближчого елемента ≥5 с; інакше дірку лишаємо (наїзд закриє)
+    const t0 = r2((s + e) / 2 - 1.5);
+    const near = elements(timelineEvents({ ...w, edit })).some((x) => Math.abs(x.t - t0) < 4.95);
+    if (near) { skip.add(s); continue; }
     const ws = w.outWords.filter((x) => x.s >= t0 - 0.2 && x.s < t0 + 3).map((x) => x.w.replace(/[^\p{L}\d'’-]/gu, '')).filter(Boolean);
     const code = FILL.find((c) => !used.has(c) && !avoid.has(c)) ?? FILL.find((c) => !used.has(c));
     if (!code) { console.log('пул акцентів вичерпано: решту дір закрий змістовною карткою або сценкою'); break; }
@@ -908,7 +929,7 @@ function fixAudit(editPath) {
   edit.cards?.sort((x, y) => x.at - y.at);
   fs.copyFileSync(w.editPath, path.join(w.dir, 'edit.before-fix.json'));
   fs.writeFileSync(w.editPath, JSON.stringify(edit, null, 2));
-  console.log(`додано карток: ${added}, виправлено накладок: ${moved} (стара версія: edit.before-fix.json)`);
+  console.log(`додано карток: ${added}, прибрано зайвих (ближче 5 с): ${thinned}, виправлено накладок: ${moved} (стара версія: edit.before-fix.json)`);
   return runAudit(w.editPath);
 }
 
@@ -1083,6 +1104,7 @@ function selftest() {
   const au = audit([{ t: 1, dur: 3, kind: 'card', code: 'E01' }, { t: 2, dur: 3, kind: 'card', code: 'E01' }, { t: 14, kind: 'cut' }], 15);
   assert.deepEqual(au.still, [[5, 14]]);
   assert.deepEqual(au.gap, [5, 14]);
+  assert.equal(audit([{ t: 1, dur: 2, kind: 'card', code: 'B10' }, { t: 3, dur: 2, kind: 'scene', code: 'E01' }, { t: 4, dur: 9, kind: 'card', code: 'A01' }], 15).crowded.length, 1); // 2 с між елементами; A01-смужка не рахується
   assert.equal(au.overlaps.length, 1);
   assert.deepEqual(au.repeats, ['E01']);
   return import('../motion/layout.ts').then(({ wrap, fitSize, paginate, capText }) => {
