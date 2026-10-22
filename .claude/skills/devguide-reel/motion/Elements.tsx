@@ -1,35 +1,23 @@
 import React from 'react';
 import { interpolate, spring } from 'remotion';
 import { F, clamp, ramp } from './theme';
-import { Base, Glass, Icon, Th, X, useLife } from './glass';
+import { Base, Glass, Icon, X, useLife } from './glass';
+import { Caret, Check, DIM_LINE, INK, Label, Reg, Spinner, WARN, pop, typed, useTh } from './el/kit';
+import { A } from './el/A';
+import { B } from './el/B';
+import { C } from './el/C';
+import { D } from './el/D';
+import { E } from './el/E';
+import { Fg } from './el/F';
+import { G } from './el/G';
+import { H } from './el/H';
+import { I } from './el/I';
+import { J } from './el/J';
 
 // Catalog elements by code (docs/ELEMENTS.md). edit.json: {"at": 12.3, "dur": 3, "type": "E01", "to": 100, "label": "…"}.
 // Every element: frame-driven, enters with the shared life curve, sits in the free strip beside the speaker (side/y/scale).
 type Code = `${'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J'}${number}`;
 export type ElementCard = Base & { type: Code } & Record<string, unknown>;
-
-const INK = '#0B0F12', WARN = '#FFD84D', DIM_LINE = 'rgba(255,255,255,.1)';
-const useTh = () => React.useContext(Th);
-const pop = (f: number, at: number, fps = 30, damping = 12) => spring({ frame: f - at, fps, config: { damping, stiffness: 170, mass: 0.7 } });
-const typed = (s: string, f: number, at: number, cps = 0.6) => s.slice(0, Math.max(0, Math.floor((f - at) * cps)));
-const Caret: React.FC<{ f: number }> = ({ f }) => { const th = useTh(); return <span style={{ color: th.accent, opacity: Math.floor(f / 8) % 2 ? 0 : 1 }}>▍</span>; };
-const Label: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const th = useTh();
-  return <div style={{ color: th.dim, fontSize: 24, fontWeight: 800, letterSpacing: '.04em', textTransform: 'uppercase' }}>{children}</div>;
-};
-const Check: React.FC<{ q: number; size?: number; bad?: boolean }> = ({ q, size = 40, bad }) => {
-  const th = useTh();
-  return <span style={{ width: size, height: size, borderRadius: size * 0.3, flexShrink: 0, display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-    background: q > 0.5 ? (bad ? 'rgba(255,255,255,.16)' : th.accent) : 'transparent', border: `2.5px solid ${q > 0.5 ? 'transparent' : th.dim}`,
-    color: bad ? th.text : INK, fontSize: size * 0.62, fontWeight: 900, transform: `scale(${0.7 + 0.3 * q})` }}>{q > 0.5 ? (bad ? '✗' : '✓') : ''}</span>;
-};
-const Spinner: React.FC<{ f: number; size?: number }> = ({ f, size = 34 }) => {
-  const th = useTh();
-  return <svg width={size} height={size} viewBox="0 0 34 34" style={{ transform: `rotate(${f * 14}deg)`, flexShrink: 0 }}>
-    <circle cx="17" cy="17" r="13" fill="none" stroke={DIM_LINE} strokeWidth="4" />
-    <circle cx="17" cy="17" r="13" fill="none" stroke={th.accent} strokeWidth="4" strokeDasharray="22 60" strokeLinecap="round" />
-  </svg>;
-};
 
 // ---------- A. навігація ----------
 const A03: React.FC<Base & { label: string; sub?: string; at?: number }> = ({ label, sub, at = 14, side, y, scale }) => {
@@ -350,7 +338,7 @@ const I01: React.FC<Base & { word: string; cta?: string }> = ({ word, cta = 'Н�
 };
 
 // demo props double as the reference for edit.json fields and drive the Catalog composition
-export const ELEMENTS: Record<string, { C: React.FC<any>; name: string; demo: Record<string, unknown> }> = {
+const WAVE1: Reg = {
   A03: { C: A03, name: 'Перемикач', demo: { label: 'Пам\'ять чату', sub: 'Налаштування › Функції' } },
   A04: { C: A04, name: 'Кнопка + курсор', demo: { label: 'Встановити' } },
   A06: { C: A06, name: 'Пошук', demo: { query: 'design skill', hints: ['design-critique', 'design-system', 'ux-writing'] } },
@@ -372,3 +360,7 @@ export const ELEMENTS: Record<string, { C: React.FC<any>; name: string; demo: Re
   H06: { C: H06, name: 'Стікер', demo: { emoji: '🤯' } },
   I01: { C: I01, name: 'CTA коментар', demo: { word: 'СКІЛ' } },
 };
+
+// all codes, sorted A01…J10 (A01/B01/C01/F01/F02 are the original cards in Cards.tsx, reached by alias)
+const ALL: Reg = { ...WAVE1, ...A, ...B, ...C, ...D, ...E, ...Fg, ...G, ...H, ...I, ...J };
+export const ELEMENTS: Reg = Object.fromEntries(Object.keys(ALL).sort().map((k) => [k, ALL[k]]));

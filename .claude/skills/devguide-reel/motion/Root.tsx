@@ -5,8 +5,7 @@ import { Text, TextProps } from './Text';
 import { ScreenFx, ScreenFxProps } from './ScreenFx';
 import { Intro, IntroProps, Outro, OutroProps } from './Wrap';
 import { Cards, CardsProps } from './Cards';
-import { CAP_COMBOS, CapCatalog, Catalog, STEP } from './Catalog';
-import { ELEMENTS } from './Elements';
+import { CAP_COMBOS, CapCatalog, Catalog, GROUPS, STEP, codesOf } from './Catalog';
 
 const meta = ({ props }: { props: { dur: number; w: number; h: number } }) =>
   ({ durationInFrames: Math.max(1, Math.round(props.dur * 30)), width: props.w, height: props.h });
@@ -35,6 +34,7 @@ export const Root: React.FC = () => <>
   <Composition id="OutroKeyword" component={Outro} fps={30} width={1080} height={1920} durationInFrames={210} defaultProps={outroKeyword} calculateMetadata={meta} />
   <Composition id="Cards" component={Cards} fps={30} width={1080} height={1920} durationInFrames={180} defaultProps={cards} calculateMetadata={meta} />
   <Composition id="ScreenFx" component={ScreenFx} fps={30} width={1080} height={960} durationInFrames={90} defaultProps={screenFx} calculateMetadata={meta} />
-  <Composition id="Catalog" component={Catalog} fps={30} width={1080} height={1920} durationInFrames={Object.keys(ELEMENTS).length * STEP * 30} defaultProps={{ w: 1080, h: 1920, dur: 0 }} />
-  <Composition id="CapCatalog" component={CapCatalog} fps={30} width={1080} height={1920} durationInFrames={CAP_COMBOS.length * STEP * 30} defaultProps={{ w: 1080, h: 1920, dur: 0 }} />
+  <Composition id="Catalog" component={Catalog} fps={30} width={1080} height={1920} durationInFrames={Math.round(codesOf().length * STEP * 30)} defaultProps={{ w: 1080, h: 1920, dur: 0 }} />
+  {GROUPS.map((g) => <Composition key={g} id={`Catalog-${g}`} component={Catalog} fps={30} width={1080} height={1920} durationInFrames={Math.round(codesOf(g).length * STEP * 30)} defaultProps={{ w: 1080, h: 1920, dur: 0, group: g }} />)}
+  <Composition id="CapCatalog" component={CapCatalog} fps={30} width={1080} height={1920} durationInFrames={Math.round(CAP_COMBOS.length * STEP * 30)} defaultProps={{ w: 1080, h: 1920, dur: 0 }} />
 </>;
