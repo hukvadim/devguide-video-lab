@@ -2,7 +2,7 @@ import React from 'react';
 import { spring } from 'remotion';
 import { F, ramp } from '../theme';
 import { Base, Glass, useLife } from '../glass';
-import { Free, INK, Label, Reg, pop, useTh } from './kit';
+import { Free, INK, Label, Reg, pop, useTh, tint } from './kit';
 
 // F. Списки й кроки
 const F04: React.FC<Base & { items: string[]; every?: number }> = ({ items, every = 12, side, y, scale }) => {
@@ -86,10 +86,10 @@ const F09: React.FC<Base & { items: { title: string; body?: string }[]; open: nu
 const F10: React.FC<Base & { items: string[]; label?: string }> = ({ items, label, side, y, scale }) => {
   const th = useTh(); const { f, fps } = useLife();
   return <Glass side={side} y={y} w={430} scale={scale} tilt={0}>
-    <div style={{ position: 'relative', padding: '18px 16px', borderRadius: 24, border: `3px dashed ${th.accent}`, display: 'flex', flexWrap: 'wrap', gap: 10, minHeight: 120, background: 'rgba(195,255,85,.05)' }}>
+    <div style={{ position: 'relative', padding: '18px 16px', borderRadius: 24, border: `3px dashed ${th.accent}`, display: 'flex', flexWrap: 'wrap', gap: 10, minHeight: 120, background: tint(th.accent, .05) }}>
       {items.map((it, i) => {
         const q = spring({ frame: f - 6 - i * 7, fps, config: { damping: 10, stiffness: 140 } });
-        return <span key={i} style={{ padding: '10px 18px', borderRadius: 16, background: th.chip, color: th.text, fontSize: 25, fontWeight: 800, border: '1.5px solid rgba(195,255,85,.35)',
+        return <span key={i} style={{ padding: '10px 18px', borderRadius: 16, background: th.chip, color: th.text, fontSize: 25, fontWeight: 800, border: '1.5px solid ${tint(th.accent, .35)}',
           transform: `translateY(${(1 - q) * -150}px) rotate(${(1 - q) * (i % 2 ? 14 : -14)}deg)`, opacity: Math.min(1, q * 3) }}>{it}</span>;
       })}
     </div>

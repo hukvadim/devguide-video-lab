@@ -2,7 +2,7 @@ import React from 'react';
 import { interpolate, spring } from 'remotion';
 import { F, clamp, ramp } from '../theme';
 import { Base, Glass, useLife } from '../glass';
-import { Check, INK, Label, Reg, pop, useTh } from './kit';
+import { Check, INK, Label, Reg, pop, useTh, tint } from './kit';
 
 // B. Картки й вікна
 // app window unfolding from its centre, macOS chrome + sidebar skeleton
@@ -46,7 +46,7 @@ const B06: React.FC<Base & { name: string; role?: string; initials?: string }> =
   return <Glass side={side} y={y} w={420} scale={scale}>
     <div style={{ display: 'flex', alignItems: 'center', gap: 22 }}>
       <div style={{ width: 110, height: 110, borderRadius: 55, flexShrink: 0, background: `linear-gradient(135deg, ${th.accent}, #4FB286)`, display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontFamily: F.display, fontWeight: 900, fontSize: 40, color: INK, transform: `scale(${a})`, boxShadow: `0 0 0 6px rgba(195,255,85,.2)` }}>{initials ?? name.split(' ').map((w) => w[0]).join('').slice(0, 2)}</div>
+        fontFamily: F.display, fontWeight: 900, fontSize: 40, color: INK, transform: `scale(${a})`, boxShadow: `0 0 0 6px ${tint(th.accent, .2)}` }}>{initials ?? name.split(' ').map((w) => w[0]).join('').slice(0, 2)}</div>
       <div style={{ opacity: ramp(f, 10, 18), transform: `translateX(${(1 - ramp(f, 10, 18)) * 20}px)` }}>
         <div style={{ fontSize: 38, fontWeight: 800, lineHeight: 1.1 }}>{name}</div>
         {role && <div style={{ fontSize: 25, color: th.dim, marginTop: 6, fontWeight: 600 }}>{role}</div>}

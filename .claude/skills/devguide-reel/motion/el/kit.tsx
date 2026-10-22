@@ -41,3 +41,8 @@ export const Full: React.FC<{ children: React.ReactNode; fade?: boolean; style?:
   return <div style={{ position: 'absolute', left: 0, top: 0, width: 1080, height: 1920, fontFamily: F.body, opacity: fade ? interpolate(p, [0, 0.12], [0, 1], clamp) : 1, ...style }}>{children}</div>;
 };
 export const outline = (px = 8) => ({ WebkitTextStroke: `${px}px rgba(8,11,14,.85)`, paintOrder: 'stroke fill' as const, textShadow: '0 6px 22px rgba(0,0,0,.6)' });
+// accent colour at a given alpha: '#C3FF55' → 'rgba(195,255,85,.12)'
+export const tint = (hex: string, a: number) => {
+  const h = hex.replace('#', ''), n = parseInt(h.length === 3 ? h.replace(/./g, '$&$&') : h.slice(0, 6), 16);
+  return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`;
+};

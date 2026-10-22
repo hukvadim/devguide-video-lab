@@ -668,7 +668,7 @@ async function render(editPath, preview) {
     w: W, h: H, dur: r2(total), accent,
     words: edit.captions === false ? [] : outWords.filter((x) => !(split && edit.headFirst) || edit.captions?.head || x.s >= edit.headFirst - 0.1),
     progress: edit.progress ? edit.progress.y ?? 172 : undefined,
-    capY: st.capY, capAnchor: st.capAnchor ?? (split ? 'center' : 'bottom'), capStyle: edit.captions?.style, cap: edit.captions?.cap,
+    capY: st.capY, capAnchor: st.capAnchor ?? (split ? 'center' : 'bottom'), capStyle: edit.captions?.style, cap: edit.captions?.cap, capSize: edit.captions?.size,
     // голова на весь кадр → субтитри внизу (y 1490), а не на обличчі
     capLow: split ? [...(edit.headFirst ? [[0, r2(Math.min(edit.headFirst, segs[0].end - segs[0].start))]] : []), ...fullcams.map((c) => [c.t, r2(c.t + c.dur)])] : undefined,
     title: edit.title?.text ? { t: 0.05, dur: r2(edit.title.dur ?? 2.6), text: edit.title.text, y: split && edit.headFirst ? (edit.style?.titleY ?? HEAD_STYLE.titleY) : st.titleY } : null,
@@ -682,7 +682,7 @@ async function render(editPath, preview) {
   // коди каталогу (docs/ELEMENTS.md), що пішли в ролик: скіл читає їх з попередніх роликів, щоб не повторювати набір
   fs.writeFileSync(path.join(dir, 'codes.txt'), [...new Set(cardList.map((c) => c.type)), ...(edit.captions?.cap ? [edit.captions.cap] : [])].join(' ') + '\n');
   if (cardList.length) {
-    inputs.push('-i', renderMotion(dir, project, 'Cards', { w: W, h: H, dur: r2(total), theme: edit.cardsTheme ?? 'dg', cards: cardList }));
+    inputs.push('-i', renderMotion(dir, project, 'Cards', { w: W, h: H, dur: r2(total), theme: edit.cardsTheme ?? 'dg', accent: edit.theme?.accent, cards: cardList }));
     cardsIdx = idx++;
   }
 

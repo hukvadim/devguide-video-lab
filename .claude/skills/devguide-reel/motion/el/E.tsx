@@ -2,7 +2,7 @@ import React from 'react';
 import { interpolate } from 'remotion';
 import { F, clamp, ramp } from '../theme';
 import { Base, Glass, useLife } from '../glass';
-import { DIM_LINE, INK, Label, Reg, pop, useTh } from './kit';
+import { DIM_LINE, INK, Label, Reg, pop, useTh, tint } from './kit';
 
 // E. Цифри й дані (лише реальні числа в роликах)
 const easeOut3 = (x: number) => 1 - Math.pow(1 - x, 3);
@@ -105,7 +105,7 @@ const E09: React.FC<Base & { left: string; right: string; pos: number; label?: s
   return <Glass side={side} y={y} w={430} scale={scale} tilt={0}>
     {label && <Label>{label}</Label>}
     <div style={{ position: 'relative', marginTop: 34, height: 14, borderRadius: 7, background: `linear-gradient(90deg, ${th.accent}, rgba(255,255,255,.25))` }}>
-      <div style={{ position: 'absolute', top: -15, left: `calc(${k * 100}% - 22px)`, width: 44, height: 44, borderRadius: 22, background: '#fff', boxShadow: `0 0 0 6px rgba(195,255,85,.35), 0 4px 10px rgba(0,0,0,.5)` }} />
+      <div style={{ position: 'absolute', top: -15, left: `calc(${k * 100}% - 22px)`, width: 44, height: 44, borderRadius: 22, background: '#fff', boxShadow: `0 0 0 6px ${tint(th.accent, .35)}, 0 4px 10px rgba(0,0,0,.5)` }} />
     </div>
     <div style={{ marginTop: 20, display: 'flex', justifyContent: 'space-between', fontSize: 25, fontWeight: 800 }}><span style={{ color: th.accent }}>{left}</span><span style={{ color: th.dim }}>{right}</span></div>
   </Glass>;

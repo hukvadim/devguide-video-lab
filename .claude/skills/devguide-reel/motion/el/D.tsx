@@ -2,7 +2,7 @@ import React from 'react';
 import { interpolate } from 'remotion';
 import { F, clamp, ramp } from '../theme';
 import { Base, Glass, useLife } from '../glass';
-import { Check, DIM_LINE, Reg, pop, typed, useTh } from './kit';
+import { Check, DIM_LINE, Reg, pop, typed, useTh, tint } from './kit';
 
 // D. Код і термінал. Код — моно 24–26 px на темному склі.
 const DARK = 'rgba(6,9,11,.94)';
@@ -11,7 +11,7 @@ const Code: React.FC<{ lines: string[]; f: number; hl?: number; start?: number }
   return <div style={{ fontFamily: F.mono, fontSize: 24, lineHeight: 1.6 }}>
     {lines.map((l, i) => {
       const on = i === hl && f > start + lines.length * 3 + 6;
-      return <div key={i} style={{ display: 'flex', opacity: ramp(f, start + i * 3, start + 6 + i * 3), background: on ? 'rgba(195,255,85,.14)' : 'transparent',
+      return <div key={i} style={{ display: 'flex', opacity: ramp(f, start + i * 3, start + 6 + i * 3), background: on ? tint(th.accent, .14) : 'transparent',
         borderLeft: `4px solid ${on ? th.accent : 'transparent'}`, paddingLeft: 10, whiteSpace: 'pre' }}>
         <span style={{ color: th.dim, opacity: 0.5, width: 36 }}>{i + 1}</span><span style={{ color: on ? th.text : '#CFD6DC' }}>{l}</span>
       </div>;
@@ -35,7 +35,7 @@ const D03: React.FC<Base & { lines: string[] }> = ({ lines, side, y, scale }) =>
       const kind = l[0], body = l.slice(1).trimStart(), at = 6 + i * 6;
       const q = ramp(f, at, at + 8);
       const style: React.CSSProperties = kind === '-' ? { color: th.dim, background: 'rgba(255,255,255,.05)', textDecoration: q > 0.5 ? 'line-through' : 'none', opacity: 1 - 0.4 * q }
-        : kind === '+' ? { color: th.accent, background: 'rgba(195,255,85,.1)', opacity: q, transform: `translateX(${(1 - q) * 40}px)` } : { color: '#CFD6DC' };
+        : kind === '+' ? { color: th.accent, background: tint(th.accent, .1), opacity: q, transform: `translateX(${(1 - q) * 40}px)` } : { color: '#CFD6DC' };
       return <div key={i} style={{ whiteSpace: 'pre', padding: '0 10px', borderRadius: 6, ...style }}>{kind === '-' || kind === '+' ? kind : ' '} {body}</div>;
     })}
   </Glass>;
@@ -76,7 +76,7 @@ const D06: React.FC<Base & { json: string[]; hl?: string }> = ({ json, hl, side,
     <div style={{ overflow: 'hidden', height: open * json.length * 40 }}>
       {json.map((l, i) => {
         const on = i === idx && f > 24;
-        return <div key={i} style={{ whiteSpace: 'pre', paddingLeft: 26, borderRadius: 6, background: on ? 'rgba(195,255,85,.14)' : 'transparent', color: on ? th.text : '#CFD6DC' }}>
+        return <div key={i} style={{ whiteSpace: 'pre', paddingLeft: 26, borderRadius: 6, background: on ? tint(th.accent, .14) : 'transparent', color: on ? th.text : '#CFD6DC' }}>
           {l.replace(/("[^"]+")(\s*:)/, '$1$2').split(/("[^"]+"\s*:)/).map((s, k) => <span key={k} style={{ color: /:\s*$/.test(s) ? (on ? th.accent : '#9BC3FF') : undefined }}>{s}</span>)}
         </div>;
       })}

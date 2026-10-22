@@ -14,6 +14,7 @@ export type TextProps = {
   capY: number;              // низ блоку субтитрів (голова) або центр (спліт), px у 1080×1920
   capAnchor: 'bottom' | 'center';
   capStyle?: 'stroke' | 'soft'; // soft: white + soft layered shadow, no outline; only the active word is accent
+  capSize?: number;          // множник автоматичного розміру субтитрів (captions.size), напр. 0.9 або 1.15
   cap?: string;              // коди субтитрів з docs/ELEMENTS.md: 'S02+T04+T27+T36+T47'
   title?: TextItem | null; callouts: TextItem[]; hits: number[];
   progress?: number;         // y смужки прогресу зверху (px у 1080×1920); без поля — без смужки
@@ -296,7 +297,7 @@ const useFontsLoaded = () => {
   return ready;
 };
 
-export const Text: React.FC<TextProps> = ({ w, words, capY, capAnchor, capStyle, cap: capCodes, title, callouts, hits, progress, capLow, accent = C.lime }) => {
+export const Text: React.FC<TextProps> = ({ w, words, capY, capAnchor, capStyle, cap: capCodes, capSize = 1, title, callouts, hits, progress, capLow, accent = C.lime }) => {
   const ready = useFontsLoaded();
   const cap = useMemo(() => parseCap(capCodes, capStyle === 'soft'), [capCodes, capStyle]);
   const pages = useMemo(() => {
@@ -304,8 +305,9 @@ export const Text: React.FC<TextProps> = ({ w, words, capY, capAnchor, capStyle,
     // T49 = narrow column beside the speaker; S06/S07 are wider than Inter 800, measure them as drawn
     const m = measureWith(cap.s.has('S07') ? F.display : F.body, cap.s.has('S07') ? '900' : '800');
     const measure: Measure = cap.s.has('S06') ? (text, size) => m(text.toUpperCase(), size) * 1.06 : m;
-    return cap.pos === 'T49' ? paginate(words, { maxW: 420, maxLines: 3, sizes: [62, 58, 54, 50] }, measure) : paginate(words, { maxW: MAX_W, maxLines: 2, sizes: CAP_SIZES }, measure);
-  }, [words, ready, cap]);
+    const k = (a: number[]) => a.map((x) => Math.round(x * capSize));
+    return cap.pos === 'T49' ? paginate(words, { maxW: 420, maxLines: 3, sizes: k([62, 58, 54, 50]) }, measure) : paginate(words, { maxW: MAX_W, maxLines: 2, sizes: k(CAP_SIZES) }, measure);
+  }, [words, ready, cap, capSize]);
   if (!ready) return null;
   return <AbsoluteFill>
     <div style={{ position: 'absolute', width: 1080, height: 1920, transform: `scale(${w / 1080})`, transformOrigin: '0 0' }}>

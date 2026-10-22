@@ -1,7 +1,7 @@
 import React from 'react';
 import { AbsoluteFill, interpolate, Sequence, spring, useVideoConfig } from 'remotion';
 import { F, clamp } from './theme';
-import { CARD_SCALE, Glass, Icon, Side, THEMES, Th, X, useLife } from './glass';
+import { CARD_SCALE, Glass, Icon, Side, THEMES, Th, X, useLife, withAccent } from './glass';
 import { ELEMENTS, ElementCard } from './Elements';
 
 // Glass cards that pop up over the reel (above the video, under nothing): they fill static stretches with
@@ -15,7 +15,8 @@ export type Card =
   | ElementCard; // codes from docs/ELEMENTS.md (E01, H01…), see Elements.tsx
 // catalog codes of the original five cards
 const ALIAS: Record<string, string> = { A01: 'crumbs', B01: 'skill', C01: 'chat', F01: 'list', F02: 'stack' };
-export type CardsProps = { w: number; h: number; dur: number; theme?: 'dg' | 'glow'; cards: Card[] };
+// accent: reel-wide accent (edit.theme.accent); a card may override it with its own `accent` and `theme`
+export type CardsProps = { w: number; h: number; dur: number; theme?: 'dg' | 'glow'; accent?: string; cards: Card[] };
 
 const Crumbs: React.FC<Extract<Card, { type: 'crumbs' }>> = ({ steps, active: a0, marks = [], y = 120 }) => {
   const th = React.useContext(Th);
@@ -116,24 +117,25 @@ const Chat: React.FC<Extract<Card, { type: 'chat' }>> = ({ prompt, reply, side =
   </Glass>;
 };
 
-export const Cards: React.FC<CardsProps> = ({ w, theme = 'dg', cards }) => {
+export const Cards: React.FC<CardsProps> = ({ w, theme = 'dg', accent, cards }) => {
   const { fps } = useVideoConfig();
-  return <Th.Provider value={THEMES[theme]}>
+  return <>
     <AbsoluteFill>
       <div style={{ position: 'absolute', width: 1080, height: 1920, transform: `scale(${w / 1080})`, transformOrigin: '0 0' }}>
         {cards.map((c0, i) => {
           const c = { ...c0, type: ALIAS[c0.type] ?? c0.type } as Card;
           const El = ELEMENTS[c.type]?.C;
-          return <Sequence key={i} from={Math.round(c.t * fps)} durationInFrames={Math.max(1, Math.round(c.dur * fps))} layout="none">
+          const own = c as { theme?: 'dg' | 'glow'; accent?: string };
+          return <Sequence key={i} from={Math.round(c.t * fps)} durationInFrames={Math.max(1, Math.round(c.dur * fps))} layout="none"><Th.Provider value={withAccent(THEMES[own.theme ?? theme], own.accent ?? accent)}>
             {c.type === 'crumbs' && <Crumbs {...c} />}
             {c.type === 'skill' && <Skill {...c} />}
             {c.type === 'list' && <List {...c} />}
             {c.type === 'stack' && <Stack {...c} />}
             {c.type === 'chat' && <Chat {...c} />}
             {El && <El {...c} />}
-          </Sequence>;
+          </Th.Provider></Sequence>;
         })}
       </div>
     </AbsoluteFill>
-  </Th.Provider>;
+  </>;
 };

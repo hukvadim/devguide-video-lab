@@ -47,3 +47,11 @@ export const Icon: React.FC<{ size?: number; glyph?: string }> = ({ size = 72, g
   return <div style={{ width: size, height: size, borderRadius: size * 0.28, background: th.chip, border: th.border, display: 'flex', flexShrink: 0,
     alignItems: 'center', justifyContent: 'center', fontSize: size * 0.5, color: th.accent, fontFamily: F.display, fontWeight: 900 }}>{glyph}</div>;
 };
+
+// theme with a custom accent (edit.theme.accent for the whole reel, or card.accent for one card):
+// chips and glows follow it. Keep it bright: accent text needs ≥3:1 on the dark glass, dark ink sits on accent fills.
+export const withAccent = (t: T, accent?: string): T => {
+  if (!accent) return t;
+  const n = parseInt(accent.replace('#', '').slice(0, 6), 16), rgb = `${n >> 16},${(n >> 8) & 255},${n & 255}`;
+  return { ...t, accent, chip: `rgba(${rgb},.12)`, glow: t.glow.replace(/rgba\(195,255,85,([.\d]+)\)/, `rgba(${rgb},$1)`) };
+};

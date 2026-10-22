@@ -2,7 +2,7 @@ import React from 'react';
 import { interpolate, spring } from 'remotion';
 import { F, clamp, ramp } from '../theme';
 import { Base, Glass, useLife } from '../glass';
-import { Check, Free, INK, Label, Reg, outline, pop, useTh } from './kit';
+import { Check, Free, INK, Label, Reg, outline, pop, useTh, tint } from './kit';
 
 // G. Порівняння й вибір
 const G02: React.FC<Base & { a: string; b: string }> = ({ a, b, y = 300 }) => {
@@ -111,7 +111,7 @@ const G08: React.FC<Base & { x: [string, string]; y: [string, string]; point: st
     <div style={{ position: 'relative', width: S, height: S, margin: '20px auto 30px' }}>
       <div style={{ position: 'absolute', left: S / 2 - 2, top: 0, width: 4, height: S * k, background: th.dim, borderRadius: 2 }} />
       <div style={{ position: 'absolute', top: S / 2 - 2, left: 0, height: 4, width: S * k, background: th.dim, borderRadius: 2 }} />
-      <div style={{ position: 'absolute', left: Math.round(px / (S / 2)) ? S / 2 : 0, top: Math.round(py / (S / 2)) ? S / 2 : 0, width: S / 2, height: S / 2, background: 'rgba(195,255,85,.1)', opacity: q }} />
+      <div style={{ position: 'absolute', left: Math.round(px / (S / 2)) ? S / 2 : 0, top: Math.round(py / (S / 2)) ? S / 2 : 0, width: S / 2, height: S / 2, background: tint(th.accent, .1), opacity: q }} />
       <div style={{ position: 'absolute', left: px - 16, top: py - 16, width: 32, height: 32, borderRadius: 16, background: th.accent, transform: `scale(${q})`, boxShadow: `0 0 20px ${th.accent}` }} />
       <div style={{ position: 'absolute', left: px + 22, top: py - 18, fontSize: 24, fontWeight: 800, color: th.accent, opacity: q, whiteSpace: 'nowrap' }}>{point}</div>
       {[[xl[0], { left: 0, top: S / 2 + 10 }], [xl[1], { right: 0, top: S / 2 + 10, textAlign: 'right' }], [yl[1], { left: 0, right: 0, top: -34, textAlign: 'center' }], [yl[0], { left: 0, right: 0, top: S + 8, textAlign: 'center' }]].map(([t, pos], i) =>

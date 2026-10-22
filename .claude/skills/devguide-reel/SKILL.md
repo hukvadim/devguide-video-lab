@@ -141,7 +141,8 @@ node "SKILL_DIR/scripts/vid.mjs" render <проєкт>/work/<назва>/edit.js
   Готові пари — у `src/system/theme.tsx` проєкту (`drop01`, `drop14` …, див. `docs/FORMAT_LAB.md`). Без поля — графіт + лайм.
 - `captions`: `{"emphasis": ["годин", "сайт"], "accent": "#C3FF55"}` або `false` (без субтитрів).
   `captions.cap`: коди субтитрів із `docs/ELEMENTS.md`, напр. `"S02+T04+T27+T36"` (стиль + поява + поведінка + зникнення + позиція).
-- `cards`: `[{at, dur, type, ...}]`, де `type` = код елемента з `docs/ELEMENTS.md` (`E01`, `H01`, `I01`…) або старе ім'я (`crumbs`, `list`…). Поля: `ELEMENTS[код].demo` у `motion/Elements.tsx`.
+  `captions.size`: множник автоматичного розміру субтитрів (`0.9` дрібніше, `1.15` більше).
+- `cards`: `[{at, dur, type, side, y, scale, accent, theme, ...}]` (`accent`/`theme` — колір однієї картки; без них картки беруть `theme.accent` ролику й `cardsTheme`), де `type` = код елемента з `docs/ELEMENTS.md` (`E01`, `H01`, `I01`…) або старе ім'я (`crumbs`, `list`…). Поля: `ELEMENTS[код].demo` у `motion/Elements.tsx`.
   Увесь текст (субтитри, титул, плашки, удари) — один прозорий шар Remotion `motion/Text.tsx` зі шрифтами DevGuide
   (Unbounded / Inter / JetBrains Mono з `fonts/`): субтитри сторінками з підсвіченим словом, розміри підбираються
   вимірюванням під ширину 912 px. `emphasis` — початки ключових слів (лаймовий акцент).

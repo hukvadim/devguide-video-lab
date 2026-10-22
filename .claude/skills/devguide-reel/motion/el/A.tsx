@@ -2,7 +2,7 @@ import React from 'react';
 import { interpolate } from 'remotion';
 import { F, clamp, ramp } from '../theme';
 import { Base, Glass, useLife } from '../glass';
-import { Check, INK, Label, Reg, pop, useTh } from './kit';
+import { Check, INK, Label, Reg, pop, useTh, tint } from './kit';
 
 // A. Навігація й інтерфейс
 const A02: React.FC<Base & { title?: string; items: string[]; pick: number }> = ({ title, items, pick, side, y, scale }) => {
@@ -45,7 +45,7 @@ const A07: React.FC<Base & { label: string; items: string[]; pick: number }> = (
     </div>
     <div style={{ overflow: 'hidden', height: open * items.length * 56 + (open > 0 ? 12 : 0) }}>
       <div style={{ marginTop: 12 }}>{items.map((it, i) => <div key={i} style={{ height: 56, display: 'flex', alignItems: 'center', padding: '0 20px', borderRadius: 14, fontSize: 27, fontWeight: 700,
-        background: i === pick && f > 26 ? `rgba(195,255,85,${0.12 + 0.25 * blink})` : 'transparent', color: i === pick && f > 26 ? th.text : th.dim }}>{it}</div>)}</div>
+        background: i === pick && f > 26 ? tint(th.accent, 0.12 + 0.25 * blink) : 'transparent', color: i === pick && f > 26 ? th.text : th.dim }}>{it}</div>)}</div>
     </div>
   </Glass>;
 };

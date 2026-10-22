@@ -2,7 +2,7 @@ import React from 'react';
 import { interpolate, random, spring } from 'remotion';
 import { F, clamp, ramp } from '../theme';
 import { Base, useLife } from '../glass';
-import { Full, INK, Reg, useTh } from './kit';
+import { Full, INK, Reg, useTh, tint } from './kit';
 
 // J. Ритм і переходи: повнокадрові накладки. Шар прозорий і не бачить відео під собою, тому
 // J03/J05/J06 — це накладки (смуги, спалах із рамкою, лінія розрізу), а не справжнє розмиття чи фриз кадру.
@@ -39,13 +39,13 @@ const J03: React.FC<Base & { dir?: 1 | -1 }> = ({ dir = 1 }) => {
 };
 
 const J04: React.FC<Base> = () => {
-  const { f } = useLife();
+  const th = useTh(); const { f } = useLife();
   if (f > 5) return null;
   return <Full fade={false}>
     {Array.from({ length: 9 }, (_, i) => {
       const s = `j04${f}_${i}`, yy = random(s + 'y') * 1920, h = 20 + random(s + 'h') * 140, dx = (random(s + 'x') - 0.5) * 120;
       return <div key={i} style={{ position: 'absolute', left: dx, top: yy, width: 1080, height: h, mixBlendMode: 'screen', opacity: 0.75,
-        background: i % 3 === 0 ? 'rgba(0,255,255,.5)' : i % 3 === 1 ? 'rgba(255,0,200,.45)' : 'rgba(195,255,85,.45)' }} />;
+        background: i % 3 === 0 ? 'rgba(0,255,255,.5)' : i % 3 === 1 ? 'rgba(255,0,200,.45)' : tint(th.accent, .45) }} />;
     })}
   </Full>;
 };
