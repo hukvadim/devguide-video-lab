@@ -38,4 +38,4 @@ Claude напише сценарій, закодить ролик, зробит�
 `~/.claude/skills/` містить багато маркетингових скілів (SEO, ads, email) і старий `edit-video`: для відео вони не потрібні, їхню роль виконує `devguide-reel` з репо. Плагіни (ponytail, ui-ux-pro-max, figma тощо) за бажанням. Пам'ять Claude (`~/.claude/projects/.../memory`) у git не їде, тому її суть уже вписано в `CLAUDE.md`.
 
 ## 5. UGC-вставки з Flow
-Промпти й образи в `docs/UGC_FLOW.md`. Свої фото додавай як Ingredients у Google Flow, готові клипи клади в `public/assets/ugc/flow/`, далі `git add`, `commit`, `push`.
+Промпти й образи в `docs/UGC_FLOW.md`. Свої фото додавай як Ingredients у Google Flow. **Учню:** кліпи автора в репо з його обличчям, тож для своїх рілсів поклади свої кліпи в `<твій-ролик>/assets/ugc/` з `ugc.json` за зразком `public/assets/ugc/ugc.json` — скіл `devguide-reel` візьме їх першими (`"ugcLibrary": false` у `edit.json` вимикає вставки).

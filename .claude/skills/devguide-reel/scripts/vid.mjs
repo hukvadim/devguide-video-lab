@@ -635,7 +635,7 @@ async function render(editPath, preview) {
   const cutaways = [];
   const whoosh = edit.whoosh ? path.resolve(project, edit.whoosh)
     : [path.join(project, 'assets/sfx/whoosh.mp3'), WHOOSH].find((p) => fs.existsSync(p)) ?? '';
-  for (const c of edit.cutaways ?? []) {
+  for (const c of [...edit.cutaways ?? [], ...ugcCutaways(ugcLibrary(project, edit), edit)]) {
     const t = mapTime(segs, c.at);
     const file = path.resolve(project, c.file);
     if (t == null || !fs.existsSync(file)) { console.warn('вставку пропущено:', c.file); continue; }
@@ -791,6 +791,22 @@ function masterAudio(file) {
   fs.renameSync(tmp, file);
 }
 
+// UGC-бібліотека (ugc.json: name, file, from, dur, tags): edit.ugcLibrary, або <проєкт>/assets/ugc/ugc.json,
+// або спільна бібліотека репо public/assets/ugc/ugc.json. Учень кладе свої кліпи у свій проєкт — чужого обличчя в ролику не буде.
+function ugcLibrary(project, edit) {
+  if (edit.ugcLibrary === false) return []; // без UGC-вставок
+  const f = [edit.ugcLibrary && path.resolve(project, edit.ugcLibrary), path.join(project, 'assets/ugc/ugc.json'), path.resolve(TOOL, '../../../public/assets/ugc/ugc.json')]
+    .filter(Boolean).find((x) => fs.existsSync(x));
+  return f ? JSON.parse(fs.readFileSync(f, 'utf8')).clips.map((c) => ({ ...c, path: path.resolve(path.dirname(f), c.file) })) : [];
+}
+const findClip = (lib, key) => lib.find((c) => c.name === key) ?? lib.find((c) => c.tags.includes(key));
+// edit.ugc: [{at, clip: 'wow' | тег, dur?, from?}] → звичайні повноекранні вставки (cutaways)
+const ugcCutaways = (lib, edit) => (edit.ugc ?? []).map((u) => {
+  const c = findClip(lib, u.clip);
+  if (!c) { console.warn('UGC-кліп не знайдено в бібліотеці:', u.clip); return null; }
+  return { at: u.at, dur: u.dur ?? c.dur ?? 3, file: c.path, from: u.from ?? c.from ?? 0, ugc: c.name };
+}).filter(Boolean);
+
 // ---------- план кадру, аудит ритму, розкадровка (scripts/plan.mjs) ----------
 // спільне читання work/<назва>/: edit.json (без segments — увесь запис одним шматком), слова в часі ролика
 function loadWork(editPath) {
@@ -803,7 +819,8 @@ function loadWork(editPath) {
   const segs = snapSegments(edit.segments?.length ? edit.segments : [{ start: 0, end: src.duration ?? words.at(-1).e + 0.5 }], src.fps);
   const total = segs.at(-1).off + segs.at(-1).end - segs.at(-1).start;
   const unmap = (t) => { const g = segs.find((x) => t >= x.off && t < x.off + x.end - x.start) ?? segs.at(-1); return g.start + t - g.off; };
-  return { editPath, dir, edit, segs, total, unmap, outWords: mapWords(segs, words) };
+  const project = path.resolve(dir, '..', '..');
+  return { editPath, dir, project, edit, segs, total, unmap, outWords: mapWords(segs, words), lib: ugcLibrary(project, edit) };
 }
 
 // коди 2–3 попередніх роликів поруч (work/*/codes.txt), щоб не повторювати набір
@@ -816,7 +833,7 @@ function recentCodes(dir) {
 
 const OLD_CODE = { crumbs: 'A01', skill: 'B01', chat: 'C01', list: 'F01', stack: 'F02' };
 // усе, що міняє картинку, у часі ролика
-function timelineEvents({ edit, segs, total }) {
+function timelineEvents({ edit, segs, total, project = '.', lib = [] }) {
   const T = (x) => mapTime(segs, x);
   const ev = [];
   segs.forEach((g, i) => { if (i && (g.zoom ?? 1) !== (segs[i - 1].zoom ?? 1)) ev.push({ t: g.off, kind: 'cut' }); });
@@ -825,7 +842,8 @@ function timelineEvents({ edit, segs, total }) {
     const t = T(s.at); if (t == null) continue;
     (s.cards ?? []).forEach((c, k) => ev.push(k ? { t, kind: 'code', code: c.type } : { t, dur: s.dur ?? 4.5, kind: 'scene', code: c.type, sfx: true }));
   }
-  for (const c of edit.cutaways ?? []) { const t = T(c.at); if (t != null) ev.push({ t, dur: c.dur ?? 3, kind: 'cutaway', sfx: true }); }
+  for (const c of edit.cutaways ?? []) { const t = T(c.at); if (t != null) ev.push({ t, dur: c.dur ?? 3, kind: 'cutaway', sfx: true, file: path.resolve(project, c.file), from: c.from ?? 0 }); }
+  for (const c of ugcCutaways(lib, edit)) { const t = T(c.at); if (t != null) ev.push({ t, dur: c.dur, kind: 'cutaway', sfx: true, file: c.file, from: c.from, code: 'ugc:' + c.ugc }); }
   for (const c of edit.fullcam ?? []) { const t = T(c.at); if (t != null) ev.push({ t, dur: c.dur ?? 4, kind: 'fullcam', sfx: true }); }
   for (const b of edit.broll ?? []) { const t = T(b.at); if (t != null) ev.push({ t, dur: b.dur ?? 3, kind: 'broll' }); }
   for (const c of edit.callouts ?? []) { const t = T(c.at); if (t != null) ev.push({ t, dur: c.dur ?? 2.6, kind: 'callout' }); }
@@ -856,7 +874,18 @@ function fixAudit(editPath) {
   const edit = structuredClone(w.edit);
   const used = new Set([...(edit.cards ?? []).map((c) => OLD_CODE[c.type] ?? c.type), ...(edit.scenes ?? []).flatMap((s) => (s.cards ?? []).map((c) => c.type))]);
   const avoid = recentCodes(w.dir);
-  let added = 0;
+  let added = 0, moved = 0;
+  // картки не лежать на сценках і вставках: перед вставкою — вкоротити, усередині — перенести одразу після неї
+  const fulls = timelineEvents({ ...w, edit }).filter((e) => e.kind === 'scene' || e.kind === 'cutaway');
+  edit.cards = (edit.cards ?? []).flatMap((c) => {
+    const t = mapTime(w.segs, c.at), dur = c.dur ?? 3;
+    const hit = t != null && fulls.find((f) => t < f.t + f.dur && f.t < t + dur);
+    if (!hit) return [c];
+    moved++;
+    if (t < hit.t) return hit.t - t - 0.1 >= 1.2 ? [{ ...c, dur: r2(hit.t - t - 0.1) }] : [];
+    const t2 = hit.t + hit.dur + 0.2;
+    return t2 + 1.2 < w.total ? [{ ...c, at: r2(w.unmap(t2)) }] : [];
+  });
   for (let k = 0; k < 12; k++) {
     const a = audit(timelineEvents({ ...w, edit }), w.total, {});
     // спершу дірки >6 с, потім різноманітність: <4 кодів на 30 с → картка в найбільший проміжок ≥4 с
@@ -873,26 +902,26 @@ function fixAudit(editPath) {
   edit.cards?.sort((x, y) => x.at - y.at);
   fs.copyFileSync(w.editPath, path.join(w.dir, 'edit.before-fix.json'));
   fs.writeFileSync(w.editPath, JSON.stringify(edit, null, 2));
-  console.log(`додано карток: ${added} (стара версія: edit.before-fix.json)`);
+  console.log(`додано карток: ${added}, виправлено накладок: ${moved} (стара версія: edit.before-fix.json)`);
   return runAudit(w.editPath);
 }
 
 function runPlan(editPath, { apply, keyword } = {}) {
   const w = loadWork(editPath);
   const split = !!(w.edit.screen && w.edit.layout !== 'head');
-  const shots = planShots(w.outWords, { split, keyword: keyword ?? w.edit.cta?.keyword, site: w.edit.site, avoid: recentCodes(w.dir) });
+  const shots = planShots(w.outWords, { split, keyword: keyword ?? w.edit.cta?.keyword, site: w.edit.site, avoid: recentCodes(w.dir), ugc: w.lib });
   const draft = planToEdit(shots, w.unmap, { split });
   const table = planTable(shots);
   fs.writeFileSync(path.join(w.dir, 'plan.md'), `# План кадру\n\n${table}\n\nТексти карток — чернетка з фрази: перепиши в ≤6 сильних слів.\n`);
   fs.writeFileSync(path.join(w.dir, 'plan.json'), JSON.stringify(draft, null, 2));
   console.log(table);
-  console.log(`\nсценок ${draft.scenes.length}, карток ${draft.cards.length}${split ? `, обличчя на весь кадр ${draft.fullcam.length}` : ''} → ${path.join(w.dir, 'plan.json')}`);
+  console.log(`\nсценок ${draft.scenes.length}, UGC-вставок ${draft.ugc.length}, карток ${draft.cards.length}${split ? `, обличчя на весь кадр ${draft.fullcam.length}` : ''} → ${path.join(w.dir, 'plan.json')}`);
   if (apply) {
     fs.copyFileSync(w.editPath, path.join(w.dir, 'edit.before-plan.json'));
     const { title, ...rest } = draft; // свій титул автора не перезаписуємо
     fs.writeFileSync(w.editPath, JSON.stringify({ ...w.edit, ...rest, title: w.edit.title ?? title }, null, 2));
     console.log('записано в edit.json (стара версія: edit.before-plan.json)');
-    runAudit(w.editPath);
+    fixAudit(w.editPath); // прибрати накладки карток на вставки й закрити дірки
   }
 }
 
@@ -906,7 +935,7 @@ async function runBoard(editPath, full = false) {
   const mids = [...ev.map((e) => ({ t: e.t + Math.min(1.2, (e.dur ?? 0.6) / 2), e })), ...segs.map((g) => ({ t: g.off + 0.4, e: { kind: 'face' } }))]
     .sort((a, b) => a.t - b.t).filter((m, i, a) => !i || m.t - a[i - 1].t > 1).slice(0, 20);
   const NAME = { card: 'картка', scene: 'СЦЕНКА', cutaway: 'вставка', fullcam: 'обличчя', broll: 'b-roll', callout: 'плашка', title: 'титул', cut: 'склейка', face: 'кадр' };
-  const fast = !full && !edit.screen && !edit.broll?.length && !edit.cutaways?.length;
+  const fast = !full && !edit.screen && !edit.broll?.length;
   const frames = []; // [{t, png}] готовий кадр 540×960 на кожну подію
   if (fast) {
     const { bundle } = await import('@remotion/bundler');
@@ -932,7 +961,10 @@ async function runBoard(editPath, full = false) {
     for (const [i, { t, e }] of mids.entries()) {
       const base = path.join(dir, `bd_${i}`), png = `${base}.png`;
       await still('Text', text, Math.round(t * FPS), `${base}_t.png`);
-      if (e.kind === 'scene') {
+      if (e.kind === 'cutaway') { // стокова або UGC-вставка: кадр самого кліпу, cover-кроп у 9:16
+        run(ffmpeg(), ['-y', '-v', 'error', '-ss', (e.from + t - e.t).toFixed(2), '-i', e.file, '-i', `${base}_t.png`, '-filter_complex',
+          '[0:v]scale=540:960:force_original_aspect_ratio=increase,crop=540:960,setsar=1[b];[b][1]overlay', '-frames:v', '1', png]);
+      } else if (e.kind === 'scene') {
         const s = edit.scenes.find((x) => T(x.at) === e.t);
         const sc = { w: 540, h: 960, dur: s.dur ?? 4.5, theme: edit.cardsTheme ?? 'dg', accent: edit.theme?.accent, bg: s.bg ?? 'scene', cards: s.cards.map((c) => ({ side: 'center', t: 0, dur: s.dur ?? 4.5, ...c })) };
         await still('Cards', sc, Math.round((t - e.t) * FPS), `${base}_c.png`);

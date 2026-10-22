@@ -1,0 +1,23 @@
+{
+  "about": "Бібліотека UGC-вставок для devguide-reel: повноекранний кліп 2–4 с без звуку між фразами. file — шлях від цієї папки, from — початок найкращого шматка (с), dur — скільки брати, tags — емоції/ситуації, за якими план кадру сам підбирає кліп. Новий кліп: поклади mp4 у flow/ і допиши сюди рядок.",
+  "clips": [
+    { "name": "wow", "file": "flow/wow.mp4", "from": 1.8, "dur": 2.5, "tags": ["wow", "surprise", "emo"] },
+    { "name": "smile", "file": "flow/smile.mp4", "from": 5.0, "dur": 2.5, "tags": ["smile", "joy", "emo", "success"] },
+    { "name": "stop", "file": "flow/Stop.mp4", "from": 1.8, "dur": 2.5, "tags": ["stop", "warn", "no"] },
+    { "name": "facepalm", "file": "flow/facepalm.mp4", "from": 1.4, "dur": 2.5, "tags": ["facepalm", "fail", "warn", "error"] },
+    { "name": "point-up", "file": "flow/point-up.mp4", "from": 2.6, "dur": 2.5, "tags": ["point", "cta", "attention"] },
+    { "name": "typing", "file": "flow/typing.mp4", "from": 0.3, "dur": 2.5, "tags": ["typing", "code", "work", "action"] },
+    { "name": "whiteboard", "file": "flow/Man_drawing_diagram_on_whiteboard.mp4", "from": 4.0, "dur": 3.5, "tags": ["explain", "scheme", "steps", "aha"] },
+    { "name": "whiteboard-black", "file": "flow/Man_drawing_diagram_on_whiteboard_black_suite.mp4", "from": 1.5, "dur": 3.5, "tags": ["explain", "scheme", "def"] },
+    { "name": "dinosaur", "file": "flow/Man_fleeing_from_dinosaur.mp4", "from": 0.3, "dur": 2.8, "tags": ["panic", "fear", "run", "joke", "deadline"] },
+    { "name": "hand-front", "file": "flow/Man_hend_front.mp4", "from": 3.0, "dur": 3.0, "tags": ["hello", "greet", "cta", "bye"] },
+    { "name": "mug-laptop", "file": "flow/Man_holding_mug_and_laptop_.mp4", "from": 3.5, "dur": 3.0, "tags": ["calm", "coffee", "morning", "success", "relax"] },
+    { "name": "sofa-laugh", "file": "flow/Man_laughs_on_sofa_with.mp4", "from": 3.5, "dur": 3.0, "tags": ["laugh", "joke", "fun", "emo"] },
+    { "name": "window-nod", "file": "flow/Man_nodding_by_window.mp4", "from": 4.5, "dur": 3.0, "tags": ["serious", "nod", "agree", "security", "question"] },
+    { "name": "phone-react", "file": "flow/Man_reacting_to_smartphone.mp4", "from": 3.5, "dur": 3.0, "tags": ["phone", "notification", "message", "direct", "wow"] },
+    { "name": "rubbing-eyes", "file": "flow/Man_rubbing_eyes_at_desk.mp4", "from": 0.0, "dur": 3.5, "tags": ["tired", "long", "waiting", "fail"] },
+    { "name": "cafe-wow", "file": "flow/Man_sipping_coffee_at_cafe_ending_wow.mp4", "from": 6.5, "dur": 3.0, "tags": ["wow", "coffee", "impressed", "emo"] },
+    { "name": "typing-focus", "file": "flow/Man_typing_at_desk.mp4", "from": 3.0, "dur": 3.0, "tags": ["focus", "code", "work", "typing", "action"] },
+    { "name": "street-phone", "file": "flow/Man_walking.mp4", "from": 3.5, "dur": 3.0, "tags": ["phone", "cta", "show", "street", "direct"] }
+  ]
+}

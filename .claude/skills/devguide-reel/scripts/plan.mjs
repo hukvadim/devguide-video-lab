@@ -44,6 +44,9 @@ const RE = {
   warn: /не роби|помилк|увага|обережно|ніколи/,
   tip: /лайфхак|порада|секрет|фішк/,
   emo: /вау|круто|шок|неймовірн|клас|кайф|жах|смішн/,
+  fail: /не працю|зламал|баг|помилк|втомив|довго|чекати/,
+  joke: /жарт|смішн|ха-ха|прикол|дедлайн|паніка/,
+  phone: /телефон|повідомлен|direct|директ|сповіщен/,
 };
 const TOOL = [[/скіл/, 'B01'], [/промпт/, 'C01'], [/агент/, 'C03'], [/термінал|npm|команд/, 'D01'], [/сайт|сторінк/, 'B02'], [/файл/, 'B07'], [/код\b|коді|кодом/, 'D02'], [/модел|opus|sonnet/, 'C08']];
 // fillers for face stretches without a cue, in order of preference
@@ -111,7 +114,12 @@ export function planShots(words, opts = {}) {
   const used = new Set(), avoid = opts.avoid ?? new Set();
   const o = { ...opts, n: 0, step: 0 };
   const take = (list) => list.find((c) => !used.has(c) && !avoid.has(c)) ?? list.find((c) => !used.has(c));
-  let lastScene = -1e9, lastVisual = 0;
+  let lastScene = -1e9, lastVisual = 0, lastUgc = -1e9;
+  // UGC library (ugc.json clips): phrase tags → clip tags, one insert per ugcGap seconds, never the hook
+  const UGC_TAGS = { emo: ['wow', 'emo', 'laugh'], joke: ['joke', 'laugh', 'panic'], fail: ['fail', 'facepalm', 'tired'], warn: ['stop', 'warn'],
+    question: ['question', 'serious'], phone: ['phone', 'message'], action: ['typing', 'action'] };
+  const usedClips = new Set();
+  const pickClip = (tags) => { for (const t of tags) for (const want of UGC_TAGS[t] ?? []) { const c = (opts.ugc ?? []).find((x) => !usedClips.has(x.name) && x.tags.includes(want)); if (c) return c; } return null; };
   const shots = ps.map((p, i) => {
     const tags = classify(p.text, i, ps.length), dur = p.e - p.s;
     const shot = { ...p, tags, kind: opts.split ? 'screen' : 'face', codes: [], cards: [] };
@@ -123,6 +131,13 @@ export function planShots(words, opts = {}) {
       : tags.includes('def') ? take(['B04'])
       : tags.includes('steps') ? take(['F04', 'F05']) : null;
     // a scene needs room: not the hook, ≥2 s of speech, ≥sceneGap since the last one
+    const clip = !tags.includes('hook') && !sceneCode && p.s - lastUgc >= (opts.ugcGap ?? 12) && p.s - lastScene >= 4 ? pickClip(tags) : null;
+    if (clip) {
+      usedClips.add(clip.name);
+      shot.kind = 'ugc'; shot.clip = clip.name; shot.codes.push('UGC:' + clip.name); shot.dur = Math.min(clip.dur ?? 3, Math.max(2, dur));
+      lastUgc = p.s; lastVisual = p.s;
+      return shot;
+    }
     if (sceneCode && !tags.includes('hook') && dur >= 2 && p.s - lastScene >= (opts.sceneGap ?? 10)) {
       shot.kind = 'scene';
       shot.dur = r2(Math.min(5, Math.max(4, dur)));
@@ -145,10 +160,11 @@ export function planShots(words, opts = {}) {
 
 // shots → draft edit fields. unmap: output seconds → source seconds (edit.json "at" is in source time)
 export function planToEdit(shots, unmap, { split } = {}) {
-  const scenes = [], cards = [], fullcam = [];
+  const scenes = [], cards = [], fullcam = [], ugc = [];
   for (const s of shots) {
     const at = r2(unmap(s.s + 0.05));
     if (at == null || Number.isNaN(at)) continue;
+    if (s.kind === 'ugc') { ugc.push({ at, clip: s.clip, dur: r2(s.dur) }); continue; }
     if (s.kind === 'scene') scenes.push({ at, dur: s.dur, cards: s.cards.map(({ type, ...f }) => ({ type, ...f })) });
     else s.cards.forEach((c) => cards.push({ at, dur: r2(Math.max(2.5, Math.min(4, s.e - s.s + 0.6))), ...c }));
     if (split && s.kind === 'face') fullcam.push({ at, dur: r2(Math.max(1.5, Math.min(4, s.e - s.s))) });
@@ -156,14 +172,14 @@ export function planToEdit(shots, unmap, { split } = {}) {
   // the hook phrase becomes the title (2–5 words on the first seconds)
   const hook = shots[0];
   const title = hook ? { text: cap1(keys(hook.words, 4) || hook.words.slice(0, 4).join(' ')), dur: 2.6 } : undefined;
-  return { scenes, cards, ...(split ? { fullcam } : {}), title };
+  return { scenes, cards, ugc, ...(split ? { fullcam } : {}), title };
 }
 
 export function planTable(shots) {
-  const KIND = { face: 'обличчя', screen: 'екран (спліт)', scene: 'СЦЕНКА' };
+  const KIND = { face: 'обличчя', screen: 'екран (спліт)', scene: 'СЦЕНКА', ugc: 'UGC-вставка' };
   const fmt = (t) => `${Math.floor(t / 60)}:${(t % 60).toFixed(1).padStart(4, '0')}`;
   return ['| # | час | кадр | коди | що каже |', '|---|---|---|---|---|',
-    ...shots.map((s, i) => `| ${i + 1} | ${fmt(s.s)}–${fmt(s.kind === 'scene' ? s.s + s.dur : s.e)} | ${KIND[s.kind]} | ${s.codes.join(' ') || '—'} | ${s.text} |`)].join('\n');
+    ...shots.map((s, i) => `| ${i + 1} | ${fmt(s.s)}–${fmt(s.dur ? s.s + s.dur : s.e)} | ${KIND[s.kind]} | ${s.codes.join(' ') || '—'} | ${s.text} |`)].join('\n');
 }
 
 // ---------- audit ----------
@@ -176,12 +192,13 @@ export function audit(events, total, { maxStill = 6, prevCodes = new Set() } = {
     if (changes[i] - changes[i - 1] > maxStill) still.push([r2(changes[i - 1]), r2(changes[i])]);
     if (changes[i] - changes[i - 1] > gap[1] - gap[0]) gap = [r2(changes[i - 1]), r2(changes[i])];
   }
-  const boxes = events.filter((e) => e.kind === 'card' || e.kind === 'scene');
+  const boxes = events.filter((e) => e.kind === 'card' || e.kind === 'scene' || e.kind === 'cutaway');
   const overlaps = [];
   for (let i = 0; i < boxes.length; i++) for (let j = i + 1; j < boxes.length; j++) {
     const a = boxes[i], b = boxes[j];
     const hit = a.t < b.t + b.dur && b.t < a.t + a.dur;
-    const clash = a.kind === 'scene' || b.kind === 'scene' || (a.side ?? 'left') === (b.side ?? 'left');
+    const full = (e) => e.kind === 'scene' || e.kind === 'cutaway'; // full-frame shots hide the speaker: nothing may sit on them
+    const clash = full(a) || full(b) || (a.side ?? 'left') === (b.side ?? 'left');
     if (hit && clash) overlaps.push([a.code ?? a.kind, b.code ?? b.kind, r2(Math.max(a.t, b.t))]);
   }
   const codes = events.filter((e) => e.code).map((e) => e.code);
