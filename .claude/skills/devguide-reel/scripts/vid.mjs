@@ -939,7 +939,7 @@ async function runBoard(editPath, full = false) {
   const { edit, segs, total, dir } = w;
   const ev = timelineEvents(w).filter((e) => e.kind !== 'code');
   const mids = [...ev.map((e) => ({ t: e.t + Math.min(1.2, (e.dur ?? 0.6) / 2), e })), ...segs.map((g) => ({ t: g.off + 0.4, e: { kind: 'face' } }))]
-    .sort((a, b) => a.t - b.t).filter((m, i, a) => !i || m.t - a[i - 1].t > 1).slice(0, 20);
+    .sort((a, b) => a.t - b.t).filter((m, i, a) => !i || m.t - a[i - 1].t > 1).slice(0, 40);
   const NAME = { card: 'картка', scene: 'СЦЕНКА', cutaway: 'вставка', fullcam: 'обличчя', broll: 'b-roll', callout: 'плашка', title: 'титул', cut: 'склейка', face: 'кадр' };
   const fast = !full && !edit.screen && !edit.broll?.length;
   const frames = []; // [{t, png}] готовий кадр 540×960 на кожну подію
@@ -1005,7 +1005,7 @@ async function runBoard(editPath, full = false) {
   const list = path.join(w.dir, 'board.txt');
   fs.writeFileSync(list, files.map((f) => `file '${f.replace(/\\/g, '/')}'`).join('\n'));
   const board = path.join(w.dir, 'board.jpg');
-  run(ffmpeg(), ['-y', '-v', 'error', '-f', 'concat', '-safe', '0', '-i', list, '-vf', `tile=5x${Math.ceil(files.length / 5)}:padding=4:color=0x080B0E`, '-frames:v', '1', '-q:v', '3', board]);
+  run(ffmpeg(), ['-y', '-v', 'error', '-f', 'concat', '-safe', '0', '-i', list, '-vf', `tile=${files.length > 20 ? 8 : 5}x${Math.ceil(files.length / (files.length > 20 ? 8 : 5))}:padding=4:color=0x080B0E`, '-frames:v', '1', '-q:v', '3', board]);
   files.forEach((f) => fs.rmSync(f));
   console.log('розкадровка:', board);
 }

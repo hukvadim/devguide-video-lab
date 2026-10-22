@@ -141,7 +141,7 @@ export function planShots(words, opts = {}) {
     if (sceneCode && !tags.includes('hook') && dur >= 2 && p.s - lastScene >= (opts.sceneGap ?? 10)) {
       shot.kind = 'scene';
       shot.dur = r2(Math.min(5, Math.max(4, dur)));
-      add(sceneCode, { y: 620, scale: 1.25 });
+      add(sceneCode, { y: 700, scale: 1.8 }); // full-frame: the card is the whole picture, make it big
       lastScene = p.s; lastVisual = p.s;
       return shot;
     }
