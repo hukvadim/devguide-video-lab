@@ -849,6 +849,11 @@ function timelineEvents({ edit, segs, total, project = '.', lib = [] }) {
   for (const c of edit.callouts ?? []) { const t = T(c.at); if (t != null) ev.push({ t, dur: c.dur ?? 2.6, kind: 'callout' }); }
   for (const h of edit.hits ?? []) { const t = T(h.at ?? h); if (t != null) ev.push({ t, kind: 'cut' }); }
   if (edit.title?.text) ev.push({ t: 0.05, dur: edit.title.dur ?? 2.6, kind: 'title' });
+  // спліт: наближення, підсвітки й кліки на екрані теж міняють кадр; кроки хлібних крихт — теж
+  for (const z of edit.zooms ?? []) { const t = T(z.at); if (t != null) ev.push({ t, kind: 'cut' }); }
+  for (const h of edit.highlights ?? []) { const t = T(h.at); if (t != null) ev.push({ t, dur: h.dur ?? 1.5, kind: 'mark' }); }
+  for (const c of edit.clicks ?? []) { const t = T(c.at); if (t != null) ev.push({ t, kind: 'cut' }); }
+  for (const c of edit.cards ?? []) if (c.type === 'crumbs' || c.type === 'A01') for (const m of c.marks ?? []) { const t = T(c.at); if (t != null) ev.push({ t: t + m, kind: 'cut' }); }
   return ev.filter((e) => e.t <= total);
 }
 
@@ -886,7 +891,7 @@ function fixAudit(editPath) {
     const t2 = hit.t + hit.dur + 0.2;
     return t2 + 1.2 < w.total ? [{ ...c, at: r2(w.unmap(t2)) }] : [];
   });
-  for (let k = 0; k < 12; k++) {
+  for (let k = 0; k < 24; k++) {
     const a = audit(timelineEvents({ ...w, edit }), w.total, {});
     // спершу дірки >6 с, потім різноманітність: <4 кодів на 30 с → картка в найбільший проміжок ≥4 с
     const hole = a.still[0] ?? (a.variety < 4 && a.gap[1] - a.gap[0] >= 4 ? a.gap : null);
@@ -894,9 +899,10 @@ function fixAudit(editPath) {
     const [s, e] = hole;
     const t0 = r2(s + Math.min(1.5, (e - s) / 3));
     const ws = w.outWords.filter((x) => x.s >= t0 - 0.2 && x.s < t0 + 3).map((x) => x.w.replace(/[^\p{L}\d'’-]/gu, '')).filter(Boolean);
-    const code = FILL.find((c) => !used.has(c) && !avoid.has(c)) ?? FILL.find((c) => !used.has(c)) ?? 'H06';
+    const code = FILL.find((c) => !used.has(c) && !avoid.has(c)) ?? FILL.find((c) => !used.has(c));
+    if (!code) { console.log('пул акцентів вичерпано: решту дір закрий змістовною карткою або сценкою'); break; }
     used.add(code);
-    (edit.cards ??= []).push({ at: r2(w.unmap(t0)), dur: 3, type: code, ...fields(code, { words: ws, text: ws.join(' ') }) });
+    (edit.cards ??= []).push({ at: r2(w.unmap(t0)), dur: code === 'J01' ? 1 : 3, type: code, ...fields(code, { words: ws, text: ws.join(' ') }) });
     added++;
   }
   edit.cards?.sort((x, y) => x.at - y.at);

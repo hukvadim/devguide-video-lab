@@ -50,7 +50,7 @@ const RE = {
 };
 const TOOL = [[/скіл/, 'B01'], [/промпт/, 'C01'], [/агент/, 'C03'], [/термінал|npm|команд/, 'D01'], [/сайт|сторінк/, 'B02'], [/файл/, 'B07'], [/код\b|коді|кодом/, 'D02'], [/модел|opus|sonnet/, 'C08']];
 // fillers for face stretches without a cue, in order of preference
-export const FILL = ['H06', 'F06', 'B10', 'H01', 'E10', 'H08', 'H03', 'A09'];
+export const FILL = ['H06', 'F06', 'B10', 'H08', 'H03', 'A09', 'J07']; // only codes that need no exact spot or real numbers // no J01 chains: repeated hit frames flicker
 const EMOJI = ['🤯', '🔥', '💡', '🚀', '😎'];
 
 export function classify(text, i, n) {
@@ -192,7 +192,9 @@ export function audit(events, total, { maxStill = 6, prevCodes = new Set() } = {
     if (changes[i] - changes[i - 1] > maxStill) still.push([r2(changes[i - 1]), r2(changes[i])]);
     if (changes[i] - changes[i - 1] > gap[1] - gap[0]) gap = [r2(changes[i - 1]), r2(changes[i])];
   }
-  const boxes = events.filter((e) => e.kind === 'card' || e.kind === 'scene' || e.kind === 'cutaway');
+  // strips and accents (A01 crumbs, J10 progress, H accents on the speaker) live in their own lane, they don't collide
+  const lane = (e) => e.kind === 'card' && /^(A01|J01|J02|J10|H\d\d)$/.test(e.code ?? '');
+  const boxes = events.filter((e) => (e.kind === 'card' && !lane(e)) || e.kind === 'scene' || e.kind === 'cutaway');
   const overlaps = [];
   for (let i = 0; i < boxes.length; i++) for (let j = i + 1; j < boxes.length; j++) {
     const a = boxes[i], b = boxes[j];
@@ -202,12 +204,13 @@ export function audit(events, total, { maxStill = 6, prevCodes = new Set() } = {
     if (hit && clash) overlaps.push([a.code ?? a.kind, b.code ?? b.kind, r2(Math.max(a.t, b.t))]);
   }
   const codes = events.filter((e) => e.code).map((e) => e.code);
-  const repeats = [...new Set(codes.filter((c, i) => codes.indexOf(c) !== i))];
+  const repeats = [...new Set(codes.filter((c, i) => c !== 'J01' && codes.indexOf(c) !== i))];
   const fromPrev = [...new Set(codes.filter((c) => prevCodes.has(c)))];
   const perThirty = Math.max(1, total / 30);
   const variety = new Set(codes).size / perThirty;
   const sfx = events.filter((e) => e.sfx).length / Math.max(1 / 6, total / 60);
-  const score = Math.max(0, 100 - still.length * 15 - overlaps.length * 10 - repeats.length * 5 - Math.max(0, 4 - variety) * 8 - Math.max(0, sfx - 6) * 3);
+  const k = Math.min(1, 60 / Math.max(1, total)); // counts per minute: a 4-minute tutorial isn't punished 4× for its length
+  const score = Math.max(0, 100 - (still.length * 15 + overlaps.length * 10 + repeats.length * 5) * k - Math.max(0, 4 - variety) * 8 - Math.max(0, sfx - 6) * 3);
   return { still, gap, overlaps, repeats, fromPrev, variety: r2(variety), sfxPerMin: r2(sfx), score: Math.round(score) };
 }
 
