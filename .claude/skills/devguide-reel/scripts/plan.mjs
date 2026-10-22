@@ -50,6 +50,8 @@ const RE = {
 };
 const TOOL = [[/скіл/, 'B01'], [/промпт/, 'C01'], [/агент/, 'C03'], [/термінал|npm|команд/, 'D01'], [/сайт|сторінк/, 'B02'], [/файл/, 'B07'], [/код\b|коді|кодом/, 'D02'], [/модел|opus|sonnet/, 'C08']];
 // fillers for face stretches without a cue, in order of preference
+// codes that already span the frame width (Free/Full layouts): never scale them up in a scene
+const FULL_W = new Set(['E01', 'F05', 'F06', 'G01', 'G02', 'A04', 'A08', 'A09', 'I01', 'I03', 'I07', 'I08', 'I09', 'I10']);
 export const FILL = ['H06', 'F06', 'B10', 'H08', 'H03', 'A09', 'J07']; // only codes that need no exact spot or real numbers // no J01 chains: repeated hit frames flicker
 const EMOJI = ['🤯', '🔥', '💡', '🚀', '😎'];
 
@@ -144,7 +146,7 @@ export function planShots(words, opts = {}) {
     if (sceneCode && !tags.includes('hook') && dur >= 2 && p.s - lastScene >= (opts.sceneGap ?? 10)) {
       shot.kind = 'scene';
       shot.dur = r2(Math.min(5, Math.max(4, dur)));
-      add(sceneCode, { y: 700, scale: 1.8 }); // full-frame: the card is the whole picture, make it big
+      add(sceneCode, FULL_W.has(sceneCode) ? { y: 640 } : { y: 700, scale: 1.8 }); // full-frame: the card is the whole picture, make it big
       lastScene = p.s; lastVisual = p.s;
       return shot;
     }
