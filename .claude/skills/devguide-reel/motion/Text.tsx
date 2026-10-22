@@ -14,6 +14,7 @@ export type TextProps = {
   capY: number;              // низ блоку субтитрів (голова) або центр (спліт), px у 1080×1920
   capAnchor: 'bottom' | 'center';
   capStyle?: 'stroke' | 'soft'; // soft: white + soft layered shadow, no outline; only the active word is accent
+  cap?: string;              // коди субтитрів з docs/ELEMENTS.md: 'S02+T04+T27+T36+T47'
   title?: TextItem | null; callouts: TextItem[]; hits: number[];
   progress?: number;         // y смужки прогресу зверху (px у 1080×1920); без поля — без смужки
   capLow?: [number, number][]; // відрізки (с), де голова на весь кадр: субтитри внизу, як у HEAD_STYLE
@@ -38,38 +39,120 @@ const softShadow = (size: number, glow?: string) => ({
     glow ? `0 0 ${Math.round(size * 0.35)}px ${glow}66` : ''].filter(Boolean).join(', '),
 });
 
-const Captions: React.FC<{ pages: Page[]; y: number; anchor: 'bottom' | 'center'; accent: string; soft?: boolean; low?: [number, number][] }> = ({ pages, y: y0, anchor: a0, accent, soft, low = [] }) => {
+// Caption codes (docs/ELEMENTS.md): S = look (stackable), T = enter / during / exit / position.
+// cap: 'S02+T04+T27+T36+T47'. Missing axis = the old default (S01 or S02 by capStyle, T01 word pop, no exit, capY).
+type Ctx = { q: number; p: number; li: number; size: number; lf: number };
+type Css = React.CSSProperties;
+const sp = (frame: number, damping = 14, stiffness = 180) => spring({ frame, fps: 30, config: { damping, stiffness, mass: 0.7 } });
+// per-word style while the page enters; q = line progress 0→1, p = word pop from its spoken time
+const ENTER: Record<string, (c: Ctx) => Css> = {
+  T01: ({ p, lf }) => ({ opacity: lf >= 0 ? 1 : 0, transform: `translateY(${(1 - p) * 14}px) scale(${0.84 + 0.16 * p})` }),
+  T02: ({ q }) => ({ opacity: q, transform: `translateY(${(1 - q) * 24}px)` }),
+  T03: ({ q }) => ({ opacity: q }),
+  T04: ({ q, lf }) => ({ opacity: Math.min(1, q * 2), transform: `scale(${0.92 + 0.08 * sp(lf, 9, 200)})` }),
+  T05: ({ q }) => ({ opacity: q, filter: `blur(${(1 - q) * 12}px)` }),
+  T06: ({ q, size }) => ({ transform: `translateY(${(1 - q) * size * 1.15}px)` }),
+  T07: ({ q, size }) => ({ transform: `translateY(${-(1 - q) * size * 1.15}px)` }),
+  T08: ({ q, li }) => ({ opacity: q, transform: `translateX(${(1 - q) * (li % 2 ? 220 : -220)}px)` }),
+  T11: ({ q }) => ({ opacity: q, letterSpacing: `${(1 - q) * 0.3}em` }),
+  T12: ({ q }) => ({ opacity: Math.min(1, q * 2), transform: `perspective(600px) rotateX(${(1 - q) * 90}deg)` }),
+  T13: () => ({}), T14: () => ({}),
+  T17: ({ lf }) => ({ transform: `scaleY(${sp(lf, 7, 220)})`, opacity: lf >= 0 ? 1 : 0 }),
+  T18: ({ q, lf }) => ({ opacity: q, transform: `translateY(${-(1 - sp(lf, 7, 160)) * 70}px)` }),
+  T24: ({ q }) => ({ opacity: q, transform: `scale(${1.4 - 0.4 * q})` }),
+  T25: ({ q, lf }) => ({ opacity: q, transform: `rotate(${2 * Math.sin(lf / 3) * Math.max(0, 1 - lf / 18)}deg)` }),
+};
+// line wrapper clips: the masked enters
+const CLIP: Record<string, (q: number) => string> = {
+  T06: () => 'inset(-40% -6% -6% -6%)',
+  T07: () => 'inset(-6% -6% -40% -6%)',
+  T13: (q) => `inset(-40% ${(1 - q) * 106 - 3}% -40% -3%)`,
+  T14: (q) => `inset(-40% ${(1 - q) * 52 - 3}% -40% ${(1 - q) * 52 - 3}%)`,
+};
+const EXIT: Record<string, (o: number) => Css> = {
+  T36: (o) => ({ opacity: 1 - o }),
+  T37: (o) => ({ opacity: 1 - o, transform: `translateY(${-o * 40}px)` }),
+  T38: (o) => ({ transform: `scaleY(${1 - o})` }),
+  T39: (o) => ({ opacity: 1 - o, filter: `blur(${o * 12}px)` }),
+};
+const DURING = ['T26', 'T27', 'T28', 'T29', 'T30', 'T31', 'T32', 'T33'];
+const POS = ['T46', 'T47', 'T48', 'T49', 'T50'];
+export type Cap = { s: Set<string>; enter: string; during: Set<string>; exit?: string; pos?: string; stagger: boolean };
+export const parseCap = (cap = '', soft = false): Cap => {
+  const c = cap.toUpperCase().split(/[^A-Z0-9]+/).filter(Boolean);
+  const s = new Set(c.filter((x) => x[0] === 'S'));
+  if (!['S01', 'S02', 'S03', 'S08'].some((x) => s.has(x))) s.add(soft ? 'S02' : 'S01');
+  const enter = c.find((x) => ENTER[x]);
+  return { s, enter: enter ?? (c.includes('T15') ? 'T02' : 'T01'), during: new Set(c.filter((x) => DURING.includes(x))),
+    exit: c.find((x) => EXIT[x]), pos: c.find((x) => POS.includes(x)), stagger: c.includes('T15') };
+};
+
+const Captions: React.FC<{ pages: Page[]; y: number; anchor: 'bottom' | 'center'; accent: string; cap: Cap; low?: [number, number][] }> = ({ pages, y: y0, anchor: a0, accent, cap, low = [] }) => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = f / fps;
   const isLow = low.some(([s, e]) => t >= s && t < e);
-  const y = isLow ? 1490 : y0, anchor = isLow ? 'bottom' : a0;
+  const { s, during: d } = cap;
+  const pos = isLow ? 'T46' : cap.pos;
+  const y = pos === 'T46' ? 1490 : pos === 'T48' ? 380 : pos === 'T49' ? 1100 : y0;
+  const anchor = pos === 'T46' ? 'bottom' : pos === 'T48' || pos === 'T49' ? 'center' : a0;
   const page = pages.find((p) => t >= p.start && t < p.end);
   if (!page) return null;
   const lh = page.size * 1.12;
   const height = page.lines.length * lh;
   const top = anchor === 'bottom' ? y - height : y - height / 2;
   const activeIdx = page.words.findIndex((w, i) => t >= w.s && t < (page.words[i + 1]?.s ?? page.end));
-  return <div style={{ position: 'absolute', left: 0, right: 0, top, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-    {page.lines.map((line, li) => <div key={li} style={{ display: 'flex', gap: `0 ${page.size * 0.26}px`, height: lh, alignItems: 'flex-end' }}>
-      {line.map((wi) => {
-        const w = page.words[wi];
-        const sf = w.s * fps;
-        const p = spring({ frame: f - sf, fps, config: { damping: 15, stiffness: 260, mass: 0.6 } });
-        const shown = f >= sf;
-        const active = wi === activeIdx;
-        const color = active || (!soft && w.em) ? accent : C.text;
-        return <span key={wi} style={{
-          fontFamily: F.body, fontWeight: 800, fontSize: page.size, lineHeight: 1, letterSpacing: '-0.01em', color,
-          opacity: shown ? 1 : 0,
-          // поп від базової лінії (не від центру) — без «тремтіння» гліфів
-          transform: `translateY(${shown ? (1 - p) * 14 : 0}px) scale(${shown ? (w.em ? 1.08 : 1) * (0.84 + 0.16 * p) : 1})`,
-          // +8% акцентного слова не має з'їдати пробіл: ≈ 0.04 × ширина слова (0.6em на літеру) з кожного боку
-          margin: w.em ? `0 ${w.w.length * page.size * 0.024}px` : 0,
-          transformOrigin: '50% 90%', display: 'inline-block', ...(soft ? softShadow(page.size, active ? accent : undefined) : strokeShadow(page.size)),
-        }}>{w.w}</span>;
-      })}
-    </div>)}
+  const pf = page.start * fps, ef = page.end * fps;
+  const out = cap.exit ? ramp(f, ef - 5, ef) : 0;
+  const soft = s.has('S02'), plain = s.has('S03') || s.has('S08');
+  const hiOff = s.has('S03') || d.has('T30') || d.has('T33') || d.has('T31');
+  const fam = s.has('S07') ? F.display : F.body;
+  return <div style={{ position: 'absolute', left: pos === 'T49' ? 84 : 0, width: pos === 'T49' ? 440 : 1080, top, display: 'flex', flexDirection: 'column', alignItems: 'center',
+    transform: d.has('T32') ? `translateY(${-10 * (t - page.start) / Math.max(0.1, page.end - page.start)}px)` : undefined, ...(cap.exit ? EXIT[cap.exit](out) : {}) }}>
+    {page.lines.map((line, li) => {
+      const lf = f - pf - (cap.stagger ? li * 6 : 0);
+      const q = ramp(lf, 0, cap.enter === 'T03' ? 8 : 9);
+      return <div key={li} style={{ display: 'flex', gap: `0 ${page.size * 0.26}px`, height: lh, alignItems: 'flex-end',
+        clipPath: CLIP[cap.enter]?.(q), ...(s.has('S08') ? { background: 'rgba(8,11,14,.62)', padding: `0 ${page.size * 0.3}px`, borderRadius: page.size * 0.24, marginBottom: 6, height: lh + 6, alignItems: 'center' } : {}) }}>
+        {line.map((wi) => {
+          const w = page.words[wi];
+          const sf = w.s * fps;
+          const spoken = f >= sf;
+          const p = spring({ frame: f - sf, fps, config: { damping: 15, stiffness: 260, mass: 0.6 } });
+          const active = wi === activeIdx;
+          const since = f - sf;
+          const em = w.em && !plain;
+          let color: string = C.text;
+          if (!hiOff && active) color = accent;
+          if (em && (!soft || s.has('S09'))) color = accent;
+          if (d.has('T31') && w.em && active && since < 14) color = accent;
+          const pill = s.has('S04') && active;
+          if (pill) color = '#0B0F12';
+          const scale = em ? (s.has('S09') ? 1.12 : 1.08) : 1;
+          const ent = cap.enter === 'T01' ? ENTER.T01({ q, p, li, size: page.size, lf: since }) : ENTER[cap.enter]({ q, p, li, size: page.size, lf });
+          const extra: string[] = [];
+          if (d.has('T26') && active) extra.push(`translateY(${-6 * ramp(since, 0, 4)}px)`);
+          if (d.has('T27') && active) extra.push(`scale(${interpolate(since, [0, 4, 10], [1, 1.08, 1.04], clamp)})`);
+          const look: Css = s.has('S03') ? { textShadow: '0 2px 8px rgba(0,0,0,.45)' } : soft || s.has('S08') ? softShadow(page.size, active && !hiOff ? accent : undefined) : strokeShadow(page.size);
+          let opacity = (ent.opacity as number) ?? 1;
+          if (s.has('S05')) opacity = spoken ? Math.max(opacity, 0.4) : 0.4; // karaoke trail: the whole page is visible, future words dim
+          if (d.has('T29') && spoken && !active) opacity *= 0.6;
+          return <span key={wi} style={{
+            fontFamily: fam, fontWeight: s.has('S10') && !w.em ? 600 : s.has('S07') ? 900 : 800, fontSize: page.size, lineHeight: 1,
+            letterSpacing: s.has('S06') ? '0.04em' : '-0.01em', textTransform: s.has('S06') ? 'uppercase' : undefined, color,
+            ...look, ...ent, opacity,
+            ...(d.has('T33') && active ? { textShadow: `${look.textShadow ? look.textShadow + ', ' : ''}0 0 ${page.size * 0.45}px rgba(255,255,255,.6)` } : {}),
+            ...(pill ? { background: accent, borderRadius: page.size * 0.18, padding: `0 ${page.size * 0.14}px`, WebkitTextStroke: '0px', textShadow: 'none' } : {}),
+            ...(d.has('T28') && active ? { backgroundImage: `linear-gradient(${accent}, ${accent})`, backgroundRepeat: 'no-repeat', backgroundPosition: 'left 100%',
+              backgroundSize: `${ramp(since, 0, 6) * 100}% ${Math.round(page.size * 0.1)}px`, paddingBottom: page.size * 0.12 } : {}),
+            transform: [ent.transform ?? '', ...extra].join(' ') + (scale !== 1 ? ` scale(${scale})` : ''),
+            // +8% акцентного слова не має з'їдати пробіл: ≈ 0.04 × ширина слова (0.6em на літеру) з кожного боку
+            margin: em ? `0 ${w.w.length * page.size * 0.024}px` : 0,
+            transformOrigin: cap.enter === 'T17' ? '50% 100%' : '50% 90%', display: 'inline-block',
+          }}>{w.w}</span>;
+        })}
+      </div>;
+    })}
   </div>;
 };
 
@@ -140,13 +223,20 @@ const useFontsLoaded = () => {
   return ready;
 };
 
-export const Text: React.FC<TextProps> = ({ w, words, capY, capAnchor, capStyle, title, callouts, hits, progress, capLow, accent = C.lime }) => {
+export const Text: React.FC<TextProps> = ({ w, words, capY, capAnchor, capStyle, cap: capCodes, title, callouts, hits, progress, capLow, accent = C.lime }) => {
   const ready = useFontsLoaded();
-  const pages = useMemo(() => ready ? paginate(words, { maxW: MAX_W, maxLines: 2, sizes: CAP_SIZES }, measureWith(F.body, '800')) : [], [words, ready]);
+  const cap = useMemo(() => parseCap(capCodes, capStyle === 'soft'), [capCodes, capStyle]);
+  const pages = useMemo(() => {
+    if (!ready) return [];
+    // T49 = narrow column beside the speaker; S06/S07 are wider than Inter 800, measure them as drawn
+    const m = measureWith(cap.s.has('S07') ? F.display : F.body, cap.s.has('S07') ? '900' : '800');
+    const measure: Measure = cap.s.has('S06') ? (text, size) => m(text.toUpperCase(), size) * 1.06 : m;
+    return cap.pos === 'T49' ? paginate(words, { maxW: 420, maxLines: 3, sizes: [62, 58, 54, 50] }, measure) : paginate(words, { maxW: MAX_W, maxLines: 2, sizes: CAP_SIZES }, measure);
+  }, [words, ready, cap]);
   if (!ready) return null;
   return <AbsoluteFill>
     <div style={{ position: 'absolute', width: 1080, height: 1920, transform: `scale(${w / 1080})`, transformOrigin: '0 0' }}>
-      <Captions pages={pages} y={capY} anchor={capAnchor} accent={accent} soft={capStyle === 'soft'} low={capLow} />
+      <Captions pages={pages} y={capY} anchor={capAnchor} accent={accent} cap={cap} low={capLow} />
       {title && <Callout item={title} title accent={accent} />}
       {callouts.map((c, i) => <Callout key={i} item={c} title={false} accent={accent} />)}
       {hits.map((t, i) => <Hit key={i} t={t} accent={accent} />)}

@@ -1,6 +1,8 @@
 import React from 'react';
-import { AbsoluteFill, Easing, interpolate, Sequence, spring, useCurrentFrame, useVideoConfig } from 'remotion';
+import { AbsoluteFill, interpolate, Sequence, spring, useVideoConfig } from 'remotion';
 import { F, clamp } from './theme';
+import { CARD_SCALE, Glass, Icon, Side, THEMES, Th, X, useLife } from './glass';
+import { ELEMENTS, ElementCard } from './Elements';
 
 // Glass cards that pop up over the reel (above the video, under nothing): they fill static stretches with
 // visuals that illustrate the speech. Times are seconds of the final reel; space is 1080×1920.
@@ -9,45 +11,11 @@ export type Card =
   | { type: 'skill'; t: number; dur: number; name: string; author: string; meta: string[]; desc: string; side?: Side; y?: number; scale?: number }
   | { type: 'list'; t: number; dur: number; title: string; items: string[]; side?: Side; y?: number; scale?: number }
   | { type: 'stack'; t: number; dur: number; items: string[]; active: number; caption?: string; side?: Side; y?: number; scale?: number }
-  | { type: 'chat'; t: number; dur: number; prompt: string; reply: string; side?: Side; y?: number; scale?: number };
-type Side = 'left' | 'right' | 'center';
+  | { type: 'chat'; t: number; dur: number; prompt: string; reply: string; side?: Side; y?: number; scale?: number }
+  | ElementCard; // codes from docs/ELEMENTS.md (E01, H01…), see Elements.tsx
+// catalog codes of the original five cards
+const ALIAS: Record<string, string> = { A01: 'crumbs', B01: 'skill', C01: 'chat', F01: 'list', F02: 'stack' };
 export type CardsProps = { w: number; h: number; dur: number; theme?: 'dg' | 'glow'; cards: Card[] };
-
-type T = { bg: string; border: string; glow: string; accent: string; text: string; dim: string; chip: string; title: string };
-const THEMES: Record<'dg' | 'glow', T> = {
-  dg: { bg: 'linear-gradient(160deg, rgba(22,30,38,.86), rgba(10,14,18,.9))', border: '1.5px solid rgba(255,255,255,.14)',
-    glow: '0 30px 70px rgba(0,0,0,.55), 0 0 0 1px rgba(195,255,85,.06)', accent: '#C3FF55', text: '#F5F7F2', dim: '#AEB8C1',
-    chip: 'rgba(195,255,85,.12)', title: F.display },
-  glow: { bg: 'linear-gradient(160deg, rgba(150,24,110,.9), rgba(52,10,70,.92))', border: '2px solid rgba(255,110,220,.9)',
-    glow: '0 0 34px rgba(255,70,210,.55), 0 30px 70px rgba(20,0,30,.6), inset 0 1px 0 rgba(255,255,255,.35)', accent: '#FFD1F4', text: '#FFFFFF',
-    dim: '#F2C6EC', chip: 'rgba(255,255,255,.14)', title: F.display },
-};
-const Th = React.createContext<T>(THEMES.dg);
-
-// spring in, quick ease-in out (exit faster than entry, as in the TZ)
-const useLife = () => {
-  const f = useCurrentFrame();
-  const { fps, durationInFrames: N } = useVideoConfig();
-  const inn = spring({ frame: f, fps, config: { damping: 14, stiffness: 130, mass: 0.8 } });
-  const out = interpolate(f, [N - 10, N], [0, 1], { ...clamp, easing: Easing.in(Easing.cubic) });
-  return { f, fps, N, p: inn * (1 - out), out };
-};
-
-// side cards are drawn at 88%: the speaker usually sits a bit right of centre, the free strip on the left is ~400 px
-const CARD_SCALE = 0.88;
-const X = (side: Side = 'left', w: number) => (side === 'left' ? 24 : side === 'center' ? 540 - w / 2 : 1056 - w);
-
-const Glass: React.FC<{ side?: Side; y?: number; w: number; children: React.ReactNode; tilt?: number; scale?: number }> = ({ side = 'left', y = 260, w, children, tilt, scale = CARD_SCALE }) => {
-  const th = React.useContext(Th);
-  const { p } = useLife();
-  const dir = side === 'left' ? -1 : 1;
-  const rz = tilt ?? dir * 3;
-  return <div style={{ position: 'absolute', left: X(side, w * scale), top: y, width: w, padding: 30, borderRadius: 34, background: th.bg,
-    border: th.border, boxShadow: th.glow, backdropFilter: 'blur(18px)', color: th.text, fontFamily: F.body,
-    opacity: interpolate(p, [0, 0.2], [0, 1], clamp),
-    transformOrigin: '0 0',
-    transform: `translateX(${(1 - p) * dir * 120}px) translateY(${(1 - p) * 30}px) rotateZ(${rz * p}deg) scale(${scale * (0.85 + 0.15 * p)})` }}>{children}</div>;
-};
 
 const Crumbs: React.FC<Extract<Card, { type: 'crumbs' }>> = ({ steps, active: a0, marks = [], y = 120 }) => {
   const th = React.useContext(Th);
@@ -70,12 +38,6 @@ const Crumbs: React.FC<Extract<Card, { type: 'crumbs' }>> = ({ steps, active: a0
       })}
     </div>
   </div>;
-};
-
-const Icon: React.FC<{ size?: number }> = ({ size = 72 }) => {
-  const th = React.useContext(Th);
-  return <div style={{ width: size, height: size, borderRadius: size * 0.28, background: th.chip, border: th.border, display: 'flex',
-    alignItems: 'center', justifyContent: 'center', fontSize: size * 0.5, color: th.accent, fontFamily: F.display, fontWeight: 900 }}>✦</div>;
 };
 
 const Skill: React.FC<Extract<Card, { type: 'skill' }>> = ({ name, author, meta, desc, side, y, scale }) => {
@@ -159,13 +121,18 @@ export const Cards: React.FC<CardsProps> = ({ w, theme = 'dg', cards }) => {
   return <Th.Provider value={THEMES[theme]}>
     <AbsoluteFill>
       <div style={{ position: 'absolute', width: 1080, height: 1920, transform: `scale(${w / 1080})`, transformOrigin: '0 0' }}>
-        {cards.map((c, i) => <Sequence key={i} from={Math.round(c.t * fps)} durationInFrames={Math.max(1, Math.round(c.dur * fps))} layout="none">
-          {c.type === 'crumbs' && <Crumbs {...c} />}
-          {c.type === 'skill' && <Skill {...c} />}
-          {c.type === 'list' && <List {...c} />}
-          {c.type === 'stack' && <Stack {...c} />}
-          {c.type === 'chat' && <Chat {...c} />}
-        </Sequence>)}
+        {cards.map((c0, i) => {
+          const c = { ...c0, type: ALIAS[c0.type] ?? c0.type } as Card;
+          const El = ELEMENTS[c.type]?.C;
+          return <Sequence key={i} from={Math.round(c.t * fps)} durationInFrames={Math.max(1, Math.round(c.dur * fps))} layout="none">
+            {c.type === 'crumbs' && <Crumbs {...c} />}
+            {c.type === 'skill' && <Skill {...c} />}
+            {c.type === 'list' && <List {...c} />}
+            {c.type === 'stack' && <Stack {...c} />}
+            {c.type === 'chat' && <Chat {...c} />}
+            {El && <El {...c} />}
+          </Sequence>;
+        })}
       </div>
     </AbsoluteFill>
   </Th.Provider>;
