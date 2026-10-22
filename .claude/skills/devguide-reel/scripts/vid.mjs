@@ -7,6 +7,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import os from 'node:os';
 import { TOOL, IS_WIN, WHISPER_MODEL, WHOOSH, findBin, findWhisper, need } from './bins.mjs';
+import { audit, planShots, planTable, planToEdit, timeline } from './plan.mjs';
 
 // важкий рендер не має вішати комп'ютер: нижчий пріоритет (діти ffmpeg/Chrome його успадковують)
 try { os.setPriority(0, os.constants.priority.PRIORITY_BELOW_NORMAL); } catch {}
@@ -418,8 +419,10 @@ function buildGraph({ edit, segs, src, total, W, H, audioOnly, voiceGainDb = 0, 
   cutaways.forEach((c, i) => {
     const fit = c.width / c.height > W / H ? `scale=-2:${even(H * 1.08)}` : `scale=${even(W * 1.08)}:-2`;
     const d = c.dur.toFixed(3);
-    f.push(`[${c.idx}:v]fps=${FPS},${fit},crop=${W}:${H}:x='(iw-ow)*${c.cropX ?? 0.5}':y='(ih-oh)*(0.2+0.6*t/${d})',setsar=1,` +
-      `eq=contrast=1.04:saturation=1.08,format=yuva420p,fade=t=in:d=0.25:alpha=1,fade=t=out:st=${(c.dur - 0.25).toFixed(3)}:d=0.25:alpha=1,` +
+    // сценка (edit.scenes) вже зроблена під кадр: без кропу, панорами й корекції кольору
+    const look = c.scene ? `scale=${W}:${H},setsar=1,` : `${fit},crop=${W}:${H}:x='(iw-ow)*${c.cropX ?? 0.5}':y='(ih-oh)*(0.2+0.6*t/${d})',setsar=1,eq=contrast=1.04:saturation=1.08,`;
+    f.push(`[${c.idx}:v]fps=${FPS},${look}` +
+      `format=yuva420p,fade=t=in:d=0.25:alpha=1,fade=t=out:st=${(c.dur - 0.25).toFixed(3)}:d=0.25:alpha=1,` +
       `setpts=PTS-STARTPTS+${c.t.toFixed(3)}/TB[cw${i}]`);
     f.push(`[${last}][cw${i}]overlay=eof_action=pass:format=auto[cut${i}]`);
     last = `cut${i}`;
@@ -488,7 +491,8 @@ const sha = (x) => createHash('sha1').update(x).digest('hex').slice(0, 10);
 const renderBroll = (dir, project, props) => renderMotion(dir, project, 'Broll', props);
 
 // весь код motion/ (компоненти тягнуть theme/layout) — частина ключа кешу
-const motionCode = () => fs.readdirSync(path.join(TOOL, 'motion')).sort().map((f) => fs.readFileSync(path.join(TOOL, 'motion', f), 'utf8')).join('\n');
+const motionCode = () => fs.readdirSync(path.join(TOOL, 'motion'), { recursive: true }).sort().map((f) => path.join(TOOL, 'motion', f))
+  .filter((f) => fs.statSync(f).isFile()).map((f) => fs.readFileSync(f, 'utf8')).join('\n');
 
 // opaque: H.264 без альфи (інтро, end card); інакше прозорий ProRes 4444
 function renderMotion(dir, project, comp, props, opaque = false) {
@@ -559,6 +563,7 @@ async function ensureHeadMatte(dir, source, edit, segs, src, sync) {
 }
 
 async function render(editPath, preview) {
+  try { runAudit(editPath, true); } catch (e) { console.warn('аудит ритму пропущено:', e.message); }
   editPath = path.resolve(editPath);
   const dir = path.dirname(editPath);
   const edit = JSON.parse(fs.readFileSync(editPath, 'utf8'));
@@ -641,6 +646,20 @@ async function render(editPath, preview) {
     if (fs.existsSync(whoosh)) { inputs.push('-i', whoosh); cut.sfxIdx = idx++; }
     cutaways.push(cut);
   }
+  // scenes: [{at, dur, cards: [...]}] — сценка на весь кадр без обличчя й екрана: коди каталогу (motion/Elements.tsx)
+  // на графітовому фоні, голос і субтитри йдуть далі. Час карток усередині — від початку сценки.
+  const scenes = [];
+  for (const s of edit.scenes ?? []) {
+    const t = at(s.at, 'сценка');
+    if (t == null) continue;
+    const dur = r2(Math.min(s.dur ?? 4.5, total - t));
+    const cards = (s.cards ?? []).map((c) => ({ side: 'center', t: 0, dur, ...c }));
+    inputs.push('-i', renderMotion(dir, project, 'Cards', { w: W, h: H, dur, theme: edit.cardsTheme ?? 'dg', accent: edit.theme?.accent, bg: s.bg ?? 'scene', cards }, true));
+    const cut = { t, dur, width: W, height: H, idx: idx++, scene: true, codes: cards.map((c) => c.type) };
+    if (fs.existsSync(whoosh)) { inputs.push('-i', whoosh); cut.sfxIdx = idx++; }
+    cutaways.push(cut);
+    scenes.push(cut);
+  }
   // fullcam: [{at, dur, zoom?}] у секундах вихідного відео; «at» має лежати всередині сегмента, dur не виходить за нього
   const fullcams = [];
   for (const c of scr ? edit.fullcam ?? [] : []) {
@@ -670,7 +689,7 @@ async function render(editPath, preview) {
     progress: edit.progress ? edit.progress.y ?? 172 : undefined,
     capY: st.capY, capAnchor: st.capAnchor ?? (split ? 'center' : 'bottom'), capStyle: edit.captions?.style, cap: edit.captions?.cap, capSize: edit.captions?.size,
     // голова на весь кадр → субтитри внизу (y 1490), а не на обличчі
-    capLow: split ? [...(edit.headFirst ? [[0, r2(Math.min(edit.headFirst, segs[0].end - segs[0].start))]] : []), ...fullcams.map((c) => [c.t, r2(c.t + c.dur)])] : undefined,
+    capLow: split ? [...(edit.headFirst ? [[0, r2(Math.min(edit.headFirst, segs[0].end - segs[0].start))]] : []), ...fullcams.map((c) => [c.t, r2(c.t + c.dur)]), ...scenes.map((c) => [c.t, r2(c.t + c.dur)])] : undefined,
     title: edit.title?.text ? { t: 0.05, dur: r2(edit.title.dur ?? 2.6), text: edit.title.text, y: split && edit.headFirst ? (edit.style?.titleY ?? HEAD_STYLE.titleY) : st.titleY } : null,
     callouts, hits,
   };
@@ -680,7 +699,7 @@ async function render(editPath, preview) {
   let cardsIdx;
   const cardList = (edit.cards ?? []).map((c) => ({ ...c, t: at(c.at, 'картка') })).filter((c) => c.t != null).map(({ at: _a, ...c }) => ({ ...c, t: r2(c.t) }));
   // коди каталогу (docs/ELEMENTS.md), що пішли в ролик: скіл читає їх з попередніх роликів, щоб не повторювати набір
-  fs.writeFileSync(path.join(dir, 'codes.txt'), [...new Set(cardList.map((c) => c.type)), ...(edit.captions?.cap ? [edit.captions.cap] : [])].join(' ') + '\n');
+  fs.writeFileSync(path.join(dir, 'codes.txt'), [...new Set([...cardList.map((c) => c.type), ...scenes.flatMap((s) => s.codes)]), ...(edit.captions?.cap ? [edit.captions.cap] : [])].join(' ') + '\n');
   if (cardList.length) {
     inputs.push('-i', renderMotion(dir, project, 'Cards', { w: W, h: H, dur: r2(total), theme: edit.cardsTheme ?? 'dg', accent: edit.theme?.accent, cards: cardList }));
     cardsIdx = idx++;
@@ -757,6 +776,7 @@ async function render(editPath, preview) {
     const I = e.match(/I:\s+(-?[\d.]+) LUFS(?![\s\S]*I:\s)/)?.[1], P = e.match(/Peak:\s+(-?[\d.]+) dBFS(?![\s\S]*Peak:)/)?.[1];
     console.log(`готово: ${out}\nгучність ${I} LUFS, true peak ${P} dBFS`);
   }
+  return { out, introDur };
 }
 
 // фінальна гучність: два проходи loudnorm (−14 LUFS, TP −1.5), відео копіюється без перекодування
@@ -769,6 +789,106 @@ function masterAudio(file) {
     `loudnorm=${target}:measured_I=${j.input_i}:measured_TP=${j.input_tp}:measured_LRA=${j.input_lra}:measured_thresh=${j.input_thresh}:offset=${j.target_offset}:linear=true`,
     '-ar', '48000', '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', tmp]);
   fs.renameSync(tmp, file);
+}
+
+// ---------- план кадру, аудит ритму, розкадровка (scripts/plan.mjs) ----------
+// спільне читання work/<назва>/: edit.json (без segments — увесь запис одним шматком), слова в часі ролика
+function loadWork(editPath) {
+  editPath = path.resolve(editPath);
+  const dir = path.dirname(editPath);
+  const edit = JSON.parse(fs.readFileSync(editPath, 'utf8'));
+  const words = retime(JSON.parse(fs.readFileSync(path.join(dir, 'transcript.json'), 'utf8')).words,
+    JSON.parse(fs.readFileSync(path.join(dir, 'silences.json'), 'utf8')));
+  const src = JSON.parse(fs.readFileSync(path.join(dir, 'probe.json'), 'utf8'));
+  const segs = snapSegments(edit.segments?.length ? edit.segments : [{ start: 0, end: src.duration ?? words.at(-1).e + 0.5 }], src.fps);
+  const total = segs.at(-1).off + segs.at(-1).end - segs.at(-1).start;
+  const unmap = (t) => { const g = segs.find((x) => t >= x.off && t < x.off + x.end - x.start) ?? segs.at(-1); return g.start + t - g.off; };
+  return { editPath, dir, edit, segs, total, unmap, outWords: mapWords(segs, words) };
+}
+
+// коди 2–3 попередніх роликів поруч (work/*/codes.txt), щоб не повторювати набір
+function recentCodes(dir) {
+  const root = path.dirname(dir);
+  return new Set(fs.readdirSync(root).map((d) => path.join(root, d, 'codes.txt')).filter((f) => fs.existsSync(f) && path.dirname(f) !== dir)
+    .sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs).slice(0, 3)
+    .flatMap((f) => fs.readFileSync(f, 'utf8').split(/\s+/).filter((c) => /^[A-J]\d\d$/.test(c))));
+}
+
+const OLD_CODE = { crumbs: 'A01', skill: 'B01', chat: 'C01', list: 'F01', stack: 'F02' };
+// усе, що міняє картинку, у часі ролика
+function timelineEvents({ edit, segs, total }) {
+  const T = (x) => mapTime(segs, x);
+  const ev = [];
+  segs.forEach((g, i) => { if (i && (g.zoom ?? 1) !== (segs[i - 1].zoom ?? 1)) ev.push({ t: g.off, kind: 'cut' }); });
+  for (const c of edit.cards ?? []) { const t = T(c.at); if (t != null) ev.push({ t, dur: c.dur ?? 3, kind: 'card', code: OLD_CODE[c.type] ?? c.type, side: c.side }); }
+  for (const s of edit.scenes ?? []) {
+    const t = T(s.at); if (t == null) continue;
+    (s.cards ?? []).forEach((c, k) => ev.push(k ? { t, kind: 'code', code: c.type } : { t, dur: s.dur ?? 4.5, kind: 'scene', code: c.type, sfx: true }));
+  }
+  for (const c of edit.cutaways ?? []) { const t = T(c.at); if (t != null) ev.push({ t, dur: c.dur ?? 3, kind: 'cutaway', sfx: true }); }
+  for (const c of edit.fullcam ?? []) { const t = T(c.at); if (t != null) ev.push({ t, dur: c.dur ?? 4, kind: 'fullcam', sfx: true }); }
+  for (const b of edit.broll ?? []) { const t = T(b.at); if (t != null) ev.push({ t, dur: b.dur ?? 3, kind: 'broll' }); }
+  for (const c of edit.callouts ?? []) { const t = T(c.at); if (t != null) ev.push({ t, dur: c.dur ?? 2.6, kind: 'callout' }); }
+  for (const h of edit.hits ?? []) { const t = T(h.at ?? h); if (t != null) ev.push({ t, kind: 'cut' }); }
+  if (edit.title?.text) ev.push({ t: 0.05, dur: edit.title.dur ?? 2.6, kind: 'title' });
+  return ev.filter((e) => e.t <= total);
+}
+
+function runAudit(editPath, quiet = false) {
+  const w = loadWork(editPath);
+  const ev = timelineEvents(w);
+  const a = audit(ev, w.total, { prevCodes: recentCodes(w.dir) });
+  const lines = [`ритм: ${a.score}/100 · різних кодів на 30 с: ${a.variety} (треба ≥4) · звуків на хвилину: ${a.sfxPerMin} (≤6)`,
+    `таймлайн (1 знак = 1 с; S сценка, C стокова вставка, F обличчя, ▪ картка, · нічого зверху):`, '  ' + timeline(ev, w.total),
+    ...a.still.map(([s, e]) => `  ⚠ ${s}–${e} с нічого не міняється (${r2(e - s)} с): додай картку, сценку або наїзд`),
+    ...a.overlaps.map(([x, y, t]) => `  ⚠ ${t} с: ${x} і ${y} перекривають одне одного`),
+    ...(a.repeats.length ? [`  ⚠ код повторюється в ролику: ${a.repeats.join(' ')}`] : []),
+    ...(a.fromPrev.length ? [`  · уже були в попередніх роликах: ${a.fromPrev.join(' ')}`] : [])];
+  if (!quiet || a.score < 80) console.log(lines.join('\n'));
+  fs.writeFileSync(path.join(w.dir, 'audit.txt'), lines.join('\n') + '\n');
+  return a;
+}
+
+function runPlan(editPath, { apply, keyword } = {}) {
+  const w = loadWork(editPath);
+  const split = !!(w.edit.screen && w.edit.layout !== 'head');
+  const shots = planShots(w.outWords, { split, keyword: keyword ?? w.edit.cta?.keyword, site: w.edit.site, avoid: recentCodes(w.dir) });
+  const draft = planToEdit(shots, w.unmap, { split });
+  const table = planTable(shots);
+  fs.writeFileSync(path.join(w.dir, 'plan.md'), `# План кадру\n\n${table}\n\nТексти карток — чернетка з фрази: перепиши в ≤6 сильних слів.\n`);
+  fs.writeFileSync(path.join(w.dir, 'plan.json'), JSON.stringify(draft, null, 2));
+  console.log(table);
+  console.log(`\nсценок ${draft.scenes.length}, карток ${draft.cards.length}${split ? `, обличчя на весь кадр ${draft.fullcam.length}` : ''} → ${path.join(w.dir, 'plan.json')}`);
+  if (apply) {
+    fs.copyFileSync(w.editPath, path.join(w.dir, 'edit.before-plan.json'));
+    const { title, ...rest } = draft; // свій титул автора не перезаписуємо
+    fs.writeFileSync(w.editPath, JSON.stringify({ ...w.edit, ...rest, title: w.edit.title ?? title }, null, 2));
+    console.log('записано в edit.json (стара версія: edit.before-plan.json)');
+    runAudit(w.editPath);
+  }
+}
+
+// розкадровка: чернетковий рендер 540×960 і по кадру на кожну подію плану з підписом → board.jpg
+async function runBoard(editPath) {
+  const w = loadWork(editPath);
+  const { out, introDur } = await render(editPath, true);
+  const ev = timelineEvents(w).filter((e) => e.kind !== 'code');
+  const mids = [...ev.map((e) => ({ t: e.t + Math.min(1.2, (e.dur ?? 0.6) / 2), e })), ...w.segs.map((g) => ({ t: g.off + 0.4, e: { kind: 'face' } }))]
+    .sort((a, b) => a.t - b.t).filter((m, i, a) => !i || m.t - a[i - 1].t > 1).slice(0, 20);
+  const NAME = { card: 'картка', scene: 'СЦЕНКА', cutaway: 'вставка', fullcam: 'обличчя', broll: 'b-roll', callout: 'плашка', title: 'титул', cut: 'склейка', face: 'кадр' };
+  const files = mids.map(({ t, e }, i) => {
+    const f = path.join(w.dir, `board_${String(i).padStart(2, '0')}.jpg`);
+    const label = `${i + 1}  ${t.toFixed(1)}s  ${NAME[e.kind] ?? e.kind}${e.code ? '  ' + e.code : ''}`;
+    run(ffmpeg(), ['-y', '-v', 'error', '-ss', (t + introDur).toFixed(2), '-i', out, '-frames:v', '1', '-vf',
+      `scale=270:480,drawbox=y=436:w=270:h=44:color=black@0.7:t=fill,drawtext=fontfile=Montserrat-ExtraBold.ttf:text='${label}':x=10:y=448:fontsize=18:fontcolor=0xC3FF55`, f], { cwd: path.join(TOOL, 'fonts') });
+    return f;
+  });
+  const list = path.join(w.dir, 'board.txt');
+  fs.writeFileSync(list, files.map((f) => `file '${f.replace(/\\/g, '/')}'`).join('\n'));
+  const board = path.join(w.dir, 'board.jpg');
+  run(ffmpeg(), ['-y', '-v', 'error', '-f', 'concat', '-safe', '0', '-i', list, '-vf', `tile=5x${Math.ceil(files.length / 5)}:padding=4:color=0x080B0E`, '-frames:v', '1', '-q:v', '3', board]);
+  files.forEach((f) => fs.rmSync(f));
+  console.log('розкадровка:', board);
 }
 
 // ---------- selftest ----------
@@ -829,6 +949,22 @@ function selftest() {
   assert.match(gw, /\[mraw\]\[akey\]sidechaincompress/);
   assert.match(gw, /\[5:a\].*adelay=delays=950:all=1,volume=0\.7\[wx0\]/);
   assert.match(gw, /\[acv\]\[mduck\]\[wx0\]amix=inputs=3/);
+  // план кадру: короткі шматки склеюються, цифра → сценка E01, хук → титул, без повторів кодів
+  const say = (txt, t0 = 0, step = 0.3) => txt.split(' ').map((w, i) => ({ s: t0 + i * step, e: t0 + i * step + 0.25, w }));
+  const ws2 = [...say('привіт це мій ролик про скіли'), ...say('за 15 хвилин нейромережа зробила монтаж сама', 2.5), ...say('ну', 6), ...say('напиши слово скіл у коментарях', 8)];
+  const shots = planShots(ws2, { keyword: 'СКІЛ' });
+  assert.deepEqual(shots.map((s) => s.kind), ['face', 'scene', 'face']);
+  assert.equal(shots[1].cards[0].type, 'E01');
+  assert.equal(shots[1].cards[0].to, 15);
+  assert.equal(shots.at(-1).codes[0], 'I01');
+  const draft = planToEdit(shots, (t) => t + 10);
+  assert.equal(draft.scenes[0].at, 12.55);
+  assert.ok(draft.title.text.startsWith('Привіт'));
+  // аудит: 8 с без змін — дірка; дві картки з одного боку одночасно — перекриття
+  const au = audit([{ t: 1, dur: 3, kind: 'card', code: 'E01' }, { t: 2, dur: 3, kind: 'card', code: 'E01' }, { t: 14, kind: 'cut' }], 15);
+  assert.deepEqual(au.still, [[5, 14]]);
+  assert.equal(au.overlaps.length, 1);
+  assert.deepEqual(au.repeats, ['E01']);
   return import('../motion/layout.ts').then(({ wrap, fitSize, paginate, capText }) => {
     const m = (t, size) => t.length * size * 0.5; // моноширинна модель: символ = 0.5 × розмір
     assert.deepEqual(wrap(['aaaa', 'bb', 'cccc'], 10, 50, m), [[0, 1], [2]]);
@@ -853,5 +989,8 @@ if (cmd === 'prep' && arg) { const audio = flag('--audio'), screen = flag('--scr
 else if (cmd === 'sync' && arg) { const audio = flag('--audio'), screen = flag('--screen'); await prep(arg, 'auto', { audio, screen, syncOnly: true }); }
 else if (cmd === 'preview' && arg) await render(arg, true);
 else if (cmd === 'render' && arg) await render(arg, false);
+else if (cmd === 'plan' && arg) runPlan(arg, { keyword: flag('--keyword'), apply: rest.includes('--apply') });
+else if (cmd === 'audit' && arg) runAudit(arg);
+else if (cmd === 'board' && arg) await runBoard(arg);
 else if (cmd === 'selftest') await selftest();
-else console.log('usage: node pipeline/vid.mjs prep <video> [lang] | sync <video|папка> | preview <edit.json> | render <edit.json> | selftest');
+else console.log('usage: node pipeline/vid.mjs prep <video> [lang] | sync <video|папка> | plan <edit.json> [--apply] [--keyword СЛОВО] | audit <edit.json> | board <edit.json> | preview <edit.json> | render <edit.json> | selftest');

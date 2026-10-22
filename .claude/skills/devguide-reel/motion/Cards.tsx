@@ -16,7 +16,8 @@ export type Card =
 // catalog codes of the original five cards
 const ALIAS: Record<string, string> = { A01: 'crumbs', B01: 'skill', C01: 'chat', F01: 'list', F02: 'stack' };
 // accent: reel-wide accent (edit.theme.accent); a card may override it with its own `accent` and `theme`
-export type CardsProps = { w: number; h: number; dur: number; theme?: 'dg' | 'glow'; accent?: string; cards: Card[] };
+// bg: opaque backdrop for full-frame scenes (edit.scenes): 'scene' = graphite gradient, or any CSS background
+export type CardsProps = { w: number; h: number; dur: number; theme?: 'dg' | 'glow'; accent?: string; bg?: string; cards: Card[] };
 
 const Crumbs: React.FC<Extract<Card, { type: 'crumbs' }>> = ({ steps, active: a0, marks = [], y = 120 }) => {
   const th = React.useContext(Th);
@@ -117,9 +118,10 @@ const Chat: React.FC<Extract<Card, { type: 'chat' }>> = ({ prompt, reply, side =
   </Glass>;
 };
 
-export const Cards: React.FC<CardsProps> = ({ w, theme = 'dg', accent, cards }) => {
+export const Cards: React.FC<CardsProps> = ({ w, theme = 'dg', accent, bg, cards }) => {
   const { fps } = useVideoConfig();
   return <>
+    {bg && <AbsoluteFill style={{ background: bg === 'scene' ? 'radial-gradient(circle at 50% 38%, #1C2731, #0B1015 62%, #06080A)' : bg }} />}
     <AbsoluteFill>
       <div style={{ position: 'absolute', width: 1080, height: 1920, transform: `scale(${w / 1080})`, transformOrigin: '0 0' }}>
         {cards.map((c0, i) => {
