@@ -216,7 +216,7 @@ const D01: React.FC<Base & { cmd: string; out?: string[] }> = ({ cmd, out = [], 
 // ---------- E. цифри ----------
 const E01: React.FC<Base & { to: number; from?: number; prefix?: string; suffix?: string; label?: string; at?: number }> = ({ to, from = 0, prefix = '', suffix = '', label, at = 4, side = 'center', y = 300, scale = 1 }) => {
   const th = useTh(); const { f, p, N } = useLife();
-  const end = Math.min(at + 30, N - 14);
+  const end = Math.max(at + 1, Math.min(at + 30, N - 14));
   const v = interpolate(f, [at, end], [from, to], { ...clamp, easing: (x) => 1 - Math.pow(1 - x, 3) });
   const kick = interpolate(f, [end, end + 4, end + 12], [1, 1.12, 1], clamp);
   const w = 900;

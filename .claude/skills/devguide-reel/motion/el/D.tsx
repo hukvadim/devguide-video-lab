@@ -57,7 +57,7 @@ const D04: React.FC<Base & { cmd?: string; err: string; fix: string }> = ({ cmd,
 
 const D05: React.FC<Base & { label: string; pct?: number }> = ({ label, pct = 100, side, y, scale }) => {
   const th = useTh(); const { f, N } = useLife();
-  const k = Math.round(ramp(f, 6, N * 0.75, 0, pct, (x) => x));
+  const k = Math.round(ramp(f, 6, Math.max(7, N * 0.75), 0, pct, (x) => x));
   const cells = 16, full = Math.round(cells * k / 100);
   return <Glass side={side} y={y} w={460} scale={scale} tilt={0} style={{ background: DARK, fontFamily: F.mono, fontSize: 26 }}>
     <div style={{ color: th.dim }}>{label}</div>
@@ -118,7 +118,7 @@ const D08: React.FC<Base & { code: string[]; line: number; comment: string; who?
 // two code panes with a wipe slider moving across
 const D09: React.FC<Base & { before: string[]; after: string[] }> = ({ before, after, side, y, scale }) => {
   const th = useTh(); const { f, N } = useLife();
-  const k = interpolate(f, [12, N * 0.45, N * 0.65], [0, 1, 0.55], clamp); // slides over, settles midway so both halves read
+  const k = interpolate(f, [12, Math.max(13, N * 0.45), Math.max(14, N * 0.65)], [0, 1, 0.55], clamp); // slides over, settles midway so both halves read
   const pane = (lines: string[], col: string) => <div style={{ fontFamily: F.mono, fontSize: 23, lineHeight: 1.6, color: col, whiteSpace: 'pre', padding: 24 }}>{lines.map((l, i) => <div key={i}>{l}</div>)}</div>;
   return <Glass side={side} y={y} w={480} scale={scale} tilt={0} style={{ background: DARK, padding: 0, overflow: 'hidden' }}>
     <div style={{ display: 'flex', justifyContent: 'space-between', padding: '14px 24px 0', fontSize: 20, fontWeight: 800, textTransform: 'uppercase' }}>
@@ -135,7 +135,7 @@ const D09: React.FC<Base & { before: string[]; after: string[] }> = ({ before, a
 const D10: React.FC<Base & { typed: string; ghost: string }> = ({ typed: t0, ghost, side, y, scale }) => {
   const th = useTh(); const { f } = useLife();
   const t = typed(t0, f, 4, 0.7), shown = f > 4 + t0.length / 0.7 + 4;
-  const acc = interpolate(f, [shown ? 4 + t0.length / 0.7 + 22 : 1e9, 4 + t0.length / 0.7 + 30], [0, 1], clamp);
+  const T = 4 + t0.length / 0.7, acc = ramp(f, T + 22, T + 30); // ghost appears, then gets accepted
   return <Glass side={side} y={y} w={480} scale={scale} tilt={0} style={{ background: DARK, fontFamily: F.mono, fontSize: 25, lineHeight: 1.6 }}>
     <div style={{ whiteSpace: 'pre-wrap' }}>{t}<span style={{ color: acc > 0.5 ? '#CFD6DC' : 'rgba(255,255,255,.32)', opacity: shown ? 1 : 0 }}>{ghost}</span></div>
     <div style={{ marginTop: 14, fontSize: 20, color: th.dim, opacity: shown ? 1 : 0 }}><span style={{ padding: '2px 10px', border: `1.5px solid ${DIM_LINE}`, borderRadius: 6, color: acc > 0.5 ? th.accent : th.dim }}>Tab</span> прийняти</div>

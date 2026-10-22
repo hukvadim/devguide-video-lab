@@ -58,7 +58,7 @@ const G04: React.FC<Base & { cols: string[]; rows: [string, ...boolean[]][] }> =
 // before/after wipe on two labelled panels (for a real screenshot pass `before`/`after` image paths later)
 const G05: React.FC<Base & { before: string; after: string }> = ({ before, after, side, y, scale }) => {
   const th = useTh(); const { f, N } = useLife();
-  const k = interpolate(f, [10, N * 0.45, N * 0.65], [1, 0, 0.5], clamp);
+  const k = interpolate(f, [10, Math.max(11, N * 0.45), Math.max(12, N * 0.65)], [1, 0, 0.5], clamp);
   const pane = (t: string, good: boolean) => <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: good ? 'flex-end' : 'flex-start', padding: 30, textAlign: good ? 'right' : 'left',
     fontFamily: F.display, fontWeight: 900, fontSize: 36, lineHeight: 1.15, background: good ? 'linear-gradient(160deg,#1E2A16,#10161C)' : '#20262C', color: good ? th.accent : th.dim, ...(good ? { paddingLeft: '54%' } : { paddingRight: '54%' }) }}>{t}</div>;
   return <Glass side={side} y={y} w={460} scale={scale} tilt={0} style={{ padding: 0, overflow: 'hidden' }}>
