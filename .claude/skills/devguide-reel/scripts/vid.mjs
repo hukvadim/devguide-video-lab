@@ -427,6 +427,8 @@ function buildGraph({ edit, segs, src, total, W, H, audioOnly, voiceGainDb = 0, 
     f.push(`[${last}][cw${i}]overlay=eof_action=pass:format=auto[cut${i}]`);
     last = `cut${i}`;
   });
+  // edit.look — ffmpeg-фільтр на весь кадр (кольорокорекція, віньєтка) під текстом, щоб субтитри лишались яскравими
+  if (edit.look) { f.push(`[${last}]${edit.look}[vlk]`); last = 'vlk'; }
   icons.forEach((ic, i) => {
     const S0 = ic.size ?? 240;
     const S = Math.round(S0 * k);
@@ -643,7 +645,8 @@ async function render(editPath, preview) {
     const { width, height } = probe(file);
     inputs.push('-ss', String(c.from ?? 0), '-t', dur.toFixed(3), '-i', file);
     const cut = { ...c, t, dur, width, height, idx: idx++ };
-    if (fs.existsSync(whoosh)) { inputs.push('-i', whoosh); cut.sfxIdx = idx++; }
+    // sfx: false — без «вжух» (серія вставок підряд звучить лише на першій)
+    if (c.sfx !== false && fs.existsSync(whoosh)) { inputs.push('-i', whoosh); cut.sfxIdx = idx++; }
     cutaways.push(cut);
   }
   // scenes: [{at, dur, cards: [...]}] — сценка на весь кадр без обличчя й екрана: коди каталогу (motion/Elements.tsx)
