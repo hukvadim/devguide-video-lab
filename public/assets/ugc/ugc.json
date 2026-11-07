@@ -18,6 +18,8 @@
     { "name": "rubbing-eyes", "file": "flow/Man_rubbing_eyes_at_desk.mp4", "from": 0.0, "dur": 3.5, "tags": ["tired", "long", "waiting", "fail"] },
     { "name": "cafe-wow", "file": "flow/Man_sipping_coffee_at_cafe_ending_wow.mp4", "from": 6.5, "dur": 3.0, "tags": ["wow", "coffee", "impressed", "emo"] },
     { "name": "typing-focus", "file": "flow/Man_typing_at_desk.mp4", "from": 3.0, "dur": 3.0, "tags": ["focus", "code", "work", "typing", "action"] },
-    { "name": "street-phone", "file": "flow/Man_walking.mp4", "from": 3.5, "dur": 3.0, "tags": ["phone", "cta", "show", "street", "direct"] }
+    { "name": "street-phone", "file": "flow/Man_walking.mp4", "from": 3.5, "dur": 3.0, "tags": ["phone", "cta", "show", "street", "direct"] },
+    { "name": "br-019", "file": "flow/br-019.mp4", "from": 0.5, "dur": 2.5, "tags": ["reaction", "emo", "wow", "surprise", "broll"], "title": "Тихе вау" },
+    { "name": "br-030", "file": "flow/br-030.mp4", "from": 0.5, "dur": 2.5, "tags": ["laptop", "code", "work", "broll"], "title": "Руки на клавіатурі" }
   ]
 }

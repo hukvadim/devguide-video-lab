@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "Flow B-roll",
+  "version": "2.0.0",
+  "description": "Черга перебивок DevGuide у Google Flow: генерує, зберігає br-NNN.mp4 і дописує ugc.json.",
+  "permissions": ["debugger", "storage"],
+  "host_permissions": [
+    "https://flow.google.com/*",
+    "https://*.google.com/*",
+    "https://*.googleusercontent.com/*",
+    "https://storage.googleapis.com/*",
+    "https://flow-content.google/*",
+    "http://127.0.0.1:5177/*"
+  ],
+  "background": { "service_worker": "background.js" },
+  "action": { "default_title": "Flow B-roll: показати/сховати панель" },
+  "content_scripts": [
+    { "matches": ["https://flow.google.com/*"], "js": ["lib.js", "content.js"], "run_at": "document_idle" }
+  ]
+}
