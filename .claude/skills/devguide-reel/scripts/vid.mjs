@@ -597,7 +597,7 @@ async function render(editPath, preview) {
   fs.writeFileSync(path.join(dir, 'graph_audio.txt'), buildGraph({ edit, segs, src, total, W, H, audioOnly: true }));
   const m = run(ffmpeg(), ['-hide_banner', '-i', audioFile ?? source, '-/filter_complex', 'graph_audio.txt', '-map', '[aout]', '-f', 'null', '-'], { cwd: dir }).stderr;
   const meas = JSON.parse(m.slice(m.lastIndexOf('{'), m.lastIndexOf('}') + 1));
-  const voiceGainDb = edit.voiceReady ? 0 : -14 - Number(meas.input_i); // voiceReady: голос уже оброблений (-14 LUFS), без повторної обробки
+  const voiceGainDb = edit.voiceReady ? 0 : (edit.loudness ?? -14) - Number(meas.input_i); // voiceReady: голос уже оброблений (-14 LUFS), без повторної обробки
   console.log(`голос: ${meas.input_i} LUFS → підсилення ${voiceGainDb.toFixed(1)} дБ`);
 
   const inputs = ['-i', source];
@@ -774,7 +774,7 @@ async function render(editPath, preview) {
     times.forEach((t, i) => run(ffmpeg(), ['-y', '-v', 'error', '-ss', t.toFixed(2), '-i', out, '-frames:v', '1', path.join(dir, `frame_${String(i).padStart(2, '0')}.png`)]));
     console.log('кадри:', times.map((t) => t.toFixed(1)).join(', '));
   } else {
-    masterAudio(out);
+    masterAudio(out, edit.loudness);
     const e = run(ffmpeg(), ['-hide_banner', '-i', out, '-af', 'ebur128=peak=true', '-f', 'null', '-']).stderr;
     const I = e.match(/I:\s+(-?[\d.]+) LUFS(?![\s\S]*I:\s)/)?.[1], P = e.match(/Peak:\s+(-?[\d.]+) dBFS(?![\s\S]*Peak:)/)?.[1];
     console.log(`готово: ${out}\nгучність ${I} LUFS, true peak ${P} dBFS`);
@@ -782,9 +782,9 @@ async function render(editPath, preview) {
   return { out, introDur };
 }
 
-// фінальна гучність: два проходи loudnorm (−14 LUFS, TP −1.5), відео копіюється без перекодування
-function masterAudio(file) {
-  const target = 'I=-14:TP=-1.5:LRA=11';
+// фінальна гучність: два проходи loudnorm (edit.loudness, типово −14 LUFS; TP −1.5), відео копіюється без перекодування
+function masterAudio(file, loudness = -14) {
+  const target = `I=${loudness}:TP=-1.5:LRA=11`;
   const e = run(ffmpeg(), ['-hide_banner', '-i', file, '-af', `loudnorm=${target}:print_format=json`, '-f', 'null', '-']).stderr;
   const j = JSON.parse(e.slice(e.lastIndexOf('{'), e.lastIndexOf('}') + 1));
   const tmp = file.replace(/\.mp4$/, '.master.mp4');
