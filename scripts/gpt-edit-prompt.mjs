@@ -1,5 +1,6 @@
 // Experiment «GPT as the editor»: GPT writes the whole creative part of edit.json, vid.mjs renders it.
-//   node scripts/gpt-edit-prompt.mjs work/<name>-gpt --from work/<name>   → gpt-edit.prompt.md (paste into ChatGPT)
+//   node scripts/gpt-edit-prompt.mjs work/<name> [--keyword 3D] [--from work/<other>] → gpt-edit.prompt.md (paste into ChatGPT)
+//   (new take: after `vid.mjs prep`, tech fields come from sync.json; --from copies them from an existing edit)
 //   node scripts/gpt-edit-prompt.mjs work/<name>-gpt --apply              → gpt-answer.json + tech fields → edit.json
 import fs from "node:fs";
 import path from "node:path";
@@ -60,12 +61,30 @@ if (process.argv.includes("--apply")) apply();
 else prompt();
 
 function prompt() {
-  const from = path.resolve(arg("--from"));
-  fs.writeFileSync(
-    path.join(work, "base.json"),
-    fs.readFileSync(path.join(from, "edit.json")),
-  ); // tech fields source
-  const base = read("base.json");
+  // tech fields: an existing edit (--from) or, for a new take, the files `vid.mjs prep` recorded in sync.json
+  let base;
+  if (process.argv.includes("--from"))
+    base = JSON.parse(
+      fs.readFileSync(
+        path.join(path.resolve(arg("--from")), "edit.json"),
+        "utf8",
+      ),
+    );
+  else {
+    const s = read("sync.json"); // ponytail: a camera-only take (no sync.json) needs --from
+    base = {
+      source: s.source,
+      ...(s.audio && { audio: s.audio }),
+      ...(s.screen && { screen: s.screen, layout: "split" }),
+      site: "devguide.com.ua",
+      loudness: -12,
+    };
+  }
+  const kw = process.argv.includes("--keyword")
+    ? arg("--keyword")
+    : base.outro?.keyword;
+  if (kw) base.outro = { ...base.outro, keyword: kw };
+  fs.writeFileSync(path.join(work, "base.json"), JSON.stringify(base, null, 2));
   const elements = fs
     .readFileSync(path.join(SKILL, "docs/ELEMENTS.md"), "utf8")
     .split("\n")
